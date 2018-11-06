@@ -7,10 +7,14 @@
 
 
 #include <string>
+#include <list>
+#include <memory>
 
 #define GL3_PROTOTYPES 1
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+
+#include "Drawable"
 
 namespace GLTools {
 
@@ -20,9 +24,20 @@ namespace GLTools {
         explicit Window(std::string name);
         ~Window();
 
+        Window( const Window& ) = delete; // non construction-copyable
+        Window& operator=( const Window& ) = delete; // non copyable
+
+        void add(std::shared_ptr<Drawable> pDrawable);
+
+    protected:
+        void init();
+        void render();
+
     private:
         SDL_Window *mWindow;
         SDL_GLContext mContext;
+
+        std::list<std::shared_ptr<Drawable>> mDrawables2D, mDrawables3D;
 
     };
 
