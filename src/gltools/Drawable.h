@@ -16,7 +16,7 @@ namespace GLTools {
 
     public:
         virtual RenderStep step() = 0;
-        virtual void render() = 0;
+        virtual void render() const = 0;
 
     };
 

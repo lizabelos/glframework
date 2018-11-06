@@ -48,8 +48,6 @@ GLTools::Window::Window(std::string name) {
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback((GLDEBUGPROC)glMessageCallback, nullptr);
 
-    init();
-
 }
 
 GLTools::Window::~Window() {
@@ -93,7 +91,7 @@ void GLTools::Window::init() {
 }
 
 
-void GLTools::Window::render() {
+void GLTools::Window::render() const {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -111,4 +109,37 @@ void GLTools::Window::render() {
 
     SDL_GL_SwapWindow(mWindow);
 
+}
+
+int GLTools::Window::run() {
+
+    init();
+
+    bool loop = true;
+
+    while (loop) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT) {
+                loop = false;
+            }
+            if (event.type == SDL_KEYDOWN)
+            {
+                switch (event.key.keysym.sym)
+                {
+                    case SDLK_ESCAPE:
+                        loop = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        render();
+
+    }
+
+    return 0;
 }

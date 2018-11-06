@@ -28,10 +28,12 @@ namespace GLTools {
         Window& operator=( const Window& ) = delete; // non copyable
 
         void add(std::shared_ptr<Drawable> pDrawable);
+        int run();
+
 
     protected:
         void init();
-        void render();
+        void render() const;
 
     private:
         SDL_Window *mWindow;

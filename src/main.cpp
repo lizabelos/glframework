@@ -4,6 +4,5 @@
 
 int main(int argc, char **argv) {
     GLTools::Window window("Hello world");
-
-    return 0;
+    return window.run();
 }
