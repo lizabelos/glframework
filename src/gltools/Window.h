@@ -13,6 +13,7 @@
 #define GL3_PROTOTYPES 1
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <glm/ext.hpp>
 
 #include "Drawable"
 
@@ -41,6 +42,7 @@ namespace GLTools {
 
         std::list<std::shared_ptr<Drawable>> mDrawables2D, mDrawables3D;
 
+        glm::mat4 mProjectionMatrix;
     };
 
 }

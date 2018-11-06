@@ -88,6 +88,8 @@ void GLTools::Window::init() {
     // Enable multisampling
     glEnable(GL_MULTISAMPLE_ARB);
 
+    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)(800.0 / 600.0), 0.1f, 100.0f);
+
 }
 
 
