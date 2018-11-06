@@ -5,6 +5,8 @@
 #ifndef SOLAR_SYSTEM_DRAWABLE_H
 #define SOLAR_SYSTEM_DRAWABLE_H
 
+#include <vector>
+
 #include "Camera"
 
 namespace GLTools {
@@ -22,7 +24,6 @@ namespace GLTools {
 
     };
 
-    
 }
 
 
