@@ -1,6 +1,8 @@
 #include <iostream>
 
+#include "gltools/Window"
+
 int main(int argc, char **argv) {
-    std::cout << "Hello world !" << std::endl;
+    GLTools::Window window("Hello world");
     return 0;
 }
