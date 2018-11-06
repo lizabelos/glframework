@@ -88,8 +88,6 @@ void GLTools::Window::init() {
     // Enable multisampling
     glEnable(GL_MULTISAMPLE_ARB);
 
-    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)(800.0 / 600.0), 0.1f, 100.0f);
-
 }
 
 
@@ -100,13 +98,13 @@ void GLTools::Window::render() const {
     // todo : camera matrix
 
     for (const std::shared_ptr<Drawable> &drawable : mDrawables3D) {
-        drawable->render();
+        drawable->render(mCamera);
     }
 
     // todo : 2d matrix
 
     for (const std::shared_ptr<Drawable> &drawable : mDrawables2D) {
-        drawable->render();
+        drawable->render(mCamera);
     }
 
     SDL_GL_SwapWindow(mWindow);

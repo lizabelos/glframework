@@ -5,6 +5,8 @@
 #ifndef SOLAR_SYSTEM_DRAWABLE_H
 #define SOLAR_SYSTEM_DRAWABLE_H
 
+#include "Camera"
+
 namespace GLTools {
 
     typedef enum RenderStep {
@@ -16,10 +18,11 @@ namespace GLTools {
 
     public:
         virtual RenderStep step() = 0;
-        virtual void render() const = 0;
+        virtual void render(const Camera &camera) const = 0;
 
     };
 
+    
 }
 
 
