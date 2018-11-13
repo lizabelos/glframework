@@ -19,6 +19,7 @@ namespace Astronomy {
 
         std::string getName() override;
         glm::vec3 getPosition(time_t time) override;
+        glm::vec3 getRotation(time_t time) override;
         float getRadius() override;
 
     private:

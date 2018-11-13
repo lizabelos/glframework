@@ -20,9 +20,13 @@ namespace GLTools {
         glm::mat4 getMVMatrix();
         glm::mat4 getNormalMatrix();
 
-        void pushMVMatrix();
-        void popMVMatrix();
-        void mulMVMatrix(glm::mat4 matrix);
+        void pushMatrix();
+        void popMatrix();
+
+        void translate(glm::vec3 translation);
+        void rotate(glm::vec3 rotation);
+        void scale(glm::vec3 scaling);
+        void scale(float scaling);
 
     private:
         glm::mat4 mProjectionMatrix;

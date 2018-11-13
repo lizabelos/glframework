@@ -19,7 +19,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 file(GLOB_RECURSE source_files src/*)
 
 # Ressources
-add_custom_target(copy_shader_files ${CMAKE_COMMAND} -D SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/shaders -D DESTINATION_DIR=${CMAKE_CURRENT_BINARY_DIR} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CopyFile.cmake COMMENT "Copying shaders file" VERBATIM)
+add_custom_target(copy_shader_files ${CMAKE_COMMAND} -D SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/res -D DESTINATION_DIR=${CMAKE_CURRENT_BINARY_DIR} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CopyFile.cmake COMMENT "Copying shaders file" VERBATIM)
 
 # Executable
 add_executable(solar ${source_files})

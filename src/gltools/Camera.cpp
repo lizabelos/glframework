@@ -20,15 +20,29 @@ glm::mat4 GLTools::Camera::getNormalMatrix() {
     return mNormalMatrix;
 }
 
-void GLTools::Camera::pushMVMatrix() {
+void GLTools::Camera::pushMatrix() {
     mMVMatrixStack.push_back(mMVMatrix);
 }
 
-void GLTools::Camera::popMVMatrix() {
+void GLTools::Camera::popMatrix() {
     mMVMatrix = mMVMatrixStack.back();
     mMVMatrixStack.pop_back();
 }
 
-void GLTools::Camera::mulMVMatrix(glm::mat4 matrix) {
-    mMVMatrix = mMVMatrix * matrix;
+void GLTools::Camera::translate(glm::vec3 translation) {
+    // todo
 }
+
+void GLTools::Camera::rotate(glm::vec3 rotation) {
+    // todo
+}
+
+void GLTools::Camera::scale(glm::vec3 scaling) {
+    // todo
+}
+
+void GLTools::Camera::scale(float scaling) {
+    // todo
+}
+
+

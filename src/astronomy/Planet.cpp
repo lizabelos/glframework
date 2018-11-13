@@ -20,3 +20,8 @@ glm::vec3 Astronomy::Planet::getPosition(time_t time) {
 float Astronomy::Planet::getRadius() {
     return mRadius;
 }
+
+glm::vec3 Astronomy::Planet::getRotation(time_t time) {
+    // todo
+    return glm::vec3(0, 0, 0);
+}

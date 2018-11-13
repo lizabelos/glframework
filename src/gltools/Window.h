@@ -33,13 +33,11 @@ namespace GLTools {
 
     protected:
         void init();
-        virtual void render() const = 0;
+        virtual void render() = 0;
 
     private:
         SDL_Window *mWindow;
         SDL_GLContext mContext;
-
-        Camera mCamera;
 
     };
 
