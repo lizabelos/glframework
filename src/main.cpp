@@ -1,8 +1,6 @@
-#include <iostream>
-
-#include "gltools/Window"
+#include "SolarSystem.h"
 
 int main(int argc, char **argv) {
-    GLTools::Window window("Hello world");
-    return window.run();
+    SolarSystem solarSystem;
+    return solarSystem.run();
 }

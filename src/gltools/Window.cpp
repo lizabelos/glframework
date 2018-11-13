@@ -62,17 +62,6 @@ GLTools::Window::~Window() {
 
 }
 
-void GLTools::Window::add(std::shared_ptr<Drawable> pDrawable) {
-    switch (pDrawable->step()) {
-        case Step2D:
-            mDrawables2D.push_back(pDrawable);
-            break;
-        case Step3D:
-            mDrawables3D.push_back(pDrawable);
-            break;
-    }
-}
-
 void GLTools::Window::init() {
 
     glClearColor(0.0f, 0.6f, 0.9f, 0.0f);
@@ -87,27 +76,6 @@ void GLTools::Window::init() {
 
     // Enable multisampling
     glEnable(GL_MULTISAMPLE_ARB);
-
-}
-
-
-void GLTools::Window::render() const {
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // todo : camera matrix
-
-    for (const std::shared_ptr<Drawable> &drawable : mDrawables3D) {
-        drawable->render(mCamera);
-    }
-
-    // todo : 2d matrix
-
-    for (const std::shared_ptr<Drawable> &drawable : mDrawables2D) {
-        drawable->render(mCamera);
-    }
-
-    SDL_GL_SwapWindow(mWindow);
 
 }
 
@@ -137,7 +105,9 @@ int GLTools::Window::run() {
             }
         }
 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         render();
+        SDL_GL_SwapWindow(mWindow);
 
     }
 

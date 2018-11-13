@@ -23,24 +23,21 @@ namespace GLTools {
 
     public:
         explicit Window(std::string name);
-        ~Window();
+        virtual ~Window();
 
         Window( const Window& ) = delete; // non construction-copyable
         Window& operator=( const Window& ) = delete; // non copyable
 
-        void add(std::shared_ptr<Drawable> pDrawable);
         int run();
 
 
     protected:
         void init();
-        void render() const;
+        virtual void render() const = 0;
 
     private:
         SDL_Window *mWindow;
         SDL_GLContext mContext;
-
-        std::list<std::shared_ptr<Drawable>> mDrawables2D, mDrawables3D;
 
         Camera mCamera;
 
