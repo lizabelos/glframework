@@ -19,3 +19,16 @@ glm::mat4 GLTools::Camera::getMVMatrix() {
 glm::mat4 GLTools::Camera::getNormalMatrix() {
     return mNormalMatrix;
 }
+
+void GLTools::Camera::pushMVMatrix() {
+    mMVMatrixStack.push_back(mMVMatrix);
+}
+
+void GLTools::Camera::popMVMatrix() {
+    mMVMatrix = mMVMatrixStack.back();
+    mMVMatrixStack.pop_back();
+}
+
+void GLTools::Camera::mulMVMatrix(glm::mat4 matrix) {
+    mMVMatrix = mMVMatrix * matrix;
+}

@@ -7,6 +7,7 @@
 
 
 #include <glm/ext.hpp>
+#include <vector>
 
 namespace GLTools {
 
@@ -19,10 +20,16 @@ namespace GLTools {
         glm::mat4 getMVMatrix();
         glm::mat4 getNormalMatrix();
 
+        void pushMVMatrix();
+        void popMVMatrix();
+        void mulMVMatrix(glm::mat4 matrix);
+
     private:
         glm::mat4 mProjectionMatrix;
         glm::mat4 mMVMatrix;
         glm::mat4 mNormalMatrix;
+
+        std::vector<glm::mat4> mMVMatrixStack;
 
     };
 
