@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(Solar_System)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 # Set C++ Standard to version 14
 set (CMAKE_CXX_STANDARD 14)
 
