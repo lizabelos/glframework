@@ -29,6 +29,18 @@ namespace GLTools {
 
     };
 
+    class SettableVariable : public AbstractVariable {
+
+    public:
+        void next() override;
+        float get() const override;
+        void set(float value);
+
+    private:
+        float mValue = 0;
+
+    };
+
     AbstractVariable& operator +(AbstractVariable &a, AbstractVariable &b);
     AbstractVariable& operator -(AbstractVariable &a, AbstractVariable &b);
     AbstractVariable& operator *(AbstractVariable &a, AbstractVariable &b);

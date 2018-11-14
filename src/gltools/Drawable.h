@@ -11,15 +11,9 @@
 
 namespace GLTools {
 
-    typedef enum RenderStep {
-        Step2D = 1,
-        Step3D = 0
-    } RenderStep;
-
     class Drawable {
 
     public:
-        virtual RenderStep step() = 0;
         virtual void render(const Camera &camera) const = 0;
 
     };

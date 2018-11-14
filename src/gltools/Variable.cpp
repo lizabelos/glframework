@@ -175,3 +175,15 @@ void GLTools::ConstantVariable::next() {
 float GLTools::ConstantVariable::get() const {
     return mConstant;
 }
+
+void GLTools::SettableVariable::next() {
+
+}
+
+float GLTools::SettableVariable::get() const {
+    return mValue;
+}
+
+void GLTools::SettableVariable::set(float value) {
+    mValue = value;
+}
