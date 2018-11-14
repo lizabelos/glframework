@@ -6,7 +6,7 @@
 
 #include "ParametricDrawable.h"
 
-GLTools::ParametricDrawable::ParametricDrawable(GLTools::AbstractVariable &x, GLTools::AbstractVariable &y,
+void GLTools::ParametricDrawable::initialize(GLTools::AbstractVariable &x, GLTools::AbstractVariable &y,
                                                 GLTools::AbstractVariable &z, GLTools::AbstractVariable &normX,
                                                 GLTools::AbstractVariable &normY, GLTools::AbstractVariable &normZ,
                                                 GLTools::SettableVariable &p1, GLTools::SettableVariable &p2,
@@ -42,7 +42,7 @@ GLTools::ParametricDrawable::ParametricDrawable(GLTools::AbstractVariable &x, GL
 
 
 void GLTools::ParametricDrawable::render(const GLTools::Camera &camera) const {
-
-
-
+    mVertexArrayObject.bind();
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mVertexBuffer->getSize()));
+    glBindVertexArray(0);
 }

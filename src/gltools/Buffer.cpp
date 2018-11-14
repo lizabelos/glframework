@@ -24,15 +24,15 @@ GLTools::ArrayBuffer::~ArrayBuffer() {
     glDeleteBuffers(1, &mId);
 }
 
-void GLTools::ArrayBuffer::bind() {
+void GLTools::ArrayBuffer::bind() const {
     glBindBuffer(GL_ARRAY_BUFFER, mId);
 }
 
-unsigned long GLTools::ArrayBuffer::getStep() {
+unsigned long GLTools::ArrayBuffer::getStep() const {
     return mStep;
 }
 
-unsigned long GLTools::ArrayBuffer::getSize() {
+unsigned long GLTools::ArrayBuffer::getSize() const {
     return mSize;
 }
 
@@ -48,15 +48,15 @@ GLTools::ElementArrayBuffer::~ElementArrayBuffer() {
     glDeleteBuffers(1, &mId);
 }
 
-void GLTools::ElementArrayBuffer::bind() {
+void GLTools::ElementArrayBuffer::bind() const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mId);
 }
 
-unsigned long GLTools::ElementArrayBuffer::getStep() {
+unsigned long GLTools::ElementArrayBuffer::getStep() const {
     return mStep;
 }
 
-unsigned long GLTools::ElementArrayBuffer::getSize() {
+unsigned long GLTools::ElementArrayBuffer::getSize() const {
     return mSize;
 }
 
@@ -64,7 +64,7 @@ GLTools::VertexArrayObject::VertexArrayObject() {
     glGenVertexArrays(1, &mId);
 }
 
-void GLTools::VertexArrayObject::bind() {
+void GLTools::VertexArrayObject::bind() const {
     glBindVertexArray(mId);
     mElementBuffer->bind();
 }

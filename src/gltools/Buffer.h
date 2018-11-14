@@ -20,9 +20,9 @@ namespace GLTools {
         explicit ArrayBuffer(std::vector<glm::vec3> vector);
         ~ArrayBuffer();
 
-        void bind();
-        unsigned long getStep();
-        unsigned long getSize();
+        void bind() const;
+        unsigned long getStep() const;
+        unsigned long getSize() const;
 
     private:
         GLuint mId;
@@ -37,9 +37,9 @@ namespace GLTools {
         explicit ElementArrayBuffer(std::vector<uint32_t> vector);
         ~ElementArrayBuffer();
 
-        void bind();
-        unsigned long getStep();
-        unsigned long getSize();
+        void bind() const;
+        unsigned long getStep() const;
+        unsigned long getSize() const;
 
     private:
         GLuint mId;
@@ -55,7 +55,7 @@ namespace GLTools {
 
         void add(GLuint id, std::shared_ptr<ArrayBuffer> buffer);
         void set(std::shared_ptr<ArrayBuffer> elementBuffer);
-        void bind();
+        void bind() const;
 
     private:
         GLuint mId;

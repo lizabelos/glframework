@@ -20,9 +20,8 @@ namespace GLTools {
     class ParametricDrawable : public Drawable {
 
     public:
-        ParametricDrawable(AbstractVariable &x, AbstractVariable &y, AbstractVariable &z, AbstractVariable &normX, AbstractVariable &normY, AbstractVariable &normZ, SettableVariable &p1, SettableVariable &p2, unsigned long resolution1, unsigned long resolution2);
-
-        void render(const Camera &camera) const;
+        void initialize(AbstractVariable &x, AbstractVariable &y, AbstractVariable &z, AbstractVariable &normX, AbstractVariable &normY, AbstractVariable &normZ, SettableVariable &p1, SettableVariable &p2, unsigned long resolution1, unsigned long resolution2);
+        void render(const Camera &camera) const override;
 
     private:
         std::shared_ptr<ArrayBuffer> mVertexBuffer, mNormalBuffer, mTextcoordBuffer;

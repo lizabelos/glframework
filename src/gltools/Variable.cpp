@@ -156,11 +156,11 @@ GLTools::AbstractVariable& operator /(GLTools::AbstractVariable &a, float b) {
     return *new DivisionVariable(a, *new GLTools::ConstantVariable(b));
 }
 
-GLTools::AbstractVariable& cosav(GLTools::AbstractVariable &a) {
+GLTools::AbstractVariable& GLTools::cosav(GLTools::AbstractVariable &a) {
     return *new CosavVariable(a);
 }
 
-GLTools::AbstractVariable& sinav(GLTools::AbstractVariable &a) {
+GLTools::AbstractVariable& GLTools::sinav(GLTools::AbstractVariable &a) {
     return *new SinavVariable(a);
 }
 

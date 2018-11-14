@@ -4,7 +4,59 @@
 
 #include "SolarSystem.h"
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System") {
+#include <iostream>
+#include <fstream>
+#include <iterator>
+#include <sstream>
+#include <memory>
+
+
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(256, 256) {
+
+    std::ifstream solarfile("res/solarsystem.txt");
+    if (!solarfile.is_open())
+    {
+        throw std::runtime_error("Can't open solarsystem.txt");
+    }
+
+    std::string line;
+    bool firstIteration = true;
+
+    while (getline(solarfile,line))
+    {
+        std::istringstream iss(line);
+        std::vector<std::string> splits(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
+
+        std::string type = splits[0];
+        std::string name = splits[1];
+        float radius = static_cast<float>(atof(splits[2].c_str()));
+        float rotationspeed = static_cast<float>(atof(splits[3].c_str()));
+
+        if (firstIteration) {
+            if (type != "Star") throw std::runtime_error("First entry must be a Star !");
+            mSystem = std::make_unique<Astronomy::System>(std::make_shared<Astronomy::Star>(name, radius, rotationspeed));
+            firstIteration = false;
+            continue;
+        }
+
+        if (type == "Star") {
+            // std::shared_ptr<Astronomy::Astre> star = std::make_shared<Astronomy::Astre>(new Astronomy::Star(name, radius, rotationspeed));
+            // mSystem->add(star);
+        }
+
+        if (type == "Planet") {
+            // todo
+        }
+
+        std::cerr << "Warning : unkown type, '" + type + "'. Passing" << std::endl;
+
+
+
+    }
+    solarfile.close();
+
+    mCamera.translate(glm::vec3(-10, 0, 0));
+
 
 }
 
@@ -13,10 +65,7 @@ void SolarSystem::render() {
     time_t currentTime;
     time(&currentTime);
 
-    for (const std::pair<std::shared_ptr<Astronomy::Astre>, std::shared_ptr<GLTools::Drawable>> &astreDrawable : mAstresDrawable) {
-
-        std::shared_ptr<Astronomy::Astre> astre = astreDrawable.first;
-        std::shared_ptr<GLTools::Drawable> drawable = astreDrawable.second;
+    for (const std::shared_ptr<Astronomy::Astre> &astre : mSystem->getAll()) {
 
         mCamera.pushMatrix();
 
@@ -24,7 +73,7 @@ void SolarSystem::render() {
         mCamera.rotate(astre->getRotation(currentTime));
         mCamera.translate(translationScale(astre->getPosition(currentTime)));
 
-        drawable->render(mCamera);
+        mSphere.render(mCamera);
 
         mCamera.popMatrix();
 

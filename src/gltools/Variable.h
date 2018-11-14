@@ -41,20 +41,20 @@ namespace GLTools {
 
     };
 
-    AbstractVariable& operator +(AbstractVariable &a, AbstractVariable &b);
-    AbstractVariable& operator -(AbstractVariable &a, AbstractVariable &b);
-    AbstractVariable& operator *(AbstractVariable &a, AbstractVariable &b);
-    AbstractVariable& operator /(AbstractVariable &a, AbstractVariable &b);
-
-    AbstractVariable& operator +(AbstractVariable &a, float b);
-    AbstractVariable& operator -(AbstractVariable &a, float b);
-    AbstractVariable& operator *(AbstractVariable &a, float b);
-    AbstractVariable& operator /(AbstractVariable &a, float b);
-
     AbstractVariable& cosav(AbstractVariable &a);
     AbstractVariable& sinav(AbstractVariable &a);
 
 }
+
+GLTools::AbstractVariable& operator +(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
+GLTools::AbstractVariable& operator -(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
+GLTools::AbstractVariable& operator *(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
+GLTools::AbstractVariable& operator /(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
+
+GLTools::AbstractVariable& operator +(GLTools::AbstractVariable &a, float b);
+GLTools::AbstractVariable& operator -(GLTools::AbstractVariable &a, float b);
+GLTools::AbstractVariable& operator *(GLTools::AbstractVariable &a, float b);
+GLTools::AbstractVariable& operator /(GLTools::AbstractVariable &a, float b);
 
 
 #endif //SOLAR_SYSTEM_VARIABLE_H

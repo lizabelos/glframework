@@ -1,1 +1,1 @@
-Star Sun 695500km 1.997km/s
+Star Sun 695500 1.997

@@ -9,7 +9,8 @@
 #include <glm/ext.hpp>
 
 #include "gltools/Window"
-#include "astronomy/Astre"
+#include "gltools/Sphere"
+#include "astronomy/System"
 
 class SolarSystem : public GLTools::Window {
 
@@ -26,7 +27,8 @@ private:
     void add(std::shared_ptr<Astronomy::Astre> astre);
 
     GLTools::Camera mCamera;
-    std::list<std::pair<std::shared_ptr<Astronomy::Astre>, std::shared_ptr<GLTools::Drawable>>> mAstresDrawable;
+    GLTools::Sphere mSphere;
+    std::unique_ptr<Astronomy::System> mSystem;
 
 };
 
