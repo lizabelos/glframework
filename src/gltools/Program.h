@@ -13,6 +13,8 @@
 #include <string>
 #include <map>
 
+#include <GL/glew.h>
+#include <SDL2/SDL.h>
 #include <glm/ext.hpp>
 
 #include "Shader"
@@ -28,6 +30,7 @@ namespace GLTools {
 
         void use() const;
         void post(const std::string &name, const glm::mat4 &mat);
+        void post(const std::string &name, GLint texture);
         void post(const Camera &camera);
 
     protected:

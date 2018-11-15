@@ -73,3 +73,8 @@ void GLTools::Program::uniform(const std::string &name) {
     }
 }
 
+void GLTools::Program::post(const std::string &name, GLint texture) {
+    uniform(name);
+    glUniform1i(mUniformMap[name], texture);
+}
+

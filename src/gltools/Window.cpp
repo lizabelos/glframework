@@ -28,7 +28,6 @@ GLTools::Window::Window(std::string name) {
 
     mContext = SDL_GL_CreateContext(mWindow);
 
-    glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (GLEW_OK != err) {
         throw std::runtime_error(std::string(reinterpret_cast<const char*>(glewGetErrorString(err))));
@@ -37,9 +36,8 @@ GLTools::Window::Window(std::string name) {
         std::cout << "Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
     }
 
-    // For compatibility with old graphics cards, we use OpenGL 3.0 with experimental functions.
-    if (!glewIsSupported("GL_VERSION_3_0")) {
-        throw std::runtime_error("Error : GL Version 3.0 not supported ");
+    if (!glewIsSupported("GL_VERSION_4_0")) {
+        throw std::runtime_error("Error : GL Version 4.0 not supported ");
     }
 
     std::cout << "OpenGL Version : " << glGetString(GL_VERSION) << std::endl;
@@ -64,9 +62,6 @@ GLTools::Window::~Window() {
 
 void GLTools::Window::init() {
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearDepth(1.0f);
-
     // Depth Test
     glEnable(GL_DEPTH_TEST);
 
@@ -76,6 +71,7 @@ void GLTools::Window::init() {
 
     // Enable multisampling
     glEnable(GL_MULTISAMPLE_ARB);
+
 
 }
 

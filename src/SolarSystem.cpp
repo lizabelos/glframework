@@ -55,39 +55,42 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(256, 256) 
         throw std::runtime_error("solarsystem.txt need at least one entry !");
     }
 
-    mBasicProgram = std::unique_ptr<GLTools::Program>(new GLTools::Program("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl"));
+    mBasicProgram = std::unique_ptr<GLTools::Program>(new GLTools::Program("res/shaders/basic3d.vs.glsl", "res/shaders/sun.fs.glsl"));
     mBegin = std::chrono::steady_clock::now();
 
 }
 
 void SolarSystem::render() {
 
+    std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+    float currentTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(end - mBegin).count() * 1e-6f;
 
     mBasicProgram->use();
 
     mCamera.identity();
-    mCamera.translate(glm::vec3(0.0f, 0.0f, -5.0f));
+    mCamera.scale(99.0f);
+    mCamera.rotate(currentTime / 10, glm::vec3(0.0f, 1.0f, 0.0f));
+    std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
+    startexture->activate(GL_TEXTURE0);
+    mBasicProgram->post("uTexture", 0);
+    mBasicProgram->post(mCamera);
+    mSphere.render(mCamera);
 
-    //mBasicProgram->post(mCamera);
-    // mSphere.render(mCamera);
+    mCamera.identity();
+    mCamera.translate(glm::vec3(0.0f, 0.0f, -20.0f));
+    mCamera.rotate(currentTime / 10, glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera.rotate(3.14 / 2, glm::vec3(1.0f, 0.0f, 0.0f));
 
-
-
-
-    std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
-
-
-    float currentTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(end - mBegin).count() * 1e-6f;
 
     for (const std::shared_ptr<Astronomy::Astre> &astre : mSystem->getAll()) {
 
+        std::shared_ptr<GLTools::Texture> texture = getTexture(astre->getName());
+        texture->activate(GL_TEXTURE0);
+        mBasicProgram->post("uTexture", 0);
+
         mCamera.pushMatrix();
 
-        // mCamera.scale(radiusScale(astre->getRadius()));
-        // mCamera.rotate(astre->getRotation(currentTime));
         glm::vec3 position = translationScale(astre->getPosition(currentTime));
-        std::cout << astre->getName() << std::endl;
-        std::cout << position.x << " " << position.y << " " << position.z << std::endl;
         mCamera.translate(position);
 
         mBasicProgram->post(mCamera);
@@ -106,4 +109,11 @@ glm::vec3 SolarSystem::translationScale(glm::vec3 translation) {
 
 float SolarSystem::radiusScale(float radius) {
     return radius / 10.0f;
+}
+
+std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &name) {
+    if (mTextures.count(name) == 0) {
+        mTextures[name] = std::shared_ptr<GLTools::Texture>(new GLTools::Texture("res/textures/" + name + ".jpg"));
+    }
+    return mTextures[name];
 }

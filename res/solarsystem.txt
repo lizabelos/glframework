@@ -1,2 +1,4 @@
 Star Sun 0.0 0.0
-Planet Earth 0.0 0.5 0.0 0.0
+Planet Earth 0.0 500 1.0 1.0
+Planet Earth 0.0 1000 0.5 0.5
+Planet Earth 0.0 1500 0.25 0.25

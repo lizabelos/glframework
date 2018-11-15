@@ -83,7 +83,7 @@ void GLTools::VertexArrayObject::add(GLuint id, std::shared_ptr<GLTools::ArrayBu
     std::cout << "Attaching the buffer to the VAO " <<  mId << "." << std::endl;
 }
 
-void GLTools::VertexArrayObject::set(std::shared_ptr<GLTools::ArrayBuffer> elementBuffer) {
+void GLTools::VertexArrayObject::set(std::shared_ptr<GLTools::ElementArrayBuffer> elementBuffer) {
     mElementBuffer = elementBuffer;
     bind();
     elementBuffer->bind();

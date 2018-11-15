@@ -21,6 +21,9 @@ GLTools::Sphere::Sphere(unsigned long resolutionX, unsigned long resolutionY) {
     AbstractVariable &normY = y;
     AbstractVariable &normZ = z;
 
-    initialize(x, y, z, normX, normY, normZ, p1, p2, resolutionX, resolutionY);
+    AbstractVariable &texX = p1;
+    AbstractVariable &texY = p2;
+
+    initialize(x, y, z, normX, normY, normZ, texX, texY, p1, p2, resolutionX, resolutionY);
 
 }

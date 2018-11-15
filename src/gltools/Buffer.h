@@ -54,13 +54,13 @@ namespace GLTools {
         VertexArrayObject();
 
         void add(GLuint id, std::shared_ptr<ArrayBuffer> buffer);
-        void set(std::shared_ptr<ArrayBuffer> elementBuffer);
+        void set(std::shared_ptr<ElementArrayBuffer> elementBuffer);
         void bind() const;
 
     private:
         GLuint mId;
         std::map<GLuint, std::shared_ptr<ArrayBuffer>> mBuffers;
-        std::shared_ptr<ArrayBuffer> mElementBuffer;
+        std::shared_ptr<ElementArrayBuffer> mElementBuffer;
 
     };
 
