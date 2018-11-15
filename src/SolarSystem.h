@@ -10,6 +10,7 @@
 
 #include "gltools/Window"
 #include "gltools/Sphere"
+#include "gltools/Program"
 #include "astronomy/System"
 
 class SolarSystem : public GLTools::Window {
@@ -29,7 +30,7 @@ private:
     GLTools::Camera mCamera;
     GLTools::Sphere mSphere;
     std::unique_ptr<Astronomy::System> mSystem;
-
+    std::unique_ptr<GLTools::Program> mBasicProgram;
 };
 
 

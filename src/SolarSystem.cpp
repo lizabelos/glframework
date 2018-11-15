@@ -40,6 +40,7 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(256, 256) 
         }
 
         if (type == "Star") {
+            // todo
             // std::shared_ptr<Astronomy::Astre> star = std::make_shared<Astronomy::Astre>(new Astronomy::Star(name, radius, rotationspeed));
             // mSystem->add(star);
         }
@@ -55,7 +56,13 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(256, 256) 
     }
     solarfile.close();
 
+    if (firstIteration) {
+        throw std::runtime_error("solarsystem.txt need at least one entry !");
+    }
+
     mCamera.translate(glm::vec3(-10, 0, 0));
+
+    mBasicProgram = std::unique_ptr<GLTools::Program>(new GLTools::Program("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl"));
 
 
 }
@@ -72,6 +79,9 @@ void SolarSystem::render() {
         mCamera.scale(radiusScale(astre->getRadius()));
         mCamera.rotate(astre->getRotation(currentTime));
         mCamera.translate(translationScale(astre->getPosition(currentTime)));
+
+        mBasicProgram->use();
+        mBasicProgram->post(mCamera);
 
         mSphere.render(mCamera);
 

@@ -6,10 +6,27 @@
 
 GLTools::Program::Program(std::shared_ptr<GLTools::Shader> pVertex, std::shared_ptr<GLTools::Shader> pFragment) {
 
+    mVertex = pVertex;
+    mFragment = pFragment;
+    initialize();
+
+}
+
+GLTools::Program::Program(const std::string &vertexPath, const std::string &fragmentPath) {
+
+    mVertex = std::shared_ptr<Shader>(new Shader(GL_VERTEX_SHADER, vertexPath));
+    mFragment = std::shared_ptr<Shader>(new Shader(GL_FRAGMENT_SHADER, fragmentPath));
+    initialize();
+
+}
+
+
+void GLTools::Program::initialize() {
+
     mId = glCreateProgram();
 
-    glAttachShader(mId, pVertex->getId());
-    glAttachShader(mId, pFragment->getId());
+    glAttachShader(mId, mVertex->getId());
+    glAttachShader(mId, mFragment->getId());
 
     glLinkProgram(mId);
 
@@ -39,7 +56,11 @@ void GLTools::Program::use() const {
 
 void GLTools::Program::post(const std::string &name, const glm::mat4 &mat) {
     uniform(name);
-    glUniformMatrix4fv(mId, 1, GL_FALSE, glm::value_ptr(mat));
+    glUniformMatrix4fv(mUniformMap[name], 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void GLTools::Program::post(const GLTools::Camera &camera) {
+    post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
 }
 
 void GLTools::Program::uniform(const std::string &name) {

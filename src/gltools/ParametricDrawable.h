@@ -10,10 +10,8 @@
 #include "Drawable"
 #include "Variable"
 #include "Buffer"
+#include "Program"
 
-#define VERTEX_ID 0
-#define NORMAL_ID 1
-#define TEXTCOORD_ID 2
 
 namespace GLTools {
 

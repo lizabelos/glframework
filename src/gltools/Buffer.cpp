@@ -66,7 +66,7 @@ GLTools::VertexArrayObject::VertexArrayObject() {
 
 void GLTools::VertexArrayObject::bind() const {
     glBindVertexArray(mId);
-    mElementBuffer->bind();
+    if (mElementBuffer != nullptr) mElementBuffer->bind();
 }
 
 void GLTools::VertexArrayObject::add(GLuint id, std::shared_ptr<GLTools::ArrayBuffer> buffer) {

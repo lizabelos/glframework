@@ -16,9 +16,9 @@ namespace GLTools {
     public:
         Camera();
 
-        glm::mat4 getProjectionMatrix();
-        glm::mat4 getMVMatrix();
-        glm::mat4 getNormalMatrix();
+        glm::mat4 getProjectionMatrix() const;
+        glm::mat4 getMVMatrix() const;
+        glm::mat4 getNormalMatrix() const;
 
         void pushMatrix();
         void popMatrix();

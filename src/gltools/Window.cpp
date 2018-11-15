@@ -64,7 +64,7 @@ GLTools::Window::~Window() {
 
 void GLTools::Window::init() {
 
-    glClearColor(0.0f, 0.6f, 0.9f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClearDepth(1.0f);
 
     // Depth Test
