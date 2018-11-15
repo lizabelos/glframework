@@ -25,7 +25,7 @@ namespace Astronomy {
         std::list<std::shared_ptr<Astre>> getAstres();
         std::list<std::shared_ptr<Astre>> getAll();
 
-        void add(std::shared_ptr<Astre> &mAstre);
+        void add(std::shared_ptr<Astre> mAstre);
 
     private:
         std::shared_ptr<Star> mStar;

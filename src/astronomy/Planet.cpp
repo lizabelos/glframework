@@ -4,7 +4,10 @@
 
 #include "Planet.h"
 
-Astronomy::Planet::Planet(std::shared_ptr<Astronomy::Astre> star, std::string name, float radius) : mStar(star), mName(name), mRadius(radius) {
+#include <iostream>
+
+Astronomy::Planet::Planet(std::shared_ptr<Astronomy::Astre> star, std::string name, float radius, float distance, float roationSpeedStar, float rotationSpeed)
+: mStar(star), mName(name), mRadius(radius), mDistance(distance), mRotationSpeedStar(mRotationSpeedStar), mRotationSpeed(rotationSpeed) {
 
 }
 
@@ -12,16 +15,14 @@ std::string Astronomy::Planet::getName() {
     return mName;
 }
 
-glm::vec3 Astronomy::Planet::getPosition(time_t time) {
-    // todo
-    return glm::vec3(0, 0, 0);
+glm::vec3 Astronomy::Planet::getPosition(float time) {
+    return glm::vec4(0, 0, -1000.0f, 1) * glm::rotate(glm::mat4(1.0f), time, glm::vec3(0, 1, 0));
 }
 
 float Astronomy::Planet::getRadius() {
     return mRadius;
 }
 
-glm::vec3 Astronomy::Planet::getRotation(time_t time) {
-    // todo
+glm::vec3 Astronomy::Planet::getRotation(float time) {
     return glm::vec3(0, 0, 0);
 }

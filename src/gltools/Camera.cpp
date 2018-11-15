@@ -6,6 +6,7 @@
 
 GLTools::Camera::Camera() {
     mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)(800.0 / 600.0), 0.1f, 100.0f);
+    mMVMatrix = glm::mat4(1.0f);
 }
 
 glm::mat4 GLTools::Camera::getProjectionMatrix() const {
@@ -17,7 +18,7 @@ glm::mat4 GLTools::Camera::getMVMatrix() const {
 }
 
 glm::mat4 GLTools::Camera::getNormalMatrix() const {
-    return mNormalMatrix;
+    return glm::transpose(glm::inverse(mMVMatrix));
 }
 
 void GLTools::Camera::pushMatrix() {
@@ -30,19 +31,23 @@ void GLTools::Camera::popMatrix() {
 }
 
 void GLTools::Camera::translate(glm::vec3 translation) {
-    // todo
+    mMVMatrix = glm::translate(mMVMatrix, translation);
 }
 
-void GLTools::Camera::rotate(glm::vec3 rotation) {
-    // todo
+void GLTools::Camera::rotate(float angle, glm::vec3 axis) {
+    mMVMatrix = glm::rotate(mMVMatrix, angle, axis);
 }
+
 
 void GLTools::Camera::scale(glm::vec3 scaling) {
-    // todo
+    mMVMatrix = glm::scale(mMVMatrix, scaling);
 }
 
 void GLTools::Camera::scale(float scaling) {
-    // todo
+    mMVMatrix = glm::scale(mMVMatrix, glm::vec3(scaling, scaling, scaling));
 }
 
+void GLTools::Camera::identity() {
+    mMVMatrix = glm::mat4(1.0f);
+}
 

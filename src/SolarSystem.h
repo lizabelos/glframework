@@ -6,12 +6,14 @@
 #define SOLAR_SYSTEM_SOLARSYSTEM_H
 
 #include <list>
+#include <chrono>
 #include <glm/ext.hpp>
 
 #include "gltools/Window"
 #include "gltools/Sphere"
 #include "gltools/Program"
 #include "astronomy/System"
+#include "astronomy/Planet"
 
 class SolarSystem : public GLTools::Window {
 
@@ -25,12 +27,12 @@ protected:
     float radiusScale(float radius);
 
 private:
-    void add(std::shared_ptr<Astronomy::Astre> astre);
-
     GLTools::Camera mCamera;
     GLTools::Sphere mSphere;
     std::unique_ptr<Astronomy::System> mSystem;
     std::unique_ptr<GLTools::Program> mBasicProgram;
+
+    std::chrono::steady_clock::time_point mBegin;
 };
 
 

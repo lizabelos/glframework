@@ -22,7 +22,7 @@ namespace GLTools {
         void render(const Camera &camera) const override;
 
     private:
-        std::shared_ptr<ArrayBuffer> mVertexBuffer, mNormalBuffer, mTextcoordBuffer;
+        unsigned long mSize;
         VertexArrayObject mVertexArrayObject;
 
     };

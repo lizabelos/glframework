@@ -34,10 +34,10 @@ GLTools::Shader::Shader(GLenum type, const std::string &path) {
     //
 
     const GLchar *fileContentC = fileContent.c_str();
-    glShaderSource(mId, 1, &fileContentC, 0);
+    glShaderSource(mId, 1, &fileContentC, nullptr);
 
 
-    std::cout << "Compiling '" << path << "'" << std::endl;
+    std::cout << "Compiling shader '" << path << "' with id " << mId << "." << std::endl;
     glCompileShader(mId);
 
     GLint error = 0;
@@ -54,7 +54,7 @@ GLTools::Shader::Shader(GLenum type, const std::string &path) {
     std::cerr << errorStr << std::endl;
 
     if (error != GL_TRUE) {
-        delete errorStr;
+        delete[] errorStr;
         exit(EXIT_FAILURE);
 
     }

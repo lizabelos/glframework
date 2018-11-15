@@ -3,6 +3,7 @@
 //
 
 #include "Program.h"
+#include <iostream>
 
 GLTools::Program::Program(std::shared_ptr<GLTools::Shader> pVertex, std::shared_ptr<GLTools::Shader> pFragment) {
 
@@ -24,6 +25,8 @@ GLTools::Program::Program(const std::string &vertexPath, const std::string &frag
 void GLTools::Program::initialize() {
 
     mId = glCreateProgram();
+
+    std::cout << "Creating a new program " << mId << " with vertex shader " << mVertex->getId() << " and fragment shader " << mFragment->getId() << std::endl;
 
     glAttachShader(mId, mVertex->getId());
     glAttachShader(mId, mFragment->getId());
@@ -66,6 +69,7 @@ void GLTools::Program::post(const GLTools::Camera &camera) {
 void GLTools::Program::uniform(const std::string &name) {
     if (mUniformMap.count(name) == 0) {
         mUniformMap[name] = glGetUniformLocation(mId, name.c_str());
+        std::cout << "The uniform of program " << mId << " with name " << name << " is " << mUniformMap[name] << std::endl;
     }
 }
 

@@ -12,7 +12,7 @@ std::string Astronomy::Star::getName() {
     return mName;
 }
 
-glm::vec3 Astronomy::Star::getPosition(time_t time) {
+glm::vec3 Astronomy::Star::getPosition(float time) {
     // todo
     return glm::vec3(0, 0, 0);
 }
@@ -21,7 +21,7 @@ float Astronomy::Star::getRadius() {
     return mRadius;
 }
 
-glm::vec3 Astronomy::Star::getRotation(time_t time) {
+glm::vec3 Astronomy::Star::getRotation(float time) {
     // todo
     return glm::vec3(0, 0, 0);
 }

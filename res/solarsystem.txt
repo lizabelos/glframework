@@ -1,1 +1,2 @@
-Star Sun 695500 1.997
+Star Sun 0.0 0.0
+Planet Earth 0.0 0.5 0.0 0.0

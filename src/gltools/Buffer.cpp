@@ -4,12 +4,15 @@
 
 #include "Buffer.h"
 
+#include <iostream>
+
 GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec2> vector) {
     glGenBuffers(1, &mId);
     glBindBuffer(GL_ARRAY_BUFFER, mId);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
     mStep = 2;
     mSize = vector.size();
+    std::cout << "Sending a array of " << vector.size() << " 2d vector to the video memory with id " << mId << "." << std::endl;
 }
 
 GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec3> vector) {
@@ -18,6 +21,7 @@ GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec3> vector) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
     mStep = 3;
     mSize = vector.size();
+    std::cout << "Sending a array of " << vector.size() << " 3d vector to the video memory with id " << mId << "." << std::endl;
 }
 
 GLTools::ArrayBuffer::~ArrayBuffer() {
@@ -62,6 +66,7 @@ unsigned long GLTools::ElementArrayBuffer::getSize() const {
 
 GLTools::VertexArrayObject::VertexArrayObject() {
     glGenVertexArrays(1, &mId);
+    std::cout << "New vertex array object created with id " << mId << "." << std::endl;
 }
 
 void GLTools::VertexArrayObject::bind() const {
@@ -73,7 +78,9 @@ void GLTools::VertexArrayObject::add(GLuint id, std::shared_ptr<GLTools::ArrayBu
     mBuffers[id] = buffer;
     bind();
     buffer->bind();
-    glVertexAttribPointer(id, static_cast<GLint>(buffer->getStep()), GL_FLOAT, GL_FALSE, static_cast<GLsizei>(buffer->getStep() * sizeof(float)), 0);
+    glEnableVertexAttribArray(id);
+    glVertexAttribPointer(id, static_cast<GLint>(buffer->getStep()), GL_FLOAT, GL_FALSE, static_cast<GLsizei>(buffer->getStep() * sizeof(float)), reinterpret_cast<const void*>(0));
+    std::cout << "Attaching the buffer to the VAO " <<  mId << "." << std::endl;
 }
 
 void GLTools::VertexArrayObject::set(std::shared_ptr<GLTools::ArrayBuffer> elementBuffer) {

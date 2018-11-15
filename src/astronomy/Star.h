@@ -18,8 +18,8 @@ namespace Astronomy {
         explicit Star(std::string name, float radius, float rotationSpeed);
 
         std::string getName() override;
-        glm::vec3 getPosition(time_t time) override;
-        glm::vec3 getRotation(time_t time) override;
+        glm::vec3 getPosition(float time) override;
+        glm::vec3 getRotation(float time) override;
         float getRadius() override;
 
     private:

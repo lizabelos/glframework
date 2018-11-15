@@ -30,19 +30,17 @@ void GLTools::ParametricDrawable::initialize(GLTools::AbstractVariable &x, GLToo
         }
     }
 
-    mVertexBuffer = std::make_shared<ArrayBuffer>(vertexs);
-    mNormalBuffer = std::make_shared<ArrayBuffer>(normals);
-    mTextcoordBuffer = std::make_shared<ArrayBuffer>(textcoords);
+    mSize = resolution1 * resolution2;
 
-    mVertexArrayObject.add(VERTEX_ID, mVertexBuffer);
-    mVertexArrayObject.add(NORMAL_ID, mNormalBuffer);
-    mVertexArrayObject.add(TEXTCOORD_ID, mTextcoordBuffer);
+    mVertexArrayObject.add(VERTEX_ID, std::shared_ptr<ArrayBuffer>(new ArrayBuffer(vertexs)));
+    mVertexArrayObject.add(NORMAL_ID, std::shared_ptr<ArrayBuffer>(new ArrayBuffer(normals)));
+    mVertexArrayObject.add(TEXTCOORD_ID, std::shared_ptr<ArrayBuffer>(new ArrayBuffer(textcoords)));
 
 }
 
 
 void GLTools::ParametricDrawable::render(const GLTools::Camera &camera) const {
     mVertexArrayObject.bind();
-    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mVertexBuffer->getSize()));
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mSize));
     glBindVertexArray(0);
 }

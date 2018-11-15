@@ -24,14 +24,15 @@ namespace GLTools {
         void popMatrix();
 
         void translate(glm::vec3 translation);
-        void rotate(glm::vec3 rotation);
+        void rotate(float angle, glm::vec3 axis);
         void scale(glm::vec3 scaling);
         void scale(float scaling);
+
+        void identity();
 
     private:
         glm::mat4 mProjectionMatrix;
         glm::mat4 mMVMatrix;
-        glm::mat4 mNormalMatrix;
 
         std::vector<glm::mat4> mMVMatrixStack;
 
