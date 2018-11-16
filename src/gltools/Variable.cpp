@@ -124,6 +124,26 @@ private:
 
 };
 
+class AtanVariable : public GLTools::AbstractVariable {
+public:
+    AtanVariable(GLTools::Variable a, GLTools::Variable b) : mA(a), mB(b) {
+
+    }
+
+    void next() override {
+        mA->next();
+        mB->next();
+    }
+
+    float get() const override {
+        return mA->get() / mB->get();
+    }
+
+private:
+    GLTools::Variable  mA, mB;
+
+};
+
 std::shared_ptr<GLTools::AbstractVariable> operator +(GLTools::Variable a, GLTools::Variable b) {
     return std::shared_ptr<GLTools::AbstractVariable>(new AdditionVariable(a, b));
 }
@@ -162,6 +182,10 @@ std::shared_ptr<GLTools::AbstractVariable> GLTools::cosav(GLTools::Variable a) {
 
 std::shared_ptr<GLTools::AbstractVariable> GLTools::sinav(GLTools::Variable a) {
     return std::shared_ptr<GLTools::AbstractVariable>(new SinavVariable(a));
+}
+
+std::shared_ptr<GLTools::AbstractVariable> GLTools::atanav(GLTools::Variable a, GLTools::Variable b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new AtanVariable(a, b));
 }
 
 GLTools::ConstantVariable::ConstantVariable(float constant) {

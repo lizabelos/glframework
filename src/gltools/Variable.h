@@ -44,8 +44,9 @@ namespace GLTools {
 
     using Variable = std::shared_ptr<GLTools::AbstractVariable>;
 
-    std::shared_ptr<GLTools::AbstractVariable> cosav(std::shared_ptr<GLTools::AbstractVariable> a);
-    std::shared_ptr<GLTools::AbstractVariable> sinav(std::shared_ptr<GLTools::AbstractVariable> a);
+    std::shared_ptr<GLTools::AbstractVariable> cosav(GLTools::Variable a);
+    std::shared_ptr<GLTools::AbstractVariable> sinav(GLTools::Variable a);
+    std::shared_ptr<GLTools::AbstractVariable> atanav(GLTools::Variable a, GLTools::Variable b);
 
 }
 
