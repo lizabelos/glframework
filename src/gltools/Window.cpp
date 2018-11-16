@@ -16,7 +16,7 @@ void glMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, G
 }
 
 
-GLTools::Window::Window(std::string name) {
+GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
 
     if (sdlInitializationCount == 0) {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) throw std::runtime_error("SDL_INIT_VIDEO failed : '" + std::string(SDL_GetError()) + "'");
@@ -25,6 +25,8 @@ GLTools::Window::Window(std::string name) {
 
     mWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512, SDL_WINDOW_OPENGL);
     if (!mWindow) throw std::runtime_error("SDL_CreateWindow failed : '" + std::string(SDL_GetError()) + "'");
+
+    SDL_SetWindowResizable(mWindow, SDL_TRUE);
 
     mContext = SDL_GL_CreateContext(mWindow);
 
@@ -72,7 +74,8 @@ void GLTools::Window::init() {
     // Enable multisampling
     glEnable(GL_MULTISAMPLE_ARB);
 
-
+    mBegin = std::chrono::steady_clock::now();
+    resize(512, 512);
 }
 
 int GLTools::Window::run() {
@@ -99,7 +102,19 @@ int GLTools::Window::run() {
                         break;
                 }
             }
+            if (event.type == SDL_WINDOWEVENT) {
+                switch (event.window.event) {
+                    case SDL_WINDOWEVENT_RESIZED:
+                        glViewport(0, 0, event.window.data1, event.window.data2);
+                        resize(static_cast<unsigned int>(event.window.data1), static_cast<unsigned int>(event.window.data2));
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
+
+        SDL_GetMouseState(&mMouseX, &mMouseY);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         render();
@@ -108,4 +123,14 @@ int GLTools::Window::run() {
     }
 
     return 0;
+}
+
+glm::vec2 GLTools::Window::getMousePosition() {
+    return glm::vec2((float)mMouseX / 512.0f, (float)mMouseY / 512.0f);
+}
+
+float GLTools::Window::getTime() {
+    std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+    float currentTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(end - mBegin).count() * 1e-6f;
+    return currentTime;
 }

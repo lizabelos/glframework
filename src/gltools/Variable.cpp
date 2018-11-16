@@ -211,3 +211,7 @@ float GLTools::SettableVariable::get() const {
 void GLTools::SettableVariable::set(float value) {
     mValue = value;
 }
+
+GLTools::SVariable GLTools::make_SVariable() {
+    return std::make_shared<GLTools::SettableVariable>();
+}

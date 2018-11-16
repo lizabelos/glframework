@@ -6,7 +6,6 @@
 #define SOLAR_SYSTEM_SOLARSYSTEM_H
 
 #include <list>
-#include <chrono>
 #include <glm/ext.hpp>
 
 #include "gltools/Window"
@@ -22,6 +21,7 @@ public:
     SolarSystem();
 
 protected:
+    void resize(unsigned int width, unsigned int height);
     void render() override;
 
     glm::vec3 translationScale(glm::vec3 translation);
@@ -35,8 +35,6 @@ private:
     std::unique_ptr<Astronomy::System> mSystem;
     std::unique_ptr<GLTools::Program> mBasicProgram;
     std::map<std::string, std::shared_ptr<GLTools::Texture>> mTextures;
-
-    std::chrono::steady_clock::time_point mBegin;
 };
 
 

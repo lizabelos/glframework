@@ -43,6 +43,9 @@ namespace GLTools {
     };
 
     using Variable = std::shared_ptr<GLTools::AbstractVariable>;
+    using SVariable = std::shared_ptr<GLTools::SettableVariable>;
+
+    SVariable make_SVariable();
 
     std::shared_ptr<GLTools::AbstractVariable> cosav(GLTools::Variable a);
     std::shared_ptr<GLTools::AbstractVariable> sinav(GLTools::Variable a);

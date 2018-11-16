@@ -5,8 +5,17 @@
 #include "Camera.h"
 
 GLTools::Camera::Camera() {
-    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)(800.0 / 600.0), 0.1f, 100.0f);
+    resize(1,1);
     mMVMatrix = glm::mat4(1.0f);
+}
+
+GLTools::Camera::Camera(unsigned int width, unsigned int height) {
+    resize(width, height);
+    mMVMatrix = glm::mat4(1.0f);
+}
+
+void GLTools::Camera::resize(unsigned int width, unsigned int height) {
+    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)width / (float)height, 0.1f, 100.0f);
 }
 
 glm::mat4 GLTools::Camera::getProjectionMatrix() const {

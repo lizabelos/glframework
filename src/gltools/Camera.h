@@ -15,6 +15,7 @@ namespace GLTools {
 
     public:
         Camera();
+        Camera(unsigned int width, unsigned int height);
 
         glm::mat4 getProjectionMatrix() const;
         glm::mat4 getMVMatrix() const;
@@ -29,6 +30,7 @@ namespace GLTools {
         void scale(float scaling);
 
         void identity();
+        void resize(unsigned int width, unsigned int height);
 
     private:
         glm::mat4 mProjectionMatrix;

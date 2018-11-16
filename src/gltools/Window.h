@@ -9,6 +9,7 @@
 #include <string>
 #include <list>
 #include <memory>
+#include <chrono>
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
@@ -21,7 +22,7 @@ namespace GLTools {
     class Window {
 
     public:
-        explicit Window(std::string name);
+        explicit Window(const std::string &name);
         virtual ~Window();
 
         Window( const Window& ) = delete; // non construction-copyable
@@ -31,12 +32,20 @@ namespace GLTools {
 
 
     protected:
-        void init();
+        glm::vec2 getMousePosition();
+        float getTime();
+
         virtual void render() = 0;
+        virtual void resize(unsigned int width, unsigned int height) = 0;
 
     private:
+        void init();
+
         SDL_Window *mWindow;
         SDL_GLContext mContext;
+
+        int mMouseX, mMouseY;
+        std::chrono::steady_clock::time_point mBegin;
 
     };
 

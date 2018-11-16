@@ -10,7 +10,7 @@ void GLTools::ParametricDrawable::initialize(GLTools::Variable x, GLTools::Varia
                                                 GLTools::Variable z, GLTools::Variable normX,
                                                 GLTools::Variable normY, GLTools::Variable normZ,
                                                 GLTools::Variable texX, GLTools::Variable texY,
-                                                std::shared_ptr<GLTools::SettableVariable> p1, std::shared_ptr<GLTools::SettableVariable> p2,
+                                                GLTools::SVariable p1, GLTools::SVariable p2,
                                                 unsigned long resolution1, unsigned long resolution2) {
 
     mResolution1 = resolution1;

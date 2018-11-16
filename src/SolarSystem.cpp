@@ -56,20 +56,22 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(256, 256) 
     }
 
     mBasicProgram = std::unique_ptr<GLTools::Program>(new GLTools::Program("res/shaders/basic3d.vs.glsl", "res/shaders/sun.fs.glsl"));
-    mBegin = std::chrono::steady_clock::now();
+
 
 }
 
 void SolarSystem::render() {
 
-    std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
-    float currentTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(end - mBegin).count() * 1e-6f;
+    float currentTime = getTime();
+    glm::vec2 mousePosition = getMousePosition() - glm::vec2(0.5, 0.5);
 
     mBasicProgram->use();
 
     mCamera.identity();
-    mCamera.scale(99.0f);
-    mCamera.rotate(currentTime / 10, glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera.scale(100.0f);
+    mCamera.rotate(mousePosition.x * 3.14, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec3 xRotation =  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(mousePosition.x * 3.14), glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera.rotate(mousePosition.y * 3.14, xRotation);
     std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
     startexture->activate(GL_TEXTURE0);
     mBasicProgram->post("uTexture", 0);
@@ -78,8 +80,8 @@ void SolarSystem::render() {
 
     mCamera.identity();
     mCamera.translate(glm::vec3(0.0f, 0.0f, -20.0f));
-    mCamera.rotate(currentTime / 10, glm::vec3(0.0f, 1.0f, 0.0f));
-    mCamera.rotate(3.14 / 2, glm::vec3(1.0f, 0.0f, 0.0f));
+    mCamera.rotate(mousePosition.x * 3.14, glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera.rotate(mousePosition.y * 3.14, xRotation);
 
 
     for (const std::shared_ptr<Astronomy::Astre> &astre : mSystem->getAll()) {
@@ -116,4 +118,8 @@ std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &nam
         mTextures[name] = std::shared_ptr<GLTools::Texture>(new GLTools::Texture("res/textures/" + name + ".jpg"));
     }
     return mTextures[name];
+}
+
+void SolarSystem::resize(unsigned int width, unsigned int height) {
+    mCamera.resize(width, height);
 }
