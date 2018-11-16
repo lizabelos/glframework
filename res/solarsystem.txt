@@ -1,4 +1,8 @@
 Star Sun 0.0 0.0
-Planet Earth 0.0 500 1.0 1.0
-Planet Earth 0.0 1000 0.5 0.5
-Planet Earth 0.0 1500 0.25 0.25
+Planet Mercury 0.0 250 2.0 0.0
+Planet Venus 0.0 500 1.5 0.0
+Planet Earth 0.0 750 1.0 0.0
+Planet Mars 0.0 1000 0.75 0.0
+Planet Jupiter 0.0 1250 0.50 0.0
+Planet Saturn 0.0 1500 0.25 0.0
+Planet Uranus 0.0 1750 0.01 0.0
