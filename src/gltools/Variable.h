@@ -5,6 +5,7 @@
 #ifndef SOLAR_SYSTEM_VARIABLE_H
 #define SOLAR_SYSTEM_VARIABLE_H
 
+#include <memory>
 
 namespace GLTools {
 
@@ -41,20 +42,22 @@ namespace GLTools {
 
     };
 
-    AbstractVariable& cosav(AbstractVariable &a);
-    AbstractVariable& sinav(AbstractVariable &a);
+    using Variable = std::shared_ptr<GLTools::AbstractVariable>;
+
+    std::shared_ptr<GLTools::AbstractVariable> cosav(std::shared_ptr<GLTools::AbstractVariable> a);
+    std::shared_ptr<GLTools::AbstractVariable> sinav(std::shared_ptr<GLTools::AbstractVariable> a);
 
 }
 
-GLTools::AbstractVariable& operator +(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
-GLTools::AbstractVariable& operator -(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
-GLTools::AbstractVariable& operator *(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
-GLTools::AbstractVariable& operator /(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b);
+GLTools::Variable operator +(GLTools::Variable a, GLTools::Variable b);
+GLTools::Variable operator -(GLTools::Variable a, GLTools::Variable b);
+GLTools::Variable operator *(GLTools::Variable a, GLTools::Variable b);
+GLTools::Variable operator /(GLTools::Variable a, GLTools::Variable b);
 
-GLTools::AbstractVariable& operator +(GLTools::AbstractVariable &a, float b);
-GLTools::AbstractVariable& operator -(GLTools::AbstractVariable &a, float b);
-GLTools::AbstractVariable& operator *(GLTools::AbstractVariable &a, float b);
-GLTools::AbstractVariable& operator /(GLTools::AbstractVariable &a, float b);
+GLTools::Variable operator +(GLTools::Variable a, float b);
+GLTools::Variable operator -(GLTools::Variable a, float b);
+GLTools::Variable operator *(GLTools::Variable a, float b);
+GLTools::Variable operator /(GLTools::Variable a, float b);
 
 
 #endif //SOLAR_SYSTEM_VARIABLE_H

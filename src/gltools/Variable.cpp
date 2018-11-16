@@ -8,160 +8,160 @@
 
 class AdditionVariable : public GLTools::AbstractVariable {
 public:
-    AdditionVariable(AbstractVariable &a, AbstractVariable &b) : mA(a), mB(b) {
+    AdditionVariable(GLTools::Variable a, GLTools::Variable b) : mA(a), mB(b) {
 
     }
 
     void next() override {
-        mA.next();
-        mB.next();
+        mA->next();
+        mB->next();
     }
 
     float get() const override {
-        return mA.get() + mB.get();
+        return mA->get() + mB->get();
     }
 
 private:
-    AbstractVariable &mA, &mB;
+    GLTools::Variable mA, mB;
 
 };
 
 class SubstractionVariable : public GLTools::AbstractVariable {
 public:
-    SubstractionVariable(AbstractVariable &a, AbstractVariable &b) : mA(a), mB(b) {
+    SubstractionVariable(GLTools::Variable a, GLTools::Variable b) : mA(a), mB(b) {
 
     }
 
     void next() override {
-        mA.next();
-        mB.next();
+        mA->next();
+        mB->next();
     }
 
     float get() const override {
-        return mA.get() - mB.get();
+        return mA->get() - mB->get();
     }
 
 private:
-    AbstractVariable & mA, &mB;
+    GLTools::Variable  mA, mB;
 
 };
 
 class MultiplicationVariable : public GLTools::AbstractVariable {
 public:
-    MultiplicationVariable(AbstractVariable &a, AbstractVariable &b) : mA(a), mB(b) {
+    MultiplicationVariable(GLTools::Variable a, GLTools::Variable b) : mA(a), mB(b) {
 
     }
 
     void next() override {
-        mA.next();
-        mB.next();
+        mA->next();
+        mB->next();
     }
 
     float get() const override {
-        return mA.get() * mB.get();
+        return mA->get() * mB->get();
     }
 
 private:
-    AbstractVariable & mA, &mB;
+    GLTools::Variable  mA, mB;
 
 };
 
 class DivisionVariable : public GLTools::AbstractVariable {
 public:
-    DivisionVariable(AbstractVariable &a, AbstractVariable &b) : mA(a), mB(b) {
+    DivisionVariable(GLTools::Variable a, GLTools::Variable b) : mA(a), mB(b) {
 
     }
 
     void next() override {
-        mA.next();
-        mB.next();
+        mA->next();
+        mB->next();
     }
 
     float get() const override {
-        return mA.get() / mB.get();
+        return mA->get() / mB->get();
     }
 
 private:
-    AbstractVariable & mA, &mB;
+    GLTools::Variable  mA, mB;
 
 };
 
 class CosavVariable : public GLTools::AbstractVariable {
 public:
-    explicit CosavVariable(AbstractVariable &a) : mA(a) {
+    explicit CosavVariable(GLTools::Variable a) : mA(a) {
 
     }
 
     void next() override {
-        mA.next();
+        mA->next();
     }
 
     float get() const override {
-        return cosf(mA.get());
+        return cosf(mA->get());
     }
 
 private:
-    AbstractVariable & mA;
+    GLTools::Variable  mA;
 
 };
 
 class SinavVariable : public GLTools::AbstractVariable {
 public:
-    explicit SinavVariable(AbstractVariable &a) : mA(a) {
+    explicit SinavVariable(GLTools::Variable a) : mA(a) {
 
     }
 
     void next() override {
-        mA.next();
+        mA->next();
     }
 
     float get() const override {
-        return sinf(mA.get());
+        return sinf(mA->get());
     }
 
 private:
-    AbstractVariable & mA;
+    GLTools::Variable  mA;
 
 };
 
-GLTools::AbstractVariable& operator +(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b) {
-    return *new AdditionVariable(a, b);
+std::shared_ptr<GLTools::AbstractVariable> operator +(GLTools::Variable a, GLTools::Variable b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new AdditionVariable(a, b));
 }
 
-GLTools::AbstractVariable& operator -(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b) {
-    return *new SubstractionVariable(a, b);
+std::shared_ptr<GLTools::AbstractVariable> operator -(GLTools::Variable a, GLTools::Variable b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new SubstractionVariable(a, b));
 }
 
-GLTools::AbstractVariable& operator *(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b) {
-    return *new MultiplicationVariable(a, b);
+std::shared_ptr<GLTools::AbstractVariable> operator *(GLTools::Variable a, GLTools::Variable b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new MultiplicationVariable(a, b));
 }
 
-GLTools::AbstractVariable& operator /(GLTools::AbstractVariable &a, GLTools::AbstractVariable &b) {
-    return *new MultiplicationVariable(a, b);
+std::shared_ptr<GLTools::AbstractVariable> operator /(GLTools::Variable a, GLTools::Variable b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new MultiplicationVariable(a, b));
 }
 
-GLTools::AbstractVariable& operator +(GLTools::AbstractVariable &a, float b) {
-    return *new AdditionVariable(a, *new GLTools::ConstantVariable(b));
+std::shared_ptr<GLTools::AbstractVariable> operator +(GLTools::Variable a, float b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new AdditionVariable(a, GLTools::Variable(new GLTools::ConstantVariable(b))));
 }
 
-GLTools::AbstractVariable& operator -(GLTools::AbstractVariable &a, float b) {
-    return *new SubstractionVariable(a, *new GLTools::ConstantVariable(b));
+std::shared_ptr<GLTools::AbstractVariable> operator -(GLTools::Variable a, float b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new SubstractionVariable(a, GLTools::Variable(new GLTools::ConstantVariable(b))));
 }
 
-GLTools::AbstractVariable& operator *(GLTools::AbstractVariable &a, float b) {
-    return *new MultiplicationVariable(a, *new GLTools::ConstantVariable(b));
+std::shared_ptr<GLTools::AbstractVariable> operator *(GLTools::Variable a, float b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new MultiplicationVariable(a, GLTools::Variable(new GLTools::ConstantVariable(b))));
 }
 
-GLTools::AbstractVariable& operator /(GLTools::AbstractVariable &a, float b) {
-    return *new DivisionVariable(a, *new GLTools::ConstantVariable(b));
+std::shared_ptr<GLTools::AbstractVariable> operator /(GLTools::Variable a, float b) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new DivisionVariable(a, GLTools::Variable(new GLTools::ConstantVariable(b))));
 }
 
-GLTools::AbstractVariable& GLTools::cosav(GLTools::AbstractVariable &a) {
-    return *new CosavVariable(a);
+std::shared_ptr<GLTools::AbstractVariable> GLTools::cosav(GLTools::Variable a) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new CosavVariable(a));
 }
 
-GLTools::AbstractVariable& GLTools::sinav(GLTools::AbstractVariable &a) {
-    return *new SinavVariable(a);
+std::shared_ptr<GLTools::AbstractVariable> GLTools::sinav(GLTools::Variable a) {
+    return std::shared_ptr<GLTools::AbstractVariable>(new SinavVariable(a));
 }
 
 GLTools::ConstantVariable::ConstantVariable(float constant) {

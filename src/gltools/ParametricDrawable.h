@@ -18,7 +18,7 @@ namespace GLTools {
     class ParametricDrawable : public Drawable {
 
     public:
-        void initialize(AbstractVariable &x, AbstractVariable &y, AbstractVariable &z, AbstractVariable &normX, AbstractVariable &normY, AbstractVariable &normZ, GLTools::AbstractVariable &texX, GLTools::AbstractVariable &texY, SettableVariable &p1, SettableVariable &p2, unsigned long resolution1, unsigned long resolution2);
+        void initialize(Variable x, Variable y, Variable z, Variable normX, Variable normY, Variable normZ, Variable texX, Variable texY, std::shared_ptr<GLTools::SettableVariable> p1, std::shared_ptr<GLTools::SettableVariable> p2, unsigned long resolution1, unsigned long resolution2);
         void render(const Camera &camera) const override;
 
     protected:

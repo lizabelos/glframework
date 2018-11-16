@@ -47,13 +47,14 @@ GLTools::Shader::Shader(GLenum type, const std::string &path) {
     GLint errorSize = 0;
     glGetShaderiv(mId, GL_INFO_LOG_LENGTH, &errorSize);
 
-    char *errorStr = new char[errorSize + 1];
-    glGetShaderInfoLog(mId, errorSize, &errorSize, errorStr);
-    errorStr[errorSize] = '\0';
-
-    std::cerr << errorStr << std::endl;
 
     if (error != GL_TRUE) {
+        char *errorStr = new char[errorSize + 1];
+        glGetShaderInfoLog(mId, errorSize, &errorSize, errorStr);
+        errorStr[errorSize] = '\0';
+
+        std::cerr << errorStr << std::endl;
+
         delete[] errorStr;
         exit(EXIT_FAILURE);
 

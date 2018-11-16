@@ -6,11 +6,11 @@
 
 #include "ParametricDrawable.h"
 
-void GLTools::ParametricDrawable::initialize(GLTools::AbstractVariable &x, GLTools::AbstractVariable &y,
-                                                GLTools::AbstractVariable &z, GLTools::AbstractVariable &normX,
-                                                GLTools::AbstractVariable &normY, GLTools::AbstractVariable &normZ,
-                                                GLTools::AbstractVariable &texX, GLTools::AbstractVariable &texY,
-                                                GLTools::SettableVariable &p1, GLTools::SettableVariable &p2,
+void GLTools::ParametricDrawable::initialize(GLTools::Variable x, GLTools::Variable y,
+                                                GLTools::Variable z, GLTools::Variable normX,
+                                                GLTools::Variable normY, GLTools::Variable normZ,
+                                                GLTools::Variable texX, GLTools::Variable texY,
+                                                std::shared_ptr<GLTools::SettableVariable> p1, std::shared_ptr<GLTools::SettableVariable> p2,
                                                 unsigned long resolution1, unsigned long resolution2) {
 
     mResolution1 = resolution1;
@@ -24,12 +24,12 @@ void GLTools::ParametricDrawable::initialize(GLTools::AbstractVariable &x, GLToo
     for (int i = 0; i < resolution1; i++) {
         for (int j = 0; j < resolution2; j++) {
 
-            p1.set(1.0f * (float)i / (float)(resolution1 - 1));
-            p2.set(1.0f * (float)j / (float)(resolution2 - 1));
+            p1->set(1.0f * (float)i / (float)(resolution1 - 1));
+            p2->set(1.0f * (float)j / (float)(resolution2 - 1));
 
-            vertexs[i + j * resolution1] = glm::vec3(x.get(), y.get(), z.get());
-            normals[i + j * resolution1] = glm::vec3(normX.get(), normY.get(), normZ.get());
-            textcoords[i + j * resolution1] = glm::vec3(texX.get(), texY.get(), 1);
+            vertexs[i + j * resolution1] = glm::vec3(x->get(), y->get(), z->get());
+            normals[i + j * resolution1] = glm::vec3(normX->get(), normY->get(), normZ->get());
+            textcoords[i + j * resolution1] = glm::vec3(texX->get(), texY->get(), 1);
 
         }
     }

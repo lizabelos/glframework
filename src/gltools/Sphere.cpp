@@ -8,22 +8,16 @@
 
 GLTools::Sphere::Sphere(unsigned long resolutionX, unsigned long resolutionY) {
 
-    SettableVariable p1, p2;
+    std::shared_ptr<GLTools::SettableVariable> p1 = std::make_shared<SettableVariable>();
+    std::shared_ptr<GLTools::SettableVariable> p2 = std::make_shared<SettableVariable>();
 
-    AbstractVariable &u = p1 * (2 * PI);
-    AbstractVariable &v = p2 * (2 * PI);
+    GLTools::Variable u = p1 * (2 * PI);
+    GLTools::Variable v = p2 * (2 * PI);
 
-    AbstractVariable &x = cosav(u) * cosav(v);
-    AbstractVariable &y = sinav(u) * cosav(v);
-    AbstractVariable &z = sinav(v);
+    GLTools::Variable x = cosav(u) * cosav(v);
+    GLTools::Variable y = sinav(u) * cosav(v);
+    GLTools::Variable z = sinav(v);
 
-    AbstractVariable &normX = x;
-    AbstractVariable &normY = y;
-    AbstractVariable &normZ = z;
-
-    AbstractVariable &texX = p1;
-    AbstractVariable &texY = p2;
-
-    initialize(x, y, z, normX, normY, normZ, texX, texY, p1, p2, resolutionX, resolutionY);
+    initialize(x, y, z, x, y, z, p1, p2, p1, p2, resolutionX, resolutionY);
 
 }
