@@ -9,22 +9,23 @@
 #include <ctime>
 
 #include "Astre"
+#include "Description"
 
 namespace Astronomy {
 
     class Star : public Astre {
 
     public:
-        explicit Star(std::string name, float radius, float rotationSpeed);
+        explicit Star(std::string name, description_t description);
 
         std::string getName() override;
         glm::vec3 getPosition(float time) override;
         glm::vec3 getRotation(float time) override;
-        float getRadius() override;
+        float getDiameter() override;
 
     private:
         std::string mName;
-        float mRadius;
+        description_t mDescription;
 
     };
 

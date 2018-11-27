@@ -4,7 +4,7 @@
 
 #include "Star.h"
 
-Astronomy::Star::Star(std::string name, float radius, float rotationSpeed) : mName(name), mRadius(radius) {
+Astronomy::Star::Star(std::string name, description_t description) : mName(name), mDescription(description) {
 
 }
 
@@ -17,8 +17,8 @@ glm::vec3 Astronomy::Star::getPosition(float time) {
     return glm::vec3(0, 0, 0);
 }
 
-float Astronomy::Star::getRadius() {
-    return mRadius;
+float Astronomy::Star::getDiameter() {
+    return static_cast<float>(mDescription.diameter);
 }
 
 glm::vec3 Astronomy::Star::getRotation(float time) {
