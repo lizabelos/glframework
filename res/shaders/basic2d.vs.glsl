@@ -17,5 +17,7 @@ void main() {
 	vPosition = aVertexPosition.xy;
 	vNormal = aVertexNormal.xy;
 	vTexCoord = aVertexTexCoord.xy;
-    gl_Position = vec4(mat3(uMVPMatrix) * vec3(vPosition, 1), 1);
+
+	vec3 transformed = mat3(uMVPMatrix) * vec3(vPosition, 1);
+    gl_Position = vec4(transformed.x, transformed.y, 0, transformed.z);
 }

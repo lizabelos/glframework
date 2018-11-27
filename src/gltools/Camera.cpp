@@ -96,19 +96,31 @@ void GLTools::Camera2D::popMatrix() {
     mMVMatrixStack.pop_back();
 }
 
-void GLTools::Camera2D::translate(glm::vec2 translation) {
-    glm::mat3 translationMatrix = glm::mat3(1, 0, 0, 0, 1, 0, translation.x, translation.y, 1);
+void GLTools::Camera2D::translate(glm::vec2 t) {
+    glm::mat3 translationMatrix = {
+            1  , 0  , 0,
+            0  , 1  , 0,
+            t.x, t.y, 1
+    };
     mMVMatrix = mMVMatrix * translationMatrix;
 }
 
-void GLTools::Camera2D::rotate(float angle) {
-    glm::mat3 rotationMatrix = glm::mat3(cosf(angle), sinf(angle), 0, -sinf(angle), cosf(angle), 0, 0, 0, 1);
+void GLTools::Camera2D::rotate(float angle, glm::vec2 axis) {
+    glm::mat3 rotationMatrix = {
+            cosf(angle) , sinf(angle), 0,
+            -sinf(angle), cosf(angle), 0,
+            0           , 0          , 1
+    };
     mMVMatrix = mMVMatrix * rotationMatrix;
 }
 
 
-void GLTools::Camera2D::scale(glm::vec2 scaling) {
-    glm::mat3 scaleMatrix = glm::mat3(scaling.x, 0, 0, 0, scaling.y, 0, 0, 0, 1);
+void GLTools::Camera2D::scale(glm::vec2 s) {
+    glm::mat3 scaleMatrix = {
+            s.x, 0  , 0,
+            0  , s.y, 0,
+            0  , 0  , 1
+    };
     mMVMatrix = mMVMatrix * scaleMatrix;
 }
 

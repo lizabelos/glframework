@@ -11,16 +11,24 @@
 
 namespace GLTools {
 
-    class Camera {
+    template<typename vecType> class Camera {
 
     public:
         virtual glm::mat4 getProjectionMatrix() const = 0;
         virtual glm::mat4 getMVMatrix() const = 0;
         virtual glm::mat4 getNormalMatrix() const = 0;
 
+        virtual void pushMatrix() = 0;
+        virtual void popMatrix() = 0;
+
+        virtual void translate(vecType translation) = 0;
+        virtual void rotate(float angle, vecType axis) = 0;
+        virtual void scale(vecType scaling) = 0;
+        virtual void scale(float scaling) = 0;
+
     };
 
-    class Camera3D : public Camera {
+    class Camera3D : public Camera<glm::vec3> {
 
     public:
         Camera3D();
@@ -30,13 +38,13 @@ namespace GLTools {
         glm::mat4 getMVMatrix() const override;
         glm::mat4 getNormalMatrix() const override;
 
-        void pushMatrix();
-        void popMatrix();
+        void pushMatrix() override;
+        void popMatrix() override;
 
-        void translate(glm::vec3 translation);
-        void rotate(float angle, glm::vec3 axis);
-        void scale(glm::vec3 scaling);
-        void scale(float scaling);
+        void translate(glm::vec3 translation) override;
+        void rotate(float angle, glm::vec3 axis) override;
+        void scale(glm::vec3 scaling) override;
+        void scale(float scaling) override;
 
         void identity();
         void resize(unsigned int width, unsigned int height);
@@ -49,7 +57,7 @@ namespace GLTools {
 
     };
 
-    class Camera2D : public Camera {
+    class Camera2D : public Camera<glm::vec2> {
 
     public:
         Camera2D();
@@ -59,13 +67,13 @@ namespace GLTools {
         glm::mat4 getMVMatrix() const override;
         glm::mat4 getNormalMatrix() const override;
 
-        void pushMatrix();
-        void popMatrix();
+        void pushMatrix() override;
+        void popMatrix() override;
 
-        void translate(glm::vec2 translation);
-        void rotate(float angle);
-        void scale(glm::vec2 scaling);
-        void scale(float scaling);
+        void translate(glm::vec2 translation) override;
+        void rotate(float angle, glm::vec2 axis) override;
+        void scale(glm::vec2 scaling) override;
+        void scale(float scaling) override;
 
         void identity();
         void resize(unsigned int width, unsigned int height);

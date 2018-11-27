@@ -18,7 +18,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(1, 256, 256), mZoom(1.0f), rotationX(0.0f), rotationY(0.0f), mouseRotation(false) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mTriangle(1), mZoom(1.0f), mRotationX(0.0f), mRotationY(0.0f), mMouseRotation(false), mProportionalView(true) {
 
     std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
 
@@ -69,55 +69,61 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(1, 256, 25
 
 
 
-    mBasicProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
-    mSelectionProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/selection3d.fs.glsl");
+    mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
+    mSelection3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/selection3d.fs.glsl");
+
+    mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/basic2d.fs.glsl");
+    mSelection2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
 
 }
 
 void SolarSystem::render(GLTools::RenderStep renderStep) {
 
-    std::shared_ptr<GLTools::Program> currentProgram;
+    std::shared_ptr<GLTools::Program> program3D, program2D;
     switch (renderStep) {
 
         case GLTools::RENDER_SCREEN:
-            currentProgram = mBasicProgram;
+            program3D = mRender3DProgram;
+            program2D = mRender2DProgram;
             break;
         case GLTools::RENDER_SELECTION:
-            currentProgram = mSelectionProgram;
+            program3D = mSelection3DProgram;
+            program2D = mSelection2DProgram;
             break;
     }
 
-    float currentTime = getTime() / 1000;
-    glm::vec2 mousePosition = getMousePosition();
-
-    if (mouseRotation) {
-        glm::vec2 diff = mousePosition - mMouseStart;
-        mMouseStart = mousePosition;
-        rotationX += diff.x;
-        rotationY += diff.y;
-    }
 
 
-    currentProgram->use();
 
-    mCamera.identity();
-    mCamera.scale(1000.0f);
-    mCamera.rotate(rotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::vec3 xRotation =  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(rotationX * 3.14), glm::vec3(0.0f, 1.0f, 0.0f));
-    mCamera.rotate(rotationY * 3.14f * 2.0f, xRotation);
+    program3D->use();
+
+    mCamera3D.identity();
+    mCamera3D.scale(1000.0f);
+    mCamera3D.rotate(mRotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec3 xRotation =  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(mRotationX * 3.14), glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera3D.rotate(mRotationY * 3.14f * 2.0f, xRotation);
     std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
     startexture->activate(GL_TEXTURE0);
-    currentProgram->post("uTexture", 0);
-    currentProgram->post(mCamera);
-    if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mCamera, renderStep);
+    program3D->post("uTexture", 0);
+    program3D->post(mCamera3D);
+    if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mCamera3D, nullptr, renderStep);
 
-    mCamera.identity();
-    mCamera.translate(glm::vec3(0.0f, 0.0f, -50.0f));
-    mCamera.rotate(rotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    mCamera.rotate(rotationY * 3.14f * 2.0f, xRotation);
-    mCamera.scale(mZoom);
+    mCamera3D.identity();
+    mCamera3D.translate(glm::vec3(0.0f, 0.0f, -50.0f));
+    mCamera3D.rotate(mRotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera3D.rotate(mRotationY * 3.14f * 2.0f, xRotation);
+    mCamera3D.scale(mZoom);
 
-    renderSystem(renderStep, currentProgram, mStarSystem->getSystem(), 1);
+    renderSystem(renderStep, program3D, mStarSystem->getSystem(), 1);
+
+    program2D->use();
+    mCamera2D.identity();
+    mCamera2D.translate(glm::vec2(-0.7,-0.7));
+    mCamera2D.scale(0.1);
+    program2D->post(mCamera2D);
+    program2D->post("uId", mTriangle.getCode());
+    mTriangle.render(mCamera2D, program2D, renderStep);
+
 
 }
 
@@ -133,22 +139,23 @@ void SolarSystem::renderSystem(GLTools::RenderStep renderStep, std::shared_ptr<G
         texture->activate(GL_TEXTURE0);
         program->postTexture("uTexture", 0);
 
-        mCamera.pushMatrix();
+        mCamera3D.pushMatrix();
 
-        mCamera.translate(translationScale(astre->getPosition(currentTime), i));
-        mCamera.scale(radiusScale(astre->getDiameter()));
+        mCamera3D.translate(translationScale(astre->getPosition(currentTime), i));
+        mCamera3D.scale(radiusScale(astre->getDiameter()));
 
-        program->post(mCamera);
-        program->post("uId", i);
 
-        mSphere.render(mCamera, renderStep);
+        program->post(mCamera3D);
+        program->post("uId", 255 - i);
+
+        mSphere.render(mCamera3D, program, renderStep);
 
 
         if (astre->hasSystem()) {
             renderSystem(renderStep, program, astre->getSystem(), recursivity + 1);
         }
 
-        mCamera.popMatrix();
+        mCamera3D.popMatrix();
 
 
 
@@ -163,11 +170,14 @@ glm::vec3 SolarSystem::translationScale(glm::vec3 translation, int i) {
     // todo : need to normalize thanks to the center point of the astre
     float currentDistance = glm::distance(translation, glm::vec3(0, 0, 0));
     // float wantedDistance = (float)(i * 3) + currentDistance * 0.000000001f;
-    float wantedDistance = (float)(i * 3) + sqrtf(currentDistance) / 1000.0f;
+    float wantedDistance;
+    if (mProportionalView) wantedDistance = (float)(i * 3) + sqrtf(currentDistance) / 1000.0f;
+    else wantedDistance = i * 6;
     return translation / currentDistance * wantedDistance;
 }
 
 float SolarSystem::radiusScale(float radius) {
+    if (!mProportionalView) return 1;
     radius = (1.0f + sqrtf(radius)) / 100.0f;
     return radius;
 }
@@ -180,7 +190,8 @@ std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &nam
 }
 
 void SolarSystem::resize(unsigned int width, unsigned int height) {
-    mCamera.resize(width, height);
+    mCamera3D.resize(width, height);
+    mCamera2D.resize(width, height);
 }
 
 void SolarSystem::scroll(int x, int y) {
@@ -194,11 +205,26 @@ void SolarSystem::scroll(int x, int y) {
 
 void SolarSystem::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) {
     if (selection == 0 && state == SDL_PRESSED) {
-        mouseRotation = true;
+        mMouseRotation = true;
         mMouseStart = mousePosition;
     }
 
+    if (selection == mTriangle.getCode() && state == SDL_PRESSED) {
+        mProportionalView = !mProportionalView;
+    }
+
     if (state == SDL_RELEASED) {
-        mouseRotation = false;
+        mMouseRotation = false;
     }
 }
+
+void SolarSystem::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
+    if (mMouseRotation) {
+        glm::vec2 diff = mousePosition - mMouseStart;
+        mMouseStart = mousePosition;
+        mRotationX += diff.x;
+        mRotationY += diff.y;
+    }
+
+}
+

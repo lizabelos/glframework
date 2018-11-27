@@ -32,7 +32,10 @@ namespace GLTools {
         void post(const std::string &name, int number);
         void post(const std::string &name, const glm::mat4 &mat);
         void postTexture(const std::string &name, GLint texture);
-        void post(const Camera &camera);
+
+        template<typename vecType> inline void post(const Camera<vecType> &camera) {
+            post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
+        }
 
     protected:
         void uniform(const std::string &name);

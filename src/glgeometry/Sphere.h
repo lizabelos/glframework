@@ -9,7 +9,7 @@
 
 namespace GLGeometry {
 
-    class Sphere : public ParametricDrawable {
+    class Sphere : public ParametricDrawable3D {
 
     public:
         Sphere(unsigned int code, unsigned long resolutionX, unsigned long resolutionY);

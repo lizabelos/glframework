@@ -12,12 +12,12 @@
 
 namespace GLGeometry {
 
-    class Triangle : public GLTools::Drawable {
+    class Triangle : public GLTools::Drawable<glm::vec2> {
 
     public:
         explicit Triangle(unsigned int code);
 
-        void render(const GLTools::Camera &camera, GLTools::RenderStep renderStep) const override;
+        void render(GLTools::Camera<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
 
     private:
         GLTools::VertexArrayObject mVertexArrayObject;

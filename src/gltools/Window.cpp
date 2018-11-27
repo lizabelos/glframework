@@ -75,6 +75,8 @@ int GLTools::Window::run() {
 
         SDL_GetMouseState(&mMouseX, &mMouseY);
         unsigned int selection = processSelection(mMouseX, mMouseY);
+        mouseMove(getMousePosition(), selection);
+
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
@@ -164,5 +166,9 @@ void GLTools::Window::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 but
 }
 
 void GLTools::Window::scroll(int x, int y) {
+
+}
+
+void GLTools::Window::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 
 }

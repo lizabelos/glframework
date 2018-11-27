@@ -9,7 +9,7 @@
 
 namespace GLGeometry {
 
-    class Circle : public ParametricDrawable {
+    class Circle : public ParametricDrawable2D {
 
     public:
         Circle(unsigned int code, unsigned long resolution);

@@ -65,16 +65,14 @@ void GLTools::Program::use() const {
 
 void GLTools::Program::post(const std::string &name, int number) {
     uniform(name);
+    use();
     glUniform1i(mUniformMap[name], number);
 }
 
 void GLTools::Program::post(const std::string &name, const glm::mat4 &mat) {
     uniform(name);
+    use();
     glUniformMatrix4fv(mUniformMap[name], 1, GL_FALSE, glm::value_ptr(mat));
-}
-
-void GLTools::Program::post(const Camera &camera) {
-    post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
 }
 
 void GLTools::Program::uniform(const std::string &name) {
@@ -86,5 +84,6 @@ void GLTools::Program::uniform(const std::string &name) {
 
 void GLTools::Program::postTexture(const std::string &name, GLint texture) {
     uniform(name);
+    use();
     glUniform1i(mUniformMap[name], texture);
 }

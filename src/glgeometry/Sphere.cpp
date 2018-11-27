@@ -5,7 +5,7 @@
 #include "Sphere.h"
 #include <cmath>
 
-GLGeometry::Sphere::Sphere(unsigned int code, unsigned long resolutionX, unsigned long resolutionY) : ParametricDrawable(code) {
+GLGeometry::Sphere::Sphere(unsigned int code, unsigned long resolutionX, unsigned long resolutionY) : ParametricDrawable3D(code) {
 
     GLGeometry::SVariable p1 = GLGeometry::make_SVariable();
     GLGeometry::SVariable p2 = GLGeometry::make_SVariable();

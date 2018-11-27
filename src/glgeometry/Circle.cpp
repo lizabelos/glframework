@@ -5,7 +5,7 @@
 #include "Circle.h"
 #include <cmath>
 
-GLGeometry::Circle::Circle(unsigned int code, unsigned long resolution) : ParametricDrawable(code) {
+GLGeometry::Circle::Circle(unsigned int code, unsigned long resolution) : ParametricDrawable2D(code) {
 
     GLGeometry::SVariable p1 = GLGeometry::make_SVariable();
     GLGeometry::SVariable p2 = GLGeometry::make_SVariable();
@@ -17,6 +17,6 @@ GLGeometry::Circle::Circle(unsigned int code, unsigned long resolution) : Parame
     GLGeometry::Variable y = sinTheta * p2;
     GLGeometry::CVariable z = GLGeometry::make_CVariable(0.0f);
 
-    initialize(x, y, z, x, y, z, x, y, p1, p2, resolution, 2);
+    initialize(x, y, x, y, p1, p2, resolution, 2);
 
 }

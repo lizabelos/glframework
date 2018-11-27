@@ -10,6 +10,7 @@
 #include "glgeometry/Circle"
 #include "glgeometry/Triangle"
 
+
 class Tangram : public GLTools::Window {
 
 public:
@@ -26,7 +27,7 @@ private:
     GLGeometry::Circle mCircle;
     GLGeometry::Triangle mTriangle;
 
-    std::unique_ptr<GLTools::Program> mBasicProgram;
+    std::shared_ptr<GLTools::Program> mBasicProgram;
 
 };
 
