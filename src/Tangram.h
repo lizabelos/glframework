@@ -21,14 +21,17 @@ public:
 protected:
     void resize(unsigned int width, unsigned int height) override;
     void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
+    void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
 
 private:
     GLTools::Camera2D mCamera;
-    GLGeometry::Circle mCircle;
-    GLGeometry::Triangle mTriangle;
+    std::vector<GLTools::TranslatedDrawable<glm::vec2>> drawables;
 
-    std::shared_ptr<GLTools::Program> mBasicProgram;
+    std::shared_ptr<GLTools::Program> mRenderProgram, mSelectionProgram;
 
+    bool mMouseMovement;
+    unsigned int mMouseSelection;
+    glm::vec2 mMouseStart;
 };
 
 

@@ -26,6 +26,7 @@ template<typename vecType> void GLTools::TranslatedDrawable<vecType>::render(Cam
                                                                              GLTools::RenderStep renderStep) const {
     camera.pushMatrix();
     camera.translate(mTranslation);
+    mDrawable->render(camera, program, renderStep);
     camera.popMatrix();
 }
 

@@ -106,7 +106,7 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
     startexture->activate(GL_TEXTURE0);
     program3D->post("uTexture", 0);
     program3D->post(mCamera3D);
-    if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mCamera3D, nullptr, renderStep);
+    if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mCamera3D, program3D, renderStep);
 
     mCamera3D.identity();
     mCamera3D.translate(glm::vec3(0.0f, 0.0f, -50.0f));
