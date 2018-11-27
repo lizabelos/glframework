@@ -1,16 +1,23 @@
 #include <memory>
 
+#include <memory>
+
 //
 // Created by thomas on 11/14/18.
 //
 
 #include "ParametricDrawable.h"
 
-void GLTools::ParametricDrawable::initialize(GLTools::Variable x, GLTools::Variable y,
-                                                GLTools::Variable z, GLTools::Variable normX,
-                                                GLTools::Variable normY, GLTools::Variable normZ,
-                                                GLTools::Variable texX, GLTools::Variable texY,
-                                                GLTools::SVariable p1, GLTools::SVariable p2,
+
+GLGeometry::ParametricDrawable::ParametricDrawable(unsigned int code) : GLTools::Drawable(code), mResolution1(0), mResolution2(0), mSize(0) {
+
+}
+
+void GLGeometry::ParametricDrawable::initialize(GLGeometry::Variable x, GLGeometry::Variable y,
+                                                GLGeometry::Variable z, GLGeometry::Variable normX,
+                                                GLGeometry::Variable normY, GLGeometry::Variable normZ,
+                                                GLGeometry::Variable texX, GLGeometry::Variable texY,
+                                                GLGeometry::SVariable p1, GLGeometry::SVariable p2,
                                                 unsigned long resolution1, unsigned long resolution2) {
 
     mResolution1 = resolution1;
@@ -36,21 +43,20 @@ void GLTools::ParametricDrawable::initialize(GLTools::Variable x, GLTools::Varia
 
     mSize = resolution1 * resolution2;
 
-    mVertexArrayObject.add(VERTEX_ID, std::shared_ptr<ArrayBuffer>(new ArrayBuffer(vertexs)));
-    mVertexArrayObject.add(NORMAL_ID, std::shared_ptr<ArrayBuffer>(new ArrayBuffer(normals)));
-    mVertexArrayObject.add(TEXTCOORD_ID, std::shared_ptr<ArrayBuffer>(new ArrayBuffer(textcoords)));
-    mVertexArrayObject.set(std::shared_ptr<ElementArrayBuffer>(new ElementArrayBuffer(getIndices(mResolution1, mResolution2))));
+    mVertexArrayObject.add(VERTEX_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
+    mVertexArrayObject.add(NORMAL_ID, std::make_shared<GLTools::ArrayBuffer>(normals));
+    mVertexArrayObject.add(TEXTCOORD_ID, std::make_shared<GLTools::ArrayBuffer>(textcoords));
+    mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(getIndices(mResolution1, mResolution2)));
 }
 
-
-void GLTools::ParametricDrawable::render(const GLTools::Camera &camera) const {
+void GLGeometry::ParametricDrawable::render(const GLTools::Camera &camera, GLTools::RenderStep renderStep) const {
     mVertexArrayObject.bind();
     glDrawElements(GL_TRIANGLES, getIndicesNumber(mResolution1, mResolution2), GL_UNSIGNED_INT, 0);
     // glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mSize));
     glBindVertexArray(0);
 }
 
-std::vector<GLuint> GLTools::ParametricDrawable::getIndices(unsigned long resolution1, unsigned long resolution2) const {
+std::vector<GLuint> GLGeometry::ParametricDrawable::getIndices(unsigned long resolution1, unsigned long resolution2) const {
     std::vector<GLuint> indices;
     indices.resize((resolution1 - 0) * (resolution2 - 0) * 6);
 
@@ -89,6 +95,6 @@ std::vector<GLuint> GLTools::ParametricDrawable::getIndices(unsigned long resolu
     return indices;
 }
 
-GLsizei GLTools::ParametricDrawable::getIndicesNumber(unsigned long resolution1, unsigned long resolution2) const {
+GLsizei GLGeometry::ParametricDrawable::getIndicesNumber(unsigned long resolution1, unsigned long resolution2) const {
     return resolution1 * resolution2 * 6;
 }

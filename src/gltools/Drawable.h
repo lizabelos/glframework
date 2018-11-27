@@ -11,10 +11,22 @@
 
 namespace GLTools {
 
+    typedef enum RenderStep {
+        RENDER_SCREEN, RENDER_SELECTION
+    } RenderStep;
+
     class Drawable {
 
     public:
-        virtual void render(const Camera &camera) const = 0;
+        explicit Drawable(unsigned int code);
+
+        virtual void render(const Camera &camera, RenderStep renderStep) const = 0;
+
+        unsigned int getCode();
+        bool is(float code);
+
+    private:
+        unsigned int mCode;
 
     };
 

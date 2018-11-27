@@ -35,11 +35,12 @@ namespace GLTools {
         glm::vec2 getMousePosition();
         float getTime();
 
-        virtual void render() = 0;
-        virtual void resize(unsigned int width, unsigned int height) = 0;
+        virtual void render(RenderStep renderStep) = 0;
+        virtual void resize(unsigned int width, unsigned int height);
+        virtual void mouseClick(int mouseX, int mouseY, Uint8 state, Uint8 button, unsigned int selection);
 
     private:
-        void init();
+        unsigned int processSelection(int x, int y);
 
         SDL_Window *mWindow;
         SDL_GLContext mContext;

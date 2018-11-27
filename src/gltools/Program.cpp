@@ -62,7 +62,7 @@ void GLTools::Program::post(const std::string &name, const glm::mat4 &mat) {
     glUniformMatrix4fv(mUniformMap[name], 1, GL_FALSE, glm::value_ptr(mat));
 }
 
-void GLTools::Program::post(const GLTools::Camera &camera) {
+void GLTools::Program::post(const Camera &camera) {
     post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
 }
 

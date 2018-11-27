@@ -7,19 +7,22 @@
 
 #include <memory>
 
-#include "Drawable"
+#include "../gltools/Drawable"
 #include "Variable"
-#include "Buffer"
-#include "Program"
+#include "../gltools/Buffer"
+#include "../gltools/Program"
 
 
-namespace GLTools {
+namespace GLGeometry {
 
-    class ParametricDrawable : public Drawable {
+    class ParametricDrawable : public GLTools::Drawable {
 
     public:
+        explicit ParametricDrawable(unsigned int code);
+
         void initialize(Variable x, Variable y, Variable z, Variable normX, Variable normY, Variable normZ, Variable texX, Variable texY, SVariable p1, SVariable p2, unsigned long resolution1, unsigned long resolution2);
-        void render(const Camera &camera) const override;
+
+        void render(const GLTools::Camera &camera, GLTools::RenderStep renderStep) const override;
 
     protected:
         std::vector<GLuint> getIndices(unsigned long resolution1, unsigned long resolution2) const;
@@ -27,7 +30,7 @@ namespace GLTools {
 
     private:
         unsigned long mSize, mResolution1, mResolution2;
-        VertexArrayObject mVertexArrayObject;
+        GLTools::VertexArrayObject mVertexArrayObject;
 
     };
 

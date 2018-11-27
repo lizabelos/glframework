@@ -7,12 +7,12 @@
 
 #include "ParametricDrawable"
 
-namespace GLTools {
+namespace GLGeometry {
 
     class Sphere : public ParametricDrawable {
 
     public:
-        Sphere(unsigned long resolutionX, unsigned long resolutionY);
+        Sphere(unsigned int code, unsigned long resolutionX, unsigned long resolutionY);
 
     };
 

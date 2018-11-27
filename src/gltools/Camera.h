@@ -14,12 +14,21 @@ namespace GLTools {
     class Camera {
 
     public:
-        Camera();
-        Camera(unsigned int width, unsigned int height);
+        virtual glm::mat4 getProjectionMatrix() const = 0;
+        virtual glm::mat4 getMVMatrix() const = 0;
+        virtual glm::mat4 getNormalMatrix() const = 0;
 
-        glm::mat4 getProjectionMatrix() const;
-        glm::mat4 getMVMatrix() const;
-        glm::mat4 getNormalMatrix() const;
+    };
+
+    class Camera3D : public Camera {
+
+    public:
+        Camera3D();
+        Camera3D(unsigned int width, unsigned int height);
+
+        glm::mat4 getProjectionMatrix() const override;
+        glm::mat4 getMVMatrix() const override;
+        glm::mat4 getNormalMatrix() const override;
 
         void pushMatrix();
         void popMatrix();
@@ -37,6 +46,35 @@ namespace GLTools {
         glm::mat4 mMVMatrix;
 
         std::vector<glm::mat4> mMVMatrixStack;
+
+    };
+
+    class Camera2D : public Camera {
+
+    public:
+        Camera2D();
+        Camera2D(unsigned int width, unsigned int height);
+
+        glm::mat4 getProjectionMatrix() const override;
+        glm::mat4 getMVMatrix() const override;
+        glm::mat4 getNormalMatrix() const override;
+
+        void pushMatrix();
+        void popMatrix();
+
+        void translate(glm::vec2 translation);
+        void rotate(float angle);
+        void scale(glm::vec2 scaling);
+        void scale(float scaling);
+
+        void identity();
+        void resize(unsigned int width, unsigned int height);
+
+    private:
+        glm::mat3 mProjectionMatrix;
+        glm::mat3 mMVMatrix;
+
+        std::vector<glm::mat3> mMVMatrixStack;
 
     };
 
