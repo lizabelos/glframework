@@ -30,6 +30,7 @@ protected:
     std::shared_ptr<GLTools::Texture> getTexture(const std::string &name);
 
     void scroll(int x, int y) override;
+    void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
 
 private:
     GLTools::Camera3D mCamera;
@@ -37,7 +38,12 @@ private:
     std::unique_ptr<Astronomy::System> mSystem;
     std::shared_ptr<GLTools::Program> mBasicProgram, mSelectionProgram;
     std::map<std::string, std::shared_ptr<GLTools::Texture>> mTextures;
+
     float mZoom;
+    float rotationX, rotationY;
+
+    bool mouseRotation;
+    glm::vec2 mMouseStart;
 };
 
 

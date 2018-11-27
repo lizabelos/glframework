@@ -37,7 +37,7 @@ namespace GLTools {
 
         virtual void render(RenderStep renderStep) = 0;
         virtual void resize(unsigned int width, unsigned int height);
-        virtual void mouseClick(int mouseX, int mouseY, Uint8 state, Uint8 button, unsigned int selection);
+        virtual void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection);
         virtual void scroll(int x, int y);
 
     private:

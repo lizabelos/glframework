@@ -23,6 +23,6 @@ void Tangram::resize(unsigned int width, unsigned int height) {
     mCamera.resize(width, height);
 }
 
-void Tangram::mouseClick(int mouseX, int mouseY, Uint8 state, Uint8 button, unsigned int selection) {
+void Tangram::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) {
 
 }

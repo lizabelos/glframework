@@ -104,7 +104,7 @@ int GLTools::Window::run() {
                 }
             }
             if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) {
-                mouseClick(mMouseX, mMouseY, event.button.state, event.button.button, selection);
+                mouseClick(getMousePosition(), event.button.state, event.button.button, selection);
             }
             if (event.type == SDL_MOUSEWHEEL) {
                 scroll(event.wheel.x, event.wheel.y);
@@ -159,7 +159,7 @@ void GLTools::Window::resize(unsigned int width, unsigned int height) {
 
 }
 
-void GLTools::Window::mouseClick(int mouseX, int mouseY, Uint8 state, Uint8 button, unsigned int selection) {
+void GLTools::Window::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) {
 
 }
 

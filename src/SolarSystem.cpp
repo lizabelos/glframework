@@ -16,7 +16,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(1, 256, 256), mZoom(1.0f) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(1, 256, 256), mZoom(1.0f), rotationX(0.0f), rotationY(0.0f), mouseRotation(false) {
 
     std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
 
@@ -83,15 +83,23 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
     }
 
     float currentTime = getTime() / 1000;
-    glm::vec2 mousePosition = getMousePosition() - glm::vec2(0.5, 0.5);
+    glm::vec2 mousePosition = getMousePosition();
+
+    if (mouseRotation) {
+        glm::vec2 diff = mousePosition - mMouseStart;
+        mMouseStart = mousePosition;
+        rotationX += diff.x;
+        rotationY += diff.y;
+    }
+
 
     currentProgram->use();
 
     mCamera.identity();
     mCamera.scale(1000.0f);
-    mCamera.rotate(mousePosition.x * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::vec3 xRotation =  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(mousePosition.x * 3.14), glm::vec3(0.0f, 1.0f, 0.0f));
-    mCamera.rotate(mousePosition.y * 3.14f * 2.0f, xRotation);
+    mCamera.rotate(rotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec3 xRotation =  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(rotationX * 3.14), glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera.rotate(rotationY * 3.14f * 2.0f, xRotation);
     std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
     startexture->activate(GL_TEXTURE0);
     currentProgram->post("uTexture", 0);
@@ -100,8 +108,8 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
 
     mCamera.identity();
     mCamera.translate(glm::vec3(0.0f, 0.0f, -50.0f));
-    mCamera.rotate(mousePosition.x * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    mCamera.rotate(mousePosition.y * 3.14f * 2.0f, xRotation);
+    mCamera.rotate(rotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    mCamera.rotate(rotationY * 3.14f * 2.0f, xRotation);
     mCamera.scale(mZoom);
 
 
@@ -168,5 +176,16 @@ void SolarSystem::scroll(int x, int y) {
     }
     if (y < 0) {
         mZoom = mZoom / (-y * 1.1f);
+    }
+}
+
+void SolarSystem::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) {
+    if (selection == 0 && state == SDL_PRESSED) {
+        mouseRotation = true;
+        mMouseStart = mousePosition;
+    }
+
+    if (state == SDL_RELEASED) {
+        mouseRotation = false;
     }
 }
