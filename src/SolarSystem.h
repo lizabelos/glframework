@@ -14,6 +14,7 @@
 #include "gltools/Texture"
 #include "astronomy/System"
 #include "astronomy/Planet"
+#include "astronomy/Star"
 
 class SolarSystem : public GLTools::Window {
 
@@ -23,6 +24,7 @@ public:
 protected:
     void resize(unsigned int width, unsigned int height);
     void render(GLTools::RenderStep renderStep) override;
+    void renderSystem(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity);
 
     glm::vec3 translationScale(glm::vec3 translation, int i);
     float radiusScale(float radius);
@@ -35,7 +37,10 @@ protected:
 private:
     GLTools::Camera3D mCamera;
     GLGeometry::Sphere mSphere;
-    std::unique_ptr<Astronomy::System> mSystem;
+
+    std::shared_ptr<Astronomy::Star> mStarSystem;
+    std::map<std::string, std::shared_ptr<Astronomy::Astre>> mAstres;
+
     std::shared_ptr<GLTools::Program> mBasicProgram, mSelectionProgram;
     std::map<std::string, std::shared_ptr<GLTools::Texture>> mTextures;
 

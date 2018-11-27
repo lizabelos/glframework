@@ -6,12 +6,8 @@
 
 #include <iostream>
 
-Astronomy::System::System(std::shared_ptr<Astronomy::Star> star) : mStar(star) {
+Astronomy::System::System() {
 
-}
-
-std::shared_ptr<Astronomy::Star> Astronomy::System::getStar() {
-    return mStar;
 }
 
 void Astronomy::System::add(std::shared_ptr<Astronomy::Astre> astre) {
@@ -20,10 +16,4 @@ void Astronomy::System::add(std::shared_ptr<Astronomy::Astre> astre) {
 
 std::vector<std::shared_ptr<Astronomy::Astre>> Astronomy::System::getAstres() {
     return mAstres;
-}
-
-std::vector<std::shared_ptr<Astronomy::Astre>> Astronomy::System::getAll() {
-    std::vector<std::shared_ptr<Astronomy::Astre>> result = std::vector<std::shared_ptr<Astronomy::Astre>>(mAstres);
-    result.emplace_back(mStar);
-    return result;
 }

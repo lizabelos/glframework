@@ -10,13 +10,14 @@
 #include "Astre"
 #include "Star"
 #include "Description"
+#include "System"
 
 namespace Astronomy {
 
     class Planet : public Astre {
 
     public:
-        explicit Planet(std::shared_ptr<Astre> star, const std::string &name, description_t description);
+        explicit Planet(const std::string &name, description_t description);
 
         std::string getName() override;
         glm::vec3 getPosition(float time) override;
@@ -24,11 +25,14 @@ namespace Astronomy {
         float getDiameter() override;
         float getCenterDistance() override;
 
+        bool hasSystem() override;
+        std::shared_ptr<System> getSystem() override;
+
     private:
-        std::shared_ptr<Astre> mStar;
         std::string mName;
         description_t mDescription;
 
+        std::shared_ptr<System> mSystem;
     };
 
 }

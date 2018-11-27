@@ -6,8 +6,8 @@
 
 #include <iostream>
 
-Astronomy::Planet::Planet(std::shared_ptr<Astronomy::Astre> star, const std::string &name, Astronomy::description_t description) : mStar(star), mName(name), mDescription(description) {
-
+Astronomy::Planet::Planet(const std::string &name, Astronomy::description_t description) : mName(name), mDescription(description) {
+    mSystem = std::make_shared<Astronomy::System>();
 }
 
 std::string Astronomy::Planet::getName() {
@@ -15,7 +15,7 @@ std::string Astronomy::Planet::getName() {
 }
 
 glm::vec3 Astronomy::Planet::getPosition(float time) {
-    return glm::vec4(0, 0, static_cast<float>(mDescription.sunDistance + mStar->getDiameter() / 2), 1) * glm::rotate(glm::mat4(1.0f), static_cast<float>(time * mDescription.orbitalPeriod), glm::vec3(0, 1, 0));
+    return glm::vec4(0, 0, static_cast<float>(mDescription.sunDistance), 1) * glm::rotate(glm::mat4(1.0f), static_cast<float>(time * mDescription.orbitalPeriod), glm::vec3(0, 1, 0));
 }
 
 float Astronomy::Planet::getDiameter() {
@@ -28,4 +28,12 @@ glm::vec3 Astronomy::Planet::getRotation(float time) {
 
 float Astronomy::Planet::getCenterDistance() {
     return mDescription.sunDistance;
+}
+
+bool Astronomy::Planet::hasSystem() {
+    return true;
+}
+
+std::shared_ptr<Astronomy::System> Astronomy::Planet::getSystem() {
+    return mSystem;
 }

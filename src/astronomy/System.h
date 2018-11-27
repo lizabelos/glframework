@@ -19,16 +19,12 @@ namespace Astronomy {
     class System {
 
     public:
-        explicit System(std::shared_ptr<Star> star);
+        System();
 
-        std::shared_ptr<Star> getStar();
         std::vector<std::shared_ptr<Astre>> getAstres();
-        std::vector<std::shared_ptr<Astre>> getAll();
-
         void add(std::shared_ptr<Astre> mAstre);
 
     private:
-        std::shared_ptr<Star> mStar;
         std::vector<std::shared_ptr<Astre>> mAstres;
 
 

@@ -7,10 +7,13 @@
 
 
 #include <string>
+#include <memory>
 
 #include <glm/ext.hpp>
 
 namespace Astronomy {
+
+    class System;
 
     class Astre {
 
@@ -20,6 +23,9 @@ namespace Astronomy {
         virtual glm::vec3 getRotation(float time) = 0;
         virtual float getCenterDistance() = 0;
         virtual float getDiameter() = 0;
+
+        virtual bool hasSystem() = 0;
+        virtual std::shared_ptr<System> getSystem() = 0;
 
     };
 

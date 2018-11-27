@@ -1,5 +1,7 @@
 #include <memory>
 
+#include <memory>
+
 //
 // Created by thomas on 13/11/18.
 //
@@ -26,6 +28,7 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(1, 256, 25
         entryMap[csv[i][0]] = i;
     }
 
+    if (entryMap.count("Parent") != 1) throw std::runtime_error("Columns Parent not found");
     if (entryMap.count("Diameter") != 1) throw std::runtime_error("Columns Diameter not found");
     if (entryMap.count("Rotation Period") != 1) throw std::runtime_error("Columns Rotation Period not found");
     if (entryMap.count("Distance from Sun") != 1) throw std::runtime_error("Columns Distance from Sun not found");
@@ -42,6 +45,8 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(1, 256, 25
         std::string name = csv[0][i];
         std::cout << "Parsing " << name << std::endl;
 
+        std::string parent = csv[entryMap["Parent"]][i];
+
         description.diameter = atof(csv[entryMap["Diameter"]][i].c_str());
         description.rotationPeriod = atof(csv[entryMap["Rotation Period"]][i].c_str());
         description.sunDistance = atof(csv[entryMap["Distance from Sun"]][i].c_str()) * 10e6;
@@ -52,12 +57,12 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(1, 256, 25
         description.ringSystem = csv[entryMap["Ring System"]][i] == "Yes";
 
         if (i == 2) {
-            std::shared_ptr<Astronomy::Star> star = std::make_shared<Astronomy::Star>(name, description);
-            mSystem = std::make_unique<Astronomy::System>(star);
-
+            mStarSystem = std::make_shared<Astronomy::Star>(name, description);
+            mAstres[name] = mStarSystem;
         } else {
-            std::shared_ptr<Astronomy::Astre> planet = std::make_shared<Astronomy::Planet>(mSystem->getStar(), name, description);
-            mSystem->add(planet);
+            std::shared_ptr<Astronomy::Astre> planet = std::make_shared<Astronomy::Planet>(name, description);
+            mAstres[parent]->getSystem()->add(planet);
+            mAstres[name] = planet;
         }
 
     }
@@ -112,38 +117,46 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
     mCamera.rotate(rotationY * 3.14f * 2.0f, xRotation);
     mCamera.scale(mZoom);
 
+    renderSystem(renderStep, currentProgram, mStarSystem->getSystem(), 1);
+
+}
+
+void SolarSystem::renderSystem(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity) {
+    float currentTime = getTime() / 1000;
+
+    std::vector<std::shared_ptr<Astronomy::Astre>> astres = system->getAstres();
+    std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance() < b->getCenterDistance(); });
 
     int i = 0;
-
-    std::vector<std::shared_ptr<Astronomy::Astre>> astres = mSystem->getAll();
-
-    std::sort(astres.begin(), astres.end(),
-            [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance() < b->getCenterDistance(); });
-
     for (const std::shared_ptr<Astronomy::Astre> &astre : astres) {
-
         std::shared_ptr<GLTools::Texture> texture = getTexture(astre->getName());
         texture->activate(GL_TEXTURE0);
-        currentProgram->postTexture("uTexture", 0);
+        program->postTexture("uTexture", 0);
 
         mCamera.pushMatrix();
 
         mCamera.translate(translationScale(astre->getPosition(currentTime), i));
         mCamera.scale(radiusScale(astre->getDiameter()));
 
-        currentProgram->post(mCamera);
-
-        currentProgram->post("uId", i);
+        program->post(mCamera);
+        program->post("uId", i);
 
         mSphere.render(mCamera, renderStep);
 
+
+        if (astre->hasSystem()) {
+            renderSystem(renderStep, program, astre->getSystem(), recursivity + 1);
+        }
+
         mCamera.popMatrix();
 
-        i++;
 
+
+        i++;
     }
 
 }
+
 
 glm::vec3 SolarSystem::translationScale(glm::vec3 translation, int i) {
     //translation = glm::log(translation);
@@ -161,7 +174,7 @@ float SolarSystem::radiusScale(float radius) {
 
 std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &name) {
     if (mTextures.count(name) == 0) {
-        mTextures[name] = std::shared_ptr<GLTools::Texture>(new GLTools::Texture("res/textures/" + name + ".jpg"));
+        mTextures[name] = std::make_shared<GLTools::Texture>("res/textures/" + name + ".jpg");
     }
     return mTextures[name];
 }

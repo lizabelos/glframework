@@ -5,7 +5,7 @@
 #include "Star.h"
 
 Astronomy::Star::Star(std::string name, description_t description) : mName(name), mDescription(description) {
-
+    mSystem = std::make_shared<Astronomy::System>();
 }
 
 std::string Astronomy::Star::getName() {
@@ -28,4 +28,12 @@ glm::vec3 Astronomy::Star::getRotation(float time) {
 
 float Astronomy::Star::getCenterDistance() {
     return mDescription.sunDistance;
+}
+
+bool Astronomy::Star::hasSystem() {
+    return true;
+}
+
+std::shared_ptr<Astronomy::System> Astronomy::Star::getSystem() {
+    return mSystem;
 }
