@@ -57,7 +57,7 @@ void Tangram::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
     if (mMouseMovement) {
         glm::vec2 diff = mousePosition - mMouseStart;
         diff.y = -diff.y;
-        diff = diff * 4.0f;
+        diff = diff * 2.0f / 0.3f;
 
         mMouseStart = mousePosition;
         drawables[mMouseSelection].move(diff);
