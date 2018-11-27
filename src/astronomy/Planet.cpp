@@ -25,3 +25,7 @@ float Astronomy::Planet::getDiameter() {
 glm::vec3 Astronomy::Planet::getRotation(float time) {
     return glm::vec3(0, 0, 0);
 }
+
+float Astronomy::Planet::getCenterDistance() {
+    return mDescription.sunDistance;
+}

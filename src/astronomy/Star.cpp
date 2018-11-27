@@ -25,3 +25,7 @@ glm::vec3 Astronomy::Star::getRotation(float time) {
     // todo
     return glm::vec3(0, 0, 0);
 }
+
+float Astronomy::Star::getCenterDistance() {
+    return mDescription.sunDistance;
+}

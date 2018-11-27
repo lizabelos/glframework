@@ -59,7 +59,7 @@ int GLTools::Window::run() {
     bool loop = true;
 
     while (loop) {
-/*
+
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -75,8 +75,6 @@ int GLTools::Window::run() {
 
         SDL_GetMouseState(&mMouseX, &mMouseY);
         unsigned int selection = processSelection(mMouseX, mMouseY);
-*/
-        unsigned int selection = 0;
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
@@ -108,11 +106,14 @@ int GLTools::Window::run() {
             if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) {
                 mouseClick(mMouseX, mMouseY, event.button.state, event.button.button, selection);
             }
+            if (event.type == SDL_MOUSEWHEEL) {
+                scroll(event.wheel.x, event.wheel.y);
+            }
         }
 
 
 
-        glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Depth Test
@@ -159,5 +160,9 @@ void GLTools::Window::resize(unsigned int width, unsigned int height) {
 }
 
 void GLTools::Window::mouseClick(int mouseX, int mouseY, Uint8 state, Uint8 button, unsigned int selection) {
+
+}
+
+void GLTools::Window::scroll(int x, int y) {
 
 }

@@ -20,7 +20,7 @@ GLGeometry::Triangle::Triangle(unsigned int code) : GLTools::Drawable(code) {
     mVertexArrayObject.add(VERTEX_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
     mVertexArrayObject.add(NORMAL_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
     mVertexArrayObject.add(TEXTCOORD_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
-
+    mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(indices));
 }
 
 void GLGeometry::Triangle::render(const GLTools::Camera &camera, GLTools::RenderStep renderStep) const {

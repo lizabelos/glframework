@@ -15,7 +15,7 @@ GLTools::Camera3D::Camera3D(unsigned int width, unsigned int height) {
 }
 
 void GLTools::Camera3D::resize(unsigned int width, unsigned int height) {
-    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)width / (float)height, 0.1f, 100.0f);
+    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)width / (float)height, 0.1f, 1000.0f);
 }
 
 glm::mat4 GLTools::Camera3D::getProjectionMatrix() const {

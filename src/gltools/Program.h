@@ -29,8 +29,9 @@ namespace GLTools {
         ~Program();
 
         void use() const;
+        void post(const std::string &name, int number);
         void post(const std::string &name, const glm::mat4 &mat);
-        void post(const std::string &name, GLint texture);
+        void postTexture(const std::string &name, GLint texture);
         void post(const Camera &camera);
 
     protected:

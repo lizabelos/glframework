@@ -18,12 +18,12 @@ void Astronomy::System::add(std::shared_ptr<Astronomy::Astre> astre) {
     mAstres.push_back(astre);
 }
 
-std::list<std::shared_ptr<Astronomy::Astre>> Astronomy::System::getAstres() {
+std::vector<std::shared_ptr<Astronomy::Astre>> Astronomy::System::getAstres() {
     return mAstres;
 }
 
-std::list<std::shared_ptr<Astronomy::Astre>> Astronomy::System::getAll() {
-    std::list<std::shared_ptr<Astronomy::Astre>> result = std::list<std::shared_ptr<Astronomy::Astre>>(mAstres);
-    result.push_front(mStar);
+std::vector<std::shared_ptr<Astronomy::Astre>> Astronomy::System::getAll() {
+    std::vector<std::shared_ptr<Astronomy::Astre>> result = std::vector<std::shared_ptr<Astronomy::Astre>>(mAstres);
+    result.emplace_back(mStar);
     return result;
 }

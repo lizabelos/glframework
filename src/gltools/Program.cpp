@@ -1,9 +1,15 @@
+#include <memory>
+
 //
 // Created by thomas on 06/11/18.
 //
 
 #include "Program.h"
+
 #include <iostream>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 GLTools::Program::Program(std::shared_ptr<GLTools::Shader> pVertex, std::shared_ptr<GLTools::Shader> pFragment) {
 
@@ -15,8 +21,8 @@ GLTools::Program::Program(std::shared_ptr<GLTools::Shader> pVertex, std::shared_
 
 GLTools::Program::Program(const std::string &vertexPath, const std::string &fragmentPath) {
 
-    mVertex = std::shared_ptr<Shader>(new Shader(GL_VERTEX_SHADER, vertexPath));
-    mFragment = std::shared_ptr<Shader>(new Shader(GL_FRAGMENT_SHADER, fragmentPath));
+    mVertex = std::make_shared<Shader>(GL_VERTEX_SHADER, vertexPath);
+    mFragment = std::make_shared<Shader>(GL_FRAGMENT_SHADER, fragmentPath);
     initialize();
 
 }
@@ -57,6 +63,11 @@ void GLTools::Program::use() const {
     glUseProgram(mId);
 }
 
+void GLTools::Program::post(const std::string &name, int number) {
+    uniform(name);
+    glUniform1i(mUniformMap[name], number);
+}
+
 void GLTools::Program::post(const std::string &name, const glm::mat4 &mat) {
     uniform(name);
     glUniformMatrix4fv(mUniformMap[name], 1, GL_FALSE, glm::value_ptr(mat));
@@ -73,8 +84,7 @@ void GLTools::Program::uniform(const std::string &name) {
     }
 }
 
-void GLTools::Program::post(const std::string &name, GLint texture) {
+void GLTools::Program::postTexture(const std::string &name, GLint texture) {
     uniform(name);
     glUniform1i(mUniformMap[name], texture);
 }
-

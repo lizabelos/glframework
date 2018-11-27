@@ -5,7 +5,7 @@
 #ifndef SOLAR_SYSTEM_SYSTEM_H
 #define SOLAR_SYSTEM_SYSTEM_H
 
-#include <list>
+#include <vector>
 #include <memory>
 
 #include "Astre"
@@ -22,14 +22,14 @@ namespace Astronomy {
         explicit System(std::shared_ptr<Star> star);
 
         std::shared_ptr<Star> getStar();
-        std::list<std::shared_ptr<Astre>> getAstres();
-        std::list<std::shared_ptr<Astre>> getAll();
+        std::vector<std::shared_ptr<Astre>> getAstres();
+        std::vector<std::shared_ptr<Astre>> getAll();
 
         void add(std::shared_ptr<Astre> mAstre);
 
     private:
         std::shared_ptr<Star> mStar;
-        std::list<std::shared_ptr<Astre>> mAstres;
+        std::vector<std::shared_ptr<Astre>> mAstres;
 
 
     };
