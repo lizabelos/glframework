@@ -15,7 +15,7 @@ std::string Astronomy::Planet::getName() {
 }
 
 glm::vec3 Astronomy::Planet::getPosition(float time) {
-    return glm::vec4(0, 0, static_cast<float>(mDescription.sunDistance), 1) * glm::rotate(glm::mat4(1.0f), static_cast<float>(time * mDescription.orbitalPeriod), glm::vec3(0, 1, 0));
+    return glm::vec3(glm::vec4(0, 0, static_cast<float>(mDescription.sunDistance), 1) * glm::rotate(glm::mat4(1.0f), static_cast<float>(time * mDescription.orbitalPeriod), glm::vec3(0, 1, 0)));
 }
 
 float Astronomy::Planet::getDiameter() {

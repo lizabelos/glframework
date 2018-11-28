@@ -87,3 +87,9 @@ void GLTools::Program::postTexture(const std::string &name, GLint texture) {
     use();
     glUniform1i(mUniformMap[name], texture);
 }
+
+void GLTools::Program::post(const std::string &name, const glm::vec4 &mat) {
+    uniform(name);
+    use();
+    glUniform4fv(mUniformMap[name], 1, glm::value_ptr(mat));
+}

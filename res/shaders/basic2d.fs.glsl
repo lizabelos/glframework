@@ -1,4 +1,4 @@
-#version 330
+#version 300 es
 
 precision mediump float;
 
@@ -8,6 +8,8 @@ in vec2 vTexCoord;
 
 out vec4 fFragColor;
 
+uniform vec4 uColor;
+
 void main() {
-    fFragColor = vec4(1, 1, 1, 1);
+    fFragColor = uColor;
 }

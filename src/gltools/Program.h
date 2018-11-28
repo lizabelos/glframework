@@ -31,6 +31,7 @@ namespace GLTools {
         void use() const;
         void post(const std::string &name, int number);
         void post(const std::string &name, const glm::mat4 &mat);
+        void post(const std::string &name, const glm::vec4 &mat);
         void postTexture(const std::string &name, GLint texture);
 
         template<typename vecType> inline void post(const Camera<vecType> &camera) {

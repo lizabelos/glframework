@@ -17,27 +17,40 @@ template<typename vecType> bool GLTools::Drawable<vecType>::is(float codef) {
     return mCode == code;
 }
 
-template<typename vecType> GLTools::TranslatedDrawable<vecType>::TranslatedDrawable(std::shared_ptr<GLTools::Drawable<vecType>> drawable, vecType translation) : GLTools::Drawable<vecType>(0), mDrawable(drawable), mTranslation(translation) {
+template<typename vecType> GLTools::TransformDrawable<vecType>::TransformDrawable(std::shared_ptr<GLTools::Drawable<vecType>> drawable) : GLTools::Drawable<vecType>(0), mDrawable(drawable), mRotation(0.0f), mScale(1.0f), mTranslation(0.0f) {
 
 }
 
-template<typename vecType> void GLTools::TranslatedDrawable<vecType>::render(Camera <vecType> &camera,
+template<typename vecType> void GLTools::TransformDrawable<vecType>::render(Camera <vecType> &camera,
                                                                              std::shared_ptr<GLTools::Program> program,
                                                                              GLTools::RenderStep renderStep) const {
     camera.pushMatrix();
+    camera.scale(mScale);
+    // camera.rotate(mRotation, mRotationAxis);
     camera.translate(mTranslation);
     mDrawable->render(camera, program, renderStep);
     camera.popMatrix();
 }
 
-template<typename vecType> unsigned int GLTools::TranslatedDrawable<vecType>::getCode() {
+template<typename vecType> unsigned int GLTools::TransformDrawable<vecType>::getCode() {
     return mDrawable->getCode();
 }
 
-template<typename vecType> bool GLTools::TranslatedDrawable<vecType>::is(float code) {
+template<typename vecType> bool GLTools::TransformDrawable<vecType>::is(float code) {
     return mDrawable->is(code);
 }
 
-template<typename vecType> void GLTools::TranslatedDrawable<vecType>::move(vecType translation) {
+template<typename vecType> void GLTools::TransformDrawable<vecType>::move(vecType translation) {
     mTranslation += translation;
+}
+
+template<typename vecType>
+void GLTools::TransformDrawable<vecType>::scale(vecType scale) {
+    mScale *= scale;
+}
+
+template<typename vecType>
+void GLTools::TransformDrawable<vecType>::rotate(float rotation, vecType rotationAxis) {
+    mRotation += rotation;
+    mRotationAxis = rotationAxis; // todo : false
 }

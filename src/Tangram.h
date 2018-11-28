@@ -9,6 +9,7 @@
 #include "gltools/Camera"
 #include "glgeometry/Circle"
 #include "glgeometry/Triangle"
+#include "glgeometry/Square"
 
 
 class Tangram : public GLTools::Window {
@@ -25,7 +26,7 @@ protected:
 
 private:
     GLTools::Camera2D mCamera;
-    std::vector<GLTools::TranslatedDrawable<glm::vec2>> drawables;
+    std::vector<GLTools::TransformDrawable<glm::vec2>> drawables;
 
     std::shared_ptr<GLTools::Program> mRenderProgram, mSelectionProgram;
 

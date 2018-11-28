@@ -33,10 +33,10 @@ namespace GLTools {
 
     };
 
-    template<typename vecType> class TranslatedDrawable : public Drawable<vecType> {
+    template<typename vecType> class TransformDrawable : public Drawable<vecType> {
 
     public:
-        TranslatedDrawable(std::shared_ptr<Drawable<vecType>> drawable, vecType translation);
+        TransformDrawable(std::shared_ptr<Drawable<vecType>> drawable);
 
         void render(Camera <vecType> &camera, std::shared_ptr<Program> program, RenderStep renderStep) const override;
 
@@ -44,14 +44,20 @@ namespace GLTools {
         bool is(float code) override;
 
         void move(vecType translation);
+        void scale(vecType scale);
+        void rotate(float rotation, vecType rotationAxis);
+
 
     private:
         std::shared_ptr<Drawable<vecType>> mDrawable;
         vecType mTranslation;
+        vecType mScale;
+        float mRotation;
+        vecType mRotationAxis;
     };
 
-    template class TranslatedDrawable<glm::vec2>;
-    template class TranslatedDrawable<glm::vec3>;
+    template class TransformDrawable<glm::vec2>;
+    template class TransformDrawable<glm::vec3>;
 
 }
 

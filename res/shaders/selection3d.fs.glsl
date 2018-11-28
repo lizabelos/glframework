@@ -1,4 +1,6 @@
-#version 330
+#version 300 es
+
+precision mediump float;
 
 in vec3 vPosition;
 in vec3 vNormal;
@@ -10,5 +12,6 @@ uniform sampler2D uTexture;
 uniform int uId;
 
 void main() {
-    fFragColor = vec4(uId / 255.0f, uId / 255.0f, uId / 255.0f, 1);
+    float uIdF = float(uId) / 255.0f;
+    fFragColor = vec4(uIdF, uIdF, uIdF, 1);
 }

@@ -100,7 +100,7 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
     mCamera3D.identity();
     mCamera3D.scale(1000.0f);
     mCamera3D.rotate(mRotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::vec3 xRotation =  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(mRotationX * 3.14), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec3 xRotation =  glm::vec3(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(mRotationX * 3.14), glm::vec3(0.0f, 1.0f, 0.0f)));
     mCamera3D.rotate(mRotationY * 3.14f * 2.0f, xRotation);
     std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
     startexture->activate(GL_TEXTURE0);
