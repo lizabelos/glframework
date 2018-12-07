@@ -19,12 +19,13 @@ namespace GLTools {
         TrackballCamera();
         TrackballCamera(float front, float left, float up);
 
+        glm::mat4 getViewMatrix() const;
+        glm::mat4 getMVMatrix() const override;
+        glm::mat4 getNormalMatrix() const override;
+
         void moveFront(float delta);
         void rotateLeft(float delta);
         void rotateUp(float delata);
-
-        void applyTrackball();
-        void applyTrackballRotation();
 
     private:
         float mFront;

@@ -100,70 +100,68 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
 
 
     if (!mFreefly) {
-        mTrackballCamera.identity();
-        mTrackballCamera.scale(1000.0f);
-        mTrackballCamera.applyTrackballRotation();
-        std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
-        startexture->activate(GL_TEXTURE0);
-        program3D->post("uTexture", 0);
-        program3D->post(mTrackballCamera);
-        if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mTrackballCamera, program3D, renderStep);
-
-        mTrackballCamera.identity();
-        mTrackballCamera.applyTrackball();
-
-        renderSystem(renderStep, mTrackballCamera, program3D, mStarSystem->getSystem(), 1);
-
+        render3d(renderStep, mTrackballCamera, program3D);
     } else {
-
-        mFreeflyCamera.identity();
-        mFreeflyCamera.scale(1000.0f);
-        std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
-        startexture->activate(GL_TEXTURE0);
-        program3D->post("uTexture", 0);
-        program3D->post(mFreeflyCamera);
-        if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mFreeflyCamera, program3D, renderStep);
-
-        mFreeflyCamera.identity();
-
-        renderSystem(renderStep, mFreeflyCamera, program3D, mStarSystem->getSystem(), 1);
-
+        render3d(renderStep, mFreeflyCamera, program3D);
     }  
 
-    program2D->use();
+    render2d(renderStep, program2D);
+
+
+
+
+    if (mPlay) lastTime = getTime() / 1000.0f;
+}
+
+void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program)
+{
+    camera.identity();
+    camera.scale(1000.0f);
+    std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
+    startexture->activate(GL_TEXTURE0);
+    program->post("uTexture", 0);
+    program->post(camera);
+    if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(camera, program, renderStep);
+
+    camera.identity();
+
+    renderSystem(renderStep, camera, program, mStarSystem->getSystem(), 1);
+}
+
+void SolarSystem::render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program) {
+
+    program->use();
     mCamera2D.identity();
     mCamera2D.scale(0.1);
 
 
     mCamera2D.translate(glm::vec2(-0.7,-0.7));
-    program2D->post(mCamera2D);
-    program2D->post("uId", RENDERCODE_BUTTON_PROPVIEW);
-    if (selectionHover == RENDERCODE_BUTTON_PROPVIEW) program2D->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    else program2D->post("uColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    program->post(mCamera2D);
+    program->post("uId", RENDERCODE_BUTTON_PROPVIEW);
+    if (selectionHover == RENDERCODE_BUTTON_PROPVIEW) program->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    else program->post("uColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
     mTextureProp->activate(GL_TEXTURE0);
-    program2D->postTexture("uTexture", 0);
-    mSquare.render(mCamera2D, program2D, renderStep);
+    program->postTexture("uTexture", 0);
+    mSquare.render(mCamera2D, program, renderStep);
 
     mCamera2D.translate(glm::vec2(0.3,0.0));
-    program2D->post(mCamera2D);
-    program2D->post("uId", RENDERCODE_BUTTON_CAMERAMODE);
-    if (selectionHover == RENDERCODE_BUTTON_CAMERAMODE) program2D->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    else program2D->post("uColor", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    program->post(mCamera2D);
+    program->post("uId", RENDERCODE_BUTTON_CAMERAMODE);
+    if (selectionHover == RENDERCODE_BUTTON_CAMERAMODE) program->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    else program->post("uColor", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
     mTextureCamera->activate(GL_TEXTURE0);
-    program2D->postTexture("uTexture", 0);
-    mSquare.render(mCamera2D, program2D, renderStep);
+    program->postTexture("uTexture", 0);
+    mSquare.render(mCamera2D, program, renderStep);
 
     mCamera2D.translate(glm::vec2(0.3,0.0));
-    program2D->post(mCamera2D);
-    program2D->post("uId", RENDERCODE_BUTTON_PLAY);
-    if (selectionHover == RENDERCODE_BUTTON_PLAY) program2D->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    else program2D->post("uColor", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+    program->post(mCamera2D);
+    program->post("uId", RENDERCODE_BUTTON_PLAY);
+    if (selectionHover == RENDERCODE_BUTTON_PLAY) program->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    else program->post("uColor", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
     mTexturePlay->activate(GL_TEXTURE0);
-    program2D->postTexture("uTexture", 0);
-    mSquare.render(mCamera2D, program2D, renderStep);
+    program->postTexture("uTexture", 0);
+    mSquare.render(mCamera2D, program, renderStep);
 
-
-    if (mPlay) lastTime = getTime() / 1000.0f;
 }
 
 void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity) {
