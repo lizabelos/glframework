@@ -82,6 +82,8 @@ namespace GLTools {
         glm::mat3 mProjectionMatrix;
         glm::mat3 mMVMatrix;
 
+        glm::vec2 mWindowSize;
+
         std::vector<glm::mat3> mMVMatrixStack;
 
     };

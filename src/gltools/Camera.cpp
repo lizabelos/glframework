@@ -73,6 +73,9 @@ GLTools::Camera2D::Camera2D(unsigned int width, unsigned int height) {
 
 void GLTools::Camera2D::resize(unsigned int width, unsigned int height) {
     mProjectionMatrix = glm::mat3(1.0f);
+    unsigned int min = width;
+    if (height < min) min = height;
+    mWindowSize = glm::vec2(width, height) / (float)min;
 }
 
 glm::mat4 GLTools::Camera2D::getProjectionMatrix() const {
@@ -80,11 +83,16 @@ glm::mat4 GLTools::Camera2D::getProjectionMatrix() const {
 }
 
 glm::mat4 GLTools::Camera2D::getMVMatrix() const {
-    return glm::mat4(mMVMatrix);
+    glm::mat3 scaleMatrix = {
+            1 / mWindowSize.x, 0  , 0,
+            0  , 1 / mWindowSize.y, 0,
+            0  , 0  , 1
+    };
+    return glm::mat4(scaleMatrix * mMVMatrix);
 }
 
 glm::mat4 GLTools::Camera2D::getNormalMatrix() const {
-    return glm::mat4(glm::transpose(glm::inverse(mMVMatrix)));
+    return glm::mat4(glm::transpose(glm::inverse(getMVMatrix())));
 }
 
 void GLTools::Camera2D::pushMatrix() {

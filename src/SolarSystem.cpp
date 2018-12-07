@@ -231,6 +231,7 @@ std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &nam
 
 void SolarSystem::resize(unsigned int width, unsigned int height) {
     mTrackballCamera.resize(width, height);
+    mFreeflyCamera.resize(width, height);
     mCamera2D.resize(width, height);
 }
 

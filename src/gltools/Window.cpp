@@ -21,7 +21,7 @@ GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
     mWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512, SDL_WINDOW_OPENGL);
     if (!mWindow) throw std::runtime_error("SDL_CreateWindow failed : '" + std::string(SDL_GetError()) + "'");
 
-    // SDL_SetWindowResizable(mWindow, SDL_TRUE);
+    SDL_SetWindowResizable(mWindow, SDL_TRUE);
 
     mContext = SDL_GL_CreateContext(mWindow);
 
