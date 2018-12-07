@@ -84,7 +84,7 @@ int GLTools::Window::run() {
             if (event.type == SDL_QUIT) {
                 loop = false;
             }
-            if (event.type == SDL_KEYDOWN)
+            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
             {
                 switch (event.key.keysym.sym)
                 {
@@ -92,6 +92,7 @@ int GLTools::Window::run() {
                         loop = false;
                         break;
                     default:
+                        keyboard(event.key.type, event.key.repeat, event.key.keysym);
                         break;
                 }
             }
@@ -170,5 +171,9 @@ void GLTools::Window::scroll(int x, int y) {
 }
 
 void GLTools::Window::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
+
+}
+
+void GLTools::Window::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
 
 }

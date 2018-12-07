@@ -15,7 +15,13 @@
 #include "astronomy/System"
 #include "astronomy/Planet"
 #include "astronomy/Star"
-#include "glgeometry/Triangle"
+#include "glgeometry/Square"
+#include "gltools/TrackballCamera"
+#include "gltools/FreeflyCamera"
+
+#define RENDERCODE_BUTTON_PROPVIEW     1
+#define RENDERCODE_BUTTON_CAMERAMODE   2
+#define RENDERCODE_BUTTON_PLAY         3
 
 class SolarSystem : public GLTools::Window {
 
@@ -25,7 +31,7 @@ public:
 protected:
     void resize(unsigned int width, unsigned int height) override;
     void render(GLTools::RenderStep renderStep) override;
-    void renderSystem(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity);
+    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity);
 
     glm::vec3 translationScale(glm::vec3 translation, int i);
     float radiusScale(float radius);
@@ -35,12 +41,14 @@ protected:
     void scroll(int x, int y) override;
     void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
+    void keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) override;
 
 private:
-    GLTools::Camera3D mCamera3D;
+    GLTools::TrackballCamera mTrackballCamera;
+    GLTools::FreeflyCamera mFreeflyCamera;
     GLTools::Camera2D mCamera2D;
     GLGeometry::Sphere mSphere;
-    GLGeometry::Triangle mTriangle;
+    GLGeometry::Square mSquare;
 
     std::shared_ptr<Astronomy::Star> mStarSystem;
     std::map<std::string, std::shared_ptr<Astronomy::Astre>> mAstres;
@@ -48,13 +56,17 @@ private:
     std::shared_ptr<GLTools::Program> mRender3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram;
     std::map<std::string, std::shared_ptr<GLTools::Texture>> mTextures;
 
-    float mZoom;
-    float mRotationX, mRotationY;
+    std::shared_ptr<GLTools::Texture> mTextureProp, mTexturePlay, mTextureCamera;
 
     bool mMouseRotation;
     glm::vec2 mMouseStart;
 
     bool mProportionalView;
+    bool mFreefly;
+    bool mPlay;
+
+    int selectionHover;
+    float lastTime;
 };
 
 

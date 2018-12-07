@@ -18,7 +18,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mTriangle(1), mZoom(1.0f), mRotationX(0.0f), mRotationY(0.0f), mMouseRotation(false), mProportionalView(true) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mSquare(1), mMouseRotation(false), mProportionalView(true), selectionHover(0), mFreefly(false), mPlay(true) {
 
     std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
 
@@ -67,12 +67,16 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
 
     }
 
+    mTextureProp = std::make_shared<GLTools::Texture>("res/prop.png");
+    mTexturePlay = std::make_shared<GLTools::Texture>("res/play.png");
+    mTextureCamera = std::make_shared<GLTools::Texture>("res/camera.png");
+
 
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mSelection3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/selection3d.fs.glsl");
 
-    mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/basic2d.fs.glsl");
+    mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mSelection2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
 
 }
@@ -92,43 +96,79 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
             break;
     }
 
-
-
-
     program3D->use();
 
-    mCamera3D.identity();
-    mCamera3D.scale(1000.0f);
-    mCamera3D.rotate(mRotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::vec3 xRotation =  glm::vec3(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), (float)(mRotationX * 3.14), glm::vec3(0.0f, 1.0f, 0.0f)));
-    mCamera3D.rotate(mRotationY * 3.14f * 2.0f, xRotation);
-    std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
-    startexture->activate(GL_TEXTURE0);
-    program3D->post("uTexture", 0);
-    program3D->post(mCamera3D);
-    if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mCamera3D, program3D, renderStep);
 
-    mCamera3D.identity();
-    mCamera3D.translate(glm::vec3(0.0f, 0.0f, -50.0f));
-    mCamera3D.rotate(mRotationX * 3.14f * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    mCamera3D.rotate(mRotationY * 3.14f * 2.0f, xRotation);
-    mCamera3D.scale(mZoom);
+    if (!mFreefly) {
+        mTrackballCamera.identity();
+        mTrackballCamera.scale(1000.0f);
+        mTrackballCamera.applyTrackballRotation();
+        std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
+        startexture->activate(GL_TEXTURE0);
+        program3D->post("uTexture", 0);
+        program3D->post(mTrackballCamera);
+        if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mTrackballCamera, program3D, renderStep);
 
-    renderSystem(renderStep, program3D, mStarSystem->getSystem(), 1);
+        mTrackballCamera.identity();
+        mTrackballCamera.applyTrackball();
+
+        renderSystem(renderStep, mTrackballCamera, program3D, mStarSystem->getSystem(), 1);
+
+    } else {
+
+        mFreeflyCamera.identity();
+        mFreeflyCamera.scale(1000.0f);
+        std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
+        startexture->activate(GL_TEXTURE0);
+        program3D->post("uTexture", 0);
+        program3D->post(mFreeflyCamera);
+        if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(mFreeflyCamera, program3D, renderStep);
+
+        mFreeflyCamera.identity();
+
+        renderSystem(renderStep, mFreeflyCamera, program3D, mStarSystem->getSystem(), 1);
+
+    }  
 
     program2D->use();
     mCamera2D.identity();
-    mCamera2D.translate(glm::vec2(-0.7,-0.7));
     mCamera2D.scale(0.1);
+
+
+    mCamera2D.translate(glm::vec2(-0.7,-0.7));
     program2D->post(mCamera2D);
-    program2D->post("uId", mTriangle.getCode());
-    mTriangle.render(mCamera2D, program2D, renderStep);
+    program2D->post("uId", RENDERCODE_BUTTON_PROPVIEW);
+    if (selectionHover == RENDERCODE_BUTTON_PROPVIEW) program2D->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    else program2D->post("uColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    mTextureProp->activate(GL_TEXTURE0);
+    program2D->postTexture("uTexture", 0);
+    mSquare.render(mCamera2D, program2D, renderStep);
+
+    mCamera2D.translate(glm::vec2(0.3,0.0));
+    program2D->post(mCamera2D);
+    program2D->post("uId", RENDERCODE_BUTTON_CAMERAMODE);
+    if (selectionHover == RENDERCODE_BUTTON_CAMERAMODE) program2D->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    else program2D->post("uColor", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    mTextureCamera->activate(GL_TEXTURE0);
+    program2D->postTexture("uTexture", 0);
+    mSquare.render(mCamera2D, program2D, renderStep);
+
+    mCamera2D.translate(glm::vec2(0.3,0.0));
+    program2D->post(mCamera2D);
+    program2D->post("uId", RENDERCODE_BUTTON_PLAY);
+    if (selectionHover == RENDERCODE_BUTTON_PLAY) program2D->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    else program2D->post("uColor", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+    mTexturePlay->activate(GL_TEXTURE0);
+    program2D->postTexture("uTexture", 0);
+    mSquare.render(mCamera2D, program2D, renderStep);
 
 
+    if (mPlay) lastTime = getTime() / 1000.0f;
 }
 
-void SolarSystem::renderSystem(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity) {
-    float currentTime = getTime() / 1000;
+void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity) {
+    float currentTime = getTime() / 1000.0f;
+    if (!mPlay) currentTime = lastTime;
 
     std::vector<std::shared_ptr<Astronomy::Astre>> astres = system->getAstres();
     std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance() < b->getCenterDistance(); });
@@ -139,23 +179,23 @@ void SolarSystem::renderSystem(GLTools::RenderStep renderStep, std::shared_ptr<G
         texture->activate(GL_TEXTURE0);
         program->postTexture("uTexture", 0);
 
-        mCamera3D.pushMatrix();
+        camera.pushMatrix();
 
-        mCamera3D.translate(translationScale(astre->getPosition(currentTime), i));
-        mCamera3D.scale(radiusScale(astre->getDiameter()));
+        camera.translate(translationScale(astre->getPosition(currentTime), i));
+        camera.scale(radiusScale(astre->getDiameter()));
 
 
-        program->post(mCamera3D);
+        program->post(camera);
         program->post("uId", 255 - i);
 
-        mSphere.render(mCamera3D, program, renderStep);
+        mSphere.render(camera, program, renderStep);
 
 
         if (astre->hasSystem()) {
-            renderSystem(renderStep, program, astre->getSystem(), recursivity + 1);
+            renderSystem(renderStep, camera, program, astre->getSystem(), recursivity + 1);
         }
 
-        mCamera3D.popMatrix();
+        camera.popMatrix();
 
 
 
@@ -190,16 +230,18 @@ std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &nam
 }
 
 void SolarSystem::resize(unsigned int width, unsigned int height) {
-    mCamera3D.resize(width, height);
+    mTrackballCamera.resize(width, height);
     mCamera2D.resize(width, height);
 }
 
 void SolarSystem::scroll(int x, int y) {
-    if (y > 0) {
-        mZoom = mZoom * (y * 1.1f);
-    }
-    if (y < 0) {
-        mZoom = mZoom / (-y * 1.1f);
+    if (!mFreefly) {
+        if (y > 0) {
+            mTrackballCamera.moveFront(1.0f / (y * 1.1f));
+        }
+        if (y < 0) {
+            mTrackballCamera.moveFront((-y * 1.1f));
+        }
     }
 }
 
@@ -209,8 +251,16 @@ void SolarSystem::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button,
         mMouseStart = mousePosition;
     }
 
-    if (selection == mTriangle.getCode() && state == SDL_PRESSED) {
+    if (selection == RENDERCODE_BUTTON_PROPVIEW && state == SDL_RELEASED) {
         mProportionalView = !mProportionalView;
+    }
+
+    if (selection == RENDERCODE_BUTTON_CAMERAMODE && state == SDL_RELEASED) {
+        mFreefly = !mFreefly;
+    }
+
+    if (selection == RENDERCODE_BUTTON_PLAY && state == SDL_RELEASED) {
+        mPlay = !mPlay;
     }
 
     if (state == SDL_RELEASED) {
@@ -219,12 +269,40 @@ void SolarSystem::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button,
 }
 
 void SolarSystem::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
-    if (mMouseRotation) {
-        glm::vec2 diff = mousePosition - mMouseStart;
-        mMouseStart = mousePosition;
-        mRotationX += diff.x;
-        mRotationY += diff.y;
+    glm::vec2 diff = mousePosition - mMouseStart;
+    mMouseStart = mousePosition;
+    if (!mFreefly) {
+        if (mMouseRotation) {
+        mTrackballCamera.rotateLeft(diff.x);
+        mTrackballCamera.rotateUp(diff.y);
+        }
+    } else {
+        mFreeflyCamera.rotateLeft(diff.x);
+        mFreeflyCamera.rotateUp(diff.y);
     }
+    
+
+    selectionHover = selection;
 
 }
 
+void SolarSystem::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
+    if (mFreefly) {
+        switch (key.sym) {
+            case SDLK_UP:
+                mFreeflyCamera.moveFront(1.0f);
+                break;
+            case SDLK_LEFT:
+                mFreeflyCamera.moveLeft(1.0f);
+                break;
+            case SDLK_RIGHT:
+                mFreeflyCamera.moveLeft(-1.0f);
+                break;
+            case SDLK_DOWN:
+                mFreeflyCamera.moveFront(-1.0f);
+                break;
+            default:
+                break;
+        }
+    }
+}

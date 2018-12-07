@@ -39,6 +39,7 @@ namespace GLTools {
         virtual void resize(unsigned int width, unsigned int height);
         virtual void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection);
         virtual void mouseMove(glm::vec2 mousePosition, unsigned int selection);
+        virtual void keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key);
         virtual void scroll(int x, int y);
 
     private:

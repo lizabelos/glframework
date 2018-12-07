@@ -12,6 +12,12 @@ GLGeometry::Square::Square(unsigned int code) : Drawable(code) {
     vertexs.emplace_back(glm::vec3( 1,  1, 0));
     vertexs.emplace_back(glm::vec3(-1,  1, 0));
 
+    std::vector<glm::vec3> texcoords;
+    texcoords.emplace_back(glm::vec3( 0,  1, 0));
+    texcoords.emplace_back(glm::vec3( 1,  1, 0));
+    texcoords.emplace_back(glm::vec3( 1,  0, 0));
+    texcoords.emplace_back(glm::vec3( 0,  0, 0));
+
     std::vector<GLuint> indices;
     indices.emplace_back(0);
     indices.emplace_back(1);
@@ -24,7 +30,7 @@ GLGeometry::Square::Square(unsigned int code) : Drawable(code) {
 
     mVertexArrayObject.add(VERTEX_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
     mVertexArrayObject.add(NORMAL_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
-    mVertexArrayObject.add(TEXTCOORD_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
+    mVertexArrayObject.add(TEXTCOORD_ID, std::make_shared<GLTools::ArrayBuffer>(texcoords));
     mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(indices));
 }
 

@@ -2,8 +2,8 @@
 #include "Tangram.h"
 
 int main(int argc, char **argv) {
-    // SolarSystem solarSystem;
-    // return solarSystem.run();
-    Tangram tangram;
-    return tangram.run();
+    SolarSystem solarSystem;
+    return solarSystem.run();
+    // Tangram tangram;
+    // return tangram.run();
 }

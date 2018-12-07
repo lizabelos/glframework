@@ -1,0 +1,40 @@
+//
+// Created by thomas on 07/12/18.
+//
+
+#ifndef SOLAR_SYSTEM_TRACKBALLCAMERA_H
+#define SOLAR_SYSTEM_TRACKBALLCAMERA_H
+
+
+#include <glm/ext.hpp>
+#include <vector>
+
+#include "Camera"
+
+namespace GLTools {
+
+    class TrackballCamera : public Camera3D {
+
+    public:
+        TrackballCamera();
+        TrackballCamera(float front, float left, float up);
+
+        void moveFront(float delta);
+        void rotateLeft(float delta);
+        void rotateUp(float delata);
+
+        void applyTrackball();
+        void applyTrackballRotation();
+
+    private:
+        float mFront;
+        float mLeft;
+        float mUp;
+
+
+    };
+
+}
+
+
+#endif //SOLAR_SYSTEM_CAMERA_H
