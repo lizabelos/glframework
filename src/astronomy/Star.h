@@ -1,6 +1,4 @@
-//
-// Created by thomas on 11/13/18.
-//
+// Copyright (C) BELOS Thomas. All Rights Reserved.
 
 #ifndef SOLAR_SYSTEM_STAR_H
 #define SOLAR_SYSTEM_STAR_H

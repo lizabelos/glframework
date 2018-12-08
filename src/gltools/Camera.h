@@ -1,6 +1,4 @@
-//
-// Created by thomas on 06/11/18.
-//
+// Copyright (C) BELOS Thomas. All Rights Reserved.
 
 #ifndef SOLAR_SYSTEM_CAMERA_H
 #define SOLAR_SYSTEM_CAMERA_H
@@ -9,21 +7,66 @@
 #include <glm/ext.hpp>
 #include <vector>
 
+/**
+ * A namespace regrouping all the GLTools OpenGL wrapper.
+ */
 namespace GLTools {
 
+    /**
+     * A virtual camera class, containing the essential function to manipulate the matrix
+     * @tparam vecType The dimension of the camera. Either 2D or 3D.
+     */
     template<typename vecType> class Camera {
 
     public:
+        /**
+         * @return The projection matrix
+         */
         virtual glm::mat4 getProjectionMatrix() const = 0;
+
+        /**
+         * @return The MV matrix
+         */
         virtual glm::mat4 getMVMatrix() const = 0;
+
+        /**
+         * @return The normal matrix
+         */
         virtual glm::mat4 getNormalMatrix() const = 0;
 
+        /**
+         * Push the current MV Matrix to the stack
+         */
         virtual void pushMatrix() = 0;
+
+        /**
+         * Pop the current MV Matrix from the stack
+         */
         virtual void popMatrix() = 0;
 
+        /**
+         * Translate the camera
+         * @param translation The translation vector
+         */
         virtual void translate(vecType translation) = 0;
+
+        /**
+         * Rotate the camera
+         * @param angle The rotation angle
+         * @param axis The rotation axis for 3D
+         */
         virtual void rotate(float angle, vecType axis) = 0;
+
+        /**
+         * Scale the camera
+         * @param scaling The scaling vector
+         */
         virtual void scale(vecType scaling) = 0;
+
+        /**
+         * Scale the camera along all the axis
+         * @param scaling The scaling coefficient
+         */
         virtual void scale(float scaling) = 0;
 
     };

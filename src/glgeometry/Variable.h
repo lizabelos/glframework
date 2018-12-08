@@ -1,6 +1,4 @@
-//
-// Created by thomas on 06/11/18.
-//
+// Copyright (C) BELOS Thomas. All Rights Reserved.
 
 #ifndef SOLAR_SYSTEM_VARIABLE_H
 #define SOLAR_SYSTEM_VARIABLE_H

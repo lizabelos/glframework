@@ -1,6 +1,4 @@
-//
-// Created by thomas on 16/11/18.
-//
+// Copyright (C) BELOS Thomas. All Rights Reserved.
 
 #ifndef SOLAR_SYSTEM_DESCRIPTION_H
 #define SOLAR_SYSTEM_DESCRIPTION_H

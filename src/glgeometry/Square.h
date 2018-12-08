@@ -1,6 +1,4 @@
-//
-// Created by thomas on 11/26/18.
-//
+// Copyright (C) BELOS Thomas. All Rights Reserved.
 
 #ifndef TANGRAM_SQUARE_H
 #define TANGRAM_SQUARE_H
