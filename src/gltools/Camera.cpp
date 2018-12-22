@@ -110,7 +110,7 @@ void GLTools::Camera2D::translate(glm::vec2 t) {
             0  , 1  , 0,
             t.x, t.y, 1
     };
-    mMVMatrix = translationMatrix * mMVMatrix;
+    mMVMatrix = mMVMatrix * translationMatrix;
 }
 
 void GLTools::Camera2D::rotate(float angle, glm::vec2 axis) {
@@ -119,7 +119,7 @@ void GLTools::Camera2D::rotate(float angle, glm::vec2 axis) {
             -sinf(angle), cosf(angle), 0,
             0           , 0          , 1
     };
-    mMVMatrix = rotationMatrix * mMVMatrix;
+    mMVMatrix = mMVMatrix * rotationMatrix;
 }
 
 
@@ -129,7 +129,7 @@ void GLTools::Camera2D::scale(glm::vec2 s) {
             0  , s.y, 0,
             0  , 0  , 1
     };
-    mMVMatrix = scaleMatrix * mMVMatrix;
+    mMVMatrix = mMVMatrix * scaleMatrix;
 }
 
 void GLTools::Camera2D::scale(float scaling) {

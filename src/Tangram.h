@@ -7,6 +7,7 @@
 
 #include "gltools/Window"
 #include "gltools/Camera"
+#include "gltools/Texture"
 #include "glgeometry/Circle"
 #include "glgeometry/Triangle"
 #include "glgeometry/Square"
@@ -24,15 +25,23 @@ protected:
     void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
 
+    void roundObject(GLTools::TransformDrawable<glm::vec2> &transformDrawable);
+
 private:
     GLTools::Camera2D mCamera;
     std::vector<GLTools::TransformDrawable<glm::vec2>> drawables;
+    GLGeometry::Square mSquare;
 
-    std::shared_ptr<GLTools::Program> mRenderProgram, mSelectionProgram;
+    std::shared_ptr<GLTools::Program> mRenderProgram, mShadowProgram, mSelectionProgram;
+    std::shared_ptr<GLTools::Texture> mTextureWood;
 
     bool mMouseMovement;
-    unsigned int mMouseSelection;
+    int mMouseSelection;
     glm::vec2 mMouseStart;
+
+    const float SCALE = 0.2f;
+    const float UNIT = 0.5f * SCALE;
+    const float ROUND = UNIT;
 };
 
 

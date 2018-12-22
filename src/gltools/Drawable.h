@@ -121,6 +121,21 @@ namespace GLTools {
          */
         void rotate(float rotation, vecType rotationAxis);
 
+        /**
+         * @return The current translation
+         */
+        vecType getTranslation();
+
+        /**
+         * @return The current scale
+         */
+        vecType getScale();
+
+        /**
+         * @param translation The new translation
+         */
+        void setTranslation(vecType translation);
+
 
     private:
         std::shared_ptr<Drawable<vecType>> mDrawable;

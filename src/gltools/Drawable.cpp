@@ -25,9 +25,9 @@ template<typename vecType> void GLTools::TransformDrawable<vecType>::render(Came
                                                                              std::shared_ptr<GLTools::Program> program,
                                                                              GLTools::RenderStep renderStep) const {
     camera.pushMatrix();
-    camera.scale(mScale);
-    // camera.rotate(mRotation, mRotationAxis);
     camera.translate(mTranslation);
+    camera.rotate(mRotation, mRotationAxis);
+    camera.scale(mScale);
     mDrawable->render(camera, program, renderStep);
     camera.popMatrix();
 }
@@ -53,4 +53,19 @@ template<typename vecType>
 void GLTools::TransformDrawable<vecType>::rotate(float rotation, vecType rotationAxis) {
     mRotation += rotation;
     mRotationAxis = rotationAxis; // todo : false
+}
+
+template<typename vecType>
+vecType GLTools::TransformDrawable<vecType>::getTranslation() {
+    return mTranslation;
+}
+
+template<typename vecType>
+void GLTools::TransformDrawable<vecType>::setTranslation(vecType translation) {
+    mTranslation = translation;
+}
+
+template<typename vecType>
+vecType GLTools::TransformDrawable<vecType>::getScale() {
+    return mScale;
 }
