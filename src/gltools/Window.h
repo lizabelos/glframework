@@ -114,7 +114,14 @@ namespace GLTools {
          */
         virtual void keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key);
 
+        /**
+         * A virtual function which if return true, wait for an event before rendering
+         * @return true if need to wait for an event. Default false;
+         */
+        virtual bool waitEvent();
+
     private:
+        void processEvent(const SDL_Event &event, bool &loop, unsigned int &selection);
         unsigned int processSelection(int x, int y);
 
         SDL_Window *mWindow;

@@ -24,6 +24,7 @@ protected:
     void resize(unsigned int width, unsigned int height) override;
     void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
+    bool waitEvent() override;
 
     void roundObject(GLTools::TransformDrawable<glm::vec2> &transformDrawable);
 

@@ -81,14 +81,14 @@ void Tangram::render(GLTools::RenderStep renderStep) {
         i++;
     }
 
-    if (renderStep == GLTools::RENDER_SCREEN) {
+    if (renderStep == GLTools::RENDER_SCREEN) {/*
         for (const GLTools::TransformDrawable<glm::vec2> &drawable : drawables) {
             mCamera.pushMatrix();
             mCamera.translate(glm::vec2(0.02f, 0.02f));
             mShadowProgram->post("uColor", glm::vec4(0, 0, 0, 0.2f));
             drawable.render(mCamera, mShadowProgram, renderStep);
             mCamera.popMatrix();
-        }
+        }*/
 
         int max = static_cast<int>(2.0f / ROUND);
         for (int x = 0; x < max; x++) {
@@ -159,4 +159,8 @@ void Tangram::roundObject(GLTools::TransformDrawable<glm::vec2> &d) {
     translation = translation + scale;
 
     d.setTranslation(translation);
+}
+
+bool Tangram::waitEvent() {
+    return true;
 }
