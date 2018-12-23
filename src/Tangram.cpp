@@ -8,7 +8,7 @@
 #include "Tangram.h"
 
 
-Tangram::Tangram() : Window("Tangram"), mMouseMovement(false), mSquare(0) {
+Tangram::Tangram() : Window("Tangram"), mMouseMovement(false), mSquare(0), mNeedRender(true) {
     mRenderProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mShadowProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/basic2d.fs.glsl");
     mSelectionProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
@@ -49,6 +49,7 @@ void Tangram::render(GLTools::RenderStep renderStep) {
 
         case GLTools::RENDER_SCREEN:
             program = mRenderProgram;
+            mNeedRender = false;
             break;
         case GLTools::RENDER_SELECTION:
             program = mSelectionProgram;
@@ -105,11 +106,11 @@ void Tangram::render(GLTools::RenderStep renderStep) {
             }
         }
     }
-
 }
 
 void Tangram::resize(unsigned int width, unsigned int height) {
     mCamera.resize(width, height);
+    mNeedRender = true;
 }
 
 void Tangram::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) {
@@ -125,10 +126,12 @@ void Tangram::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, uns
     if (state == SDL_RELEASED && button == SDL_BUTTON_LEFT) {
         mMouseMovement = false;
         roundObject(drawables[mMouseSelection]);
+        mNeedRender = true;
     }
 
     if (id < drawables.size() && id >= 0 && state == SDL_RELEASED && button == SDL_BUTTON_RIGHT) {
         drawables[id].rotate(M_PIf32 / 2, glm::vec2(1.0f, 1.0f));
+        mNeedRender = true;
     }
 
 }
@@ -141,6 +144,7 @@ void Tangram::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 
         mMouseStart = mousePosition;
         drawables[mMouseSelection].move(diff);
+        mNeedRender = true;
     }
 
 }
@@ -163,4 +167,8 @@ void Tangram::roundObject(GLTools::TransformDrawable<glm::vec2> &d) {
 
 bool Tangram::waitEvent() {
     return true;
+}
+
+bool Tangram::needRender() {
+    return mNeedRender;
 }

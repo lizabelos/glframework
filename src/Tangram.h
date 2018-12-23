@@ -25,6 +25,7 @@ protected:
     void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
     bool waitEvent() override;
+    bool needRender() override;
 
     void roundObject(GLTools::TransformDrawable<glm::vec2> &transformDrawable);
 
@@ -43,6 +44,8 @@ private:
     const float SCALE = 0.2f;
     const float UNIT = 0.5f * SCALE;
     const float ROUND = UNIT;
+
+    bool mNeedRender;
 };
 
 

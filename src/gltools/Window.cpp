@@ -73,21 +73,18 @@ int GLTools::Window::run() {
         glDisable(GL_MULTISAMPLE_ARB);
         render(RENDER_SELECTION);
 
-        SDL_GetMouseState(&mMouseX, &mMouseY);
-        unsigned int selection = processSelection(mMouseX, mMouseY);
-        mouseMove(getMousePosition(), selection);
+        do {
+            SDL_Event event;
+            if (waitEvent()) {
+                SDL_WaitEvent(&event);
+                processEvent(event, loop);
+            }
 
+            while (SDL_PollEvent(&event)) {
+                processEvent(event, loop);
+            }
 
-        SDL_Event event;
-        if (waitEvent()) {
-            SDL_WaitEvent(&event);
-            processEvent(event, loop, selection);
-        }
-
-        while (SDL_PollEvent(&event))
-        {
-            processEvent(event, loop, selection);
-        }
+        } while (!needRender() && loop);
 
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -151,7 +148,7 @@ void GLTools::Window::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
 
 }
 
-void GLTools::Window::processEvent(const SDL_Event &event, bool &loop, unsigned int &selection) {
+void GLTools::Window::processEvent(const SDL_Event &event, bool &loop) {
     if (event.type == SDL_QUIT) {
         loop = false;
     }
@@ -177,7 +174,14 @@ void GLTools::Window::processEvent(const SDL_Event &event, bool &loop, unsigned 
                 break;
         }
     }
+    if (event.type == SDL_MOUSEMOTION) {
+        SDL_GetMouseState(&mMouseX, &mMouseY);
+        unsigned int selection = processSelection(mMouseX, mMouseY);
+        mouseMove(getMousePosition(), selection);
+    }
     if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) {
+        SDL_GetMouseState(&mMouseX, &mMouseY);
+        unsigned int selection = processSelection(mMouseX, mMouseY);
         mouseClick(getMousePosition(), event.button.state, event.button.button, selection);
     }
     if (event.type == SDL_MOUSEWHEEL) {
@@ -187,4 +191,8 @@ void GLTools::Window::processEvent(const SDL_Event &event, bool &loop, unsigned 
 
 bool GLTools::Window::waitEvent() {
     return false;
+}
+
+bool GLTools::Window::needRender() {
+    return true;
 }

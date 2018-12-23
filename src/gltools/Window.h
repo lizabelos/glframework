@@ -120,8 +120,14 @@ namespace GLTools {
          */
         virtual bool waitEvent();
 
+        /**
+         * A virtual function which need to return true if we need a render
+         * @return true if need a render
+         */
+        virtual bool needRender();
+
     private:
-        void processEvent(const SDL_Event &event, bool &loop, unsigned int &selection);
+        void processEvent(const SDL_Event &event, bool &loop);
         unsigned int processSelection(int x, int y);
 
         SDL_Window *mWindow;
