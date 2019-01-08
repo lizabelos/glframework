@@ -108,7 +108,13 @@ int GLTools::Window::run() {
 }
 
 glm::vec2 GLTools::Window::getMousePosition() {
-    return glm::vec2((float)mMouseX / 512.0f, (float)mMouseY / 512.0f);
+    int w, h;
+    SDL_GetWindowSize(mWindow, &w, &h);
+
+    int min = w;
+    if (h < min) min = h;
+
+    return glm::vec2((float)mMouseX / (float)min, (float)mMouseY / (float)min);
 }
 
 float GLTools::Window::getTime() {

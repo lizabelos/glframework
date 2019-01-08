@@ -22,6 +22,6 @@ file(GLOB_RECURSE source_files src/*)
 add_custom_target(copy_shader_files ${CMAKE_COMMAND} -D SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/res -D DESTINATION_DIR=${CMAKE_CURRENT_BINARY_DIR} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CopyFile.cmake COMMENT "Copying shaders file" VERBATIM)
 
 # Executable
-add_executable(solar ${source_files})
-target_link_libraries (solar ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${GLM_LIBRARIES})
-add_dependencies(solar copy_shader_files)
+add_executable(tangram ${source_files})
+target_link_libraries (tangram ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${GLM_LIBRARIES})
+add_dependencies(tangram copy_shader_files)

@@ -11,6 +11,7 @@
 #include "glgeometry/Circle"
 #include "glgeometry/Triangle"
 #include "glgeometry/Square"
+#include "glgeometry/Parallelogram"
 
 
 class Tangram : public GLTools::Window {

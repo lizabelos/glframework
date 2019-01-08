@@ -10,6 +10,9 @@
 
 namespace GLGeometry {
 
+    /**
+     * 2D Square
+     */
     class Square : public GLTools::Drawable<glm::vec2> {
 
     public:

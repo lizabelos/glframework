@@ -7,6 +7,9 @@
 
 namespace GLGeometry {
 
+    /**
+     * 2D Circle drawable
+     */
     class Circle : public ParametricDrawable2D {
 
     public:

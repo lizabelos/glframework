@@ -121,85 +121,90 @@ void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &ca
     startexture->activate(GL_TEXTURE0);
     program->post("uTexture", 0);
     program->post(camera);
-    if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(camera, program, renderStep);
+    //if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(camera, program, renderStep);
 
     camera.identity();
 
-    renderSystem(renderStep, camera, program, mStarSystem->getSystem(), 1);
+    int i = 1;
+    renderAstre(renderStep, camera, program, mStarSystem, i);
 }
 
 void SolarSystem::render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program) {
 
     program->use();
     mCamera2D.identity();
-    mCamera2D.scale(0.1);
+
+    renderButton(renderStep, program, RENDERCODE_BUTTON_PROPVIEW, glm::vec2(0, 0), mTextureProp, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    renderButton(renderStep, program, RENDERCODE_BUTTON_CAMERAMODE, glm::vec2(1, 0), mTextureCamera, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    renderButton(renderStep, program, RENDERCODE_BUTTON_PLAY, glm::vec2(2, 0), mTexturePlay, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 
-    mCamera2D.translate(glm::vec2(-0.7,-0.7));
-    program->post(mCamera2D);
-    program->post("uId", RENDERCODE_BUTTON_PROPVIEW);
-    if (selectionHover == RENDERCODE_BUTTON_PROPVIEW) program->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    else program->post("uColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    mTextureProp->activate(GL_TEXTURE0);
-    program->postTexture("uTexture", 0);
-    mSquare.render(mCamera2D, program, renderStep);
-
-    mCamera2D.translate(glm::vec2(0.3,0.0));
-    program->post(mCamera2D);
-    program->post("uId", RENDERCODE_BUTTON_CAMERAMODE);
-    if (selectionHover == RENDERCODE_BUTTON_CAMERAMODE) program->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    else program->post("uColor", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-    mTextureCamera->activate(GL_TEXTURE0);
-    program->postTexture("uTexture", 0);
-    mSquare.render(mCamera2D, program, renderStep);
-
-    mCamera2D.translate(glm::vec2(0.3,0.0));
-    program->post(mCamera2D);
-    program->post("uId", RENDERCODE_BUTTON_PLAY);
-    if (selectionHover == RENDERCODE_BUTTON_PLAY) program->post("uColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    else program->post("uColor", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-    mTexturePlay->activate(GL_TEXTURE0);
-    program->postTexture("uTexture", 0);
-    mSquare.render(mCamera2D, program, renderStep);
 
 }
 
-void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity) {
-    float currentTime = getTime() / 1000.0f;
-    if (!mPlay) currentTime = lastTime;
+void SolarSystem::renderButton(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover) {
+
+    mCamera2D.pushMatrix();
+    mCamera2D.scale(0.1);
+    mCamera2D.translate(position * 2.2f - glm::vec2(0.5f / 0.1f, 0.5f / 0.1f));
+    program->post(mCamera2D);
+    program->post("uId", uId);
+    if (selectionHover == uId) program->post("uColor", hover);
+    else program->post("uColor", color);
+    texture->activate(GL_TEXTURE0);
+    program->postTexture("uTexture", 0);
+    mSquare.render(mCamera2D, program, renderStep);
+    mCamera2D.popMatrix();
+
+}
+
+void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int &i) {
 
     std::vector<std::shared_ptr<Astronomy::Astre>> astres = system->getAstres();
     std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance() < b->getCenterDistance(); });
 
-    int i = 0;
+
+
     for (const std::shared_ptr<Astronomy::Astre> &astre : astres) {
-        std::shared_ptr<GLTools::Texture> texture = getTexture(astre->getName());
-        texture->activate(GL_TEXTURE0);
-        program->postTexture("uTexture", 0);
-
-        camera.pushMatrix();
-
-        camera.translate(translationScale(astre->getPosition(currentTime), i));
-        camera.scale(radiusScale(astre->getDiameter()));
-
-
-        program->post(camera);
-        program->post("uId", 255 - i);
-
-        mSphere.render(camera, program, renderStep);
-
-
-        if (astre->hasSystem()) {
-            renderSystem(renderStep, camera, program, astre->getSystem(), recursivity + 1);
-        }
-
-        camera.popMatrix();
-
-
-
-        i++;
+        renderAstre(renderStep, camera, program, astre, i);
     }
 
+}
+
+void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre, int &i) {
+    float currentTime = getTime() / 1000.0f;
+    if (!mPlay) currentTime = lastTime;
+
+    std::shared_ptr<GLTools::Texture> texture = getTexture(astre->getName());
+    texture->activate(GL_TEXTURE0);
+    program->postTexture("uTexture", 0);
+
+    camera.pushMatrix();
+
+    camera.translate(translationScale(astre->getPosition(currentTime), i));
+
+    camera.pushMatrix();
+    camera.scale(radiusScale(astre->getDiameter()));
+
+
+    program->post(camera);
+    program->post("uId", 255 - i);
+
+    mSphere.render(camera, program, renderStep);
+
+    camera.popMatrix();
+
+    if (astre->hasSystem()) {
+        renderSystem(renderStep, camera, program, astre->getSystem(), i);
+    }
+
+    camera.popMatrix();
+
+
+
+    i++;
 }
 
 
@@ -207,6 +212,8 @@ glm::vec3 SolarSystem::translationScale(glm::vec3 translation, int i) {
     //translation = glm::log(translation);
     // todo : need to normalize thanks to the center point of the astre
     float currentDistance = glm::distance(translation, glm::vec3(0, 0, 0));
+
+    if (currentDistance == 0) return translation;
     // float wantedDistance = (float)(i * 3) + currentDistance * 0.000000001f;
     float wantedDistance;
     if (mProportionalView) wantedDistance = (float)(i * 3) + sqrtf(currentDistance) / 1000.0f;

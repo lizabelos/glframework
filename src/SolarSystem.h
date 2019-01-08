@@ -33,7 +33,9 @@ protected:
     void render(GLTools::RenderStep renderStep) override;
     void render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program);
     void render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program);
-    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int recursivity);
+    void renderButton(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover);
+    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int &i);
+    void renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre, int &i);
 
     glm::vec3 translationScale(glm::vec3 translation, int i);
     float radiusScale(float radius);

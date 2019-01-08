@@ -15,7 +15,7 @@ Tangram::Tangram() : Window("Tangram"), mMouseMovement(false), mSquare(0), mNeed
 
     mTextureWood = std::make_shared<GLTools::Texture>("res/wood.jpg");
 
-    int bigTriangle = 2, mediumTriangle = 1, smallTriangle = 2, square = 1;
+    int bigTriangle = 2, mediumTriangle = 1, smallTriangle = 2, square = 1, parallelogram = 1;
 
     for (int i = 0; i < bigTriangle; i++) {
         GLTools::TransformDrawable<glm::vec2> transformDrawable = GLTools::TransformDrawable<glm::vec2>(std::make_shared<GLGeometry::Triangle>(0));
@@ -37,6 +37,12 @@ Tangram::Tangram() : Window("Tangram"), mMouseMovement(false), mSquare(0), mNeed
 
     for (int i = 0; i < square; i++) {
         GLTools::TransformDrawable<glm::vec2> transformDrawable = GLTools::TransformDrawable<glm::vec2>(std::make_shared<GLGeometry::Square>(0));
+        transformDrawable.scale(glm::vec2(UNIT * 2, UNIT * 2));
+        drawables.emplace_back(transformDrawable);
+    }
+
+    for (int i = 0; i < parallelogram; i++) {
+        GLTools::TransformDrawable<glm::vec2> transformDrawable = GLTools::TransformDrawable<glm::vec2>(std::make_shared<GLGeometry::Parallelogram>(0));
         transformDrawable.scale(glm::vec2(UNIT * 2, UNIT * 2));
         drawables.emplace_back(transformDrawable);
     }
@@ -82,14 +88,7 @@ void Tangram::render(GLTools::RenderStep renderStep) {
         i++;
     }
 
-    if (renderStep == GLTools::RENDER_SCREEN) {/*
-        for (const GLTools::TransformDrawable<glm::vec2> &drawable : drawables) {
-            mCamera.pushMatrix();
-            mCamera.translate(glm::vec2(0.02f, 0.02f));
-            mShadowProgram->post("uColor", glm::vec4(0, 0, 0, 0.2f));
-            drawable.render(mCamera, mShadowProgram, renderStep);
-            mCamera.popMatrix();
-        }*/
+    if (renderStep == GLTools::RENDER_SCREEN) {
 
         int max = static_cast<int>(2.0f / ROUND);
         for (int x = 0; x < max; x++) {

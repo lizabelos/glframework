@@ -10,6 +10,9 @@
 
 namespace GLGeometry {
 
+    /**
+     * 2D Triangle
+     */
     class Triangle : public GLTools::Drawable<glm::vec2> {
 
     public:
