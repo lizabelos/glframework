@@ -187,6 +187,7 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
 
     if (renderStep == GLTools::RENDER_SCREEN) {
         camera.pushMatrix();
+        if (mProportionalView) camera.rotate(astre->getDescription().orbitalInclination / 180.0f * M_PI, glm::vec3(1.0f, 0.0f, 1.0f));
         camera.scale(glm::vec3(translationScaleOneAxis(astre->getCenterDistance().x, i), 1.0f, translationScaleOneAxis(astre->getCenterDistance().y, i)));
         program->post(camera);
         mCircle3D.setLine(true);
@@ -196,11 +197,16 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
 
     camera.pushMatrix();
 
-    glm::vec3 translation = glm::vec3(translationScaleOneAxis(astre->getCenterDistance().x, i) * cos(currentTime * 100.0f), 0.0f, translationScaleOneAxis(astre->getCenterDistance().y, i) * sin(currentTime * 100.0f));
+    float orbitalTime = currentTime * 1000.0f / (astre->getDescription().orbitalPeriod + 1.0f);
+    float rotationTime = currentTime * 1000.0f / (astre->getDescription().rotationPeriod + 1.0f);
+
+    glm::vec3 translation = glm::vec3(translationScaleOneAxis(astre->getCenterDistance().x, i) * cos(orbitalTime), 0.0f, translationScaleOneAxis(astre->getCenterDistance().y, i) * sin(orbitalTime));
+    if (mProportionalView) camera.rotate(astre->getDescription().orbitalInclination / 180.0f * M_PI, glm::vec3(1.0f, 0.0f, 1.0f));
     camera.translate(translation);
 
     camera.pushMatrix();
     camera.scale(radiusScale(astre->getDiameter()));
+    camera.rotate(rotationTime * M_PI * 2, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
     program->post(camera);
@@ -298,12 +304,12 @@ void SolarSystem::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
     mMouseStart = mousePosition;
     if (!mFreefly) {
         if (mMouseRotation) {
-        mTrackballCamera.rotateLeft(diff.x);
-        mTrackballCamera.rotateUp(diff.y);
+        mTrackballCamera.rotateLeft(diff.x * M_PI * 2);
+        mTrackballCamera.rotateUp(diff.y * M_PI * 2);
         }
     } else {
-        mFreeflyCamera.rotateLeft(diff.x);
-        mFreeflyCamera.rotateUp(diff.y);
+        mFreeflyCamera.rotateLeft(diff.x * M_PI * 2);
+        mFreeflyCamera.rotateUp(diff.y * M_PI * 2);
     }
     
 
@@ -315,19 +321,36 @@ void SolarSystem::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
     if (mFreefly) {
         switch (key.sym) {
             case SDLK_UP:
+            case SDLK_z:
                 mFreeflyCamera.moveFront(1.0f);
                 break;
             case SDLK_LEFT:
+            case SDLK_q:
                 mFreeflyCamera.moveLeft(1.0f);
                 break;
             case SDLK_RIGHT:
+            case SDLK_d:
                 mFreeflyCamera.moveLeft(-1.0f);
                 break;
             case SDLK_DOWN:
+            case SDLK_s:
                 mFreeflyCamera.moveFront(-1.0f);
+                break;
+            case SDLK_LSHIFT:
+                mFreeflyCamera.moveUp(1.0f);
+                break;
+            case SDLK_SPACE:
+                mFreeflyCamera.moveUp(-1.0f);
                 break;
             default:
                 break;
         }
+    }
+    switch (key.sym) {
+        case SDLK_c:
+            if (type == SDL_KEYUP) mFreefly = !mFreefly;
+            break;
+        default:
+            break;
     }
 }

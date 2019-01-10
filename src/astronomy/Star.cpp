@@ -12,18 +12,8 @@ std::string Astronomy::Star::getName() {
     return mName;
 }
 
-glm::vec3 Astronomy::Star::getPosition(float time) {
-    // todo
-    return glm::vec3(0, 0, 0);
-}
-
 float Astronomy::Star::getDiameter() {
     return static_cast<float>(mDescription.diameter);
-}
-
-glm::vec3 Astronomy::Star::getRotation(float time) {
-    // todo
-    return glm::vec3(0, 0, 0);
 }
 
 glm::vec2 Astronomy::Star::getCenterDistance() {
@@ -36,4 +26,8 @@ bool Astronomy::Star::hasSystem() {
 
 std::shared_ptr<Astronomy::System> Astronomy::Star::getSystem() {
     return mSystem;
+}
+
+Astronomy::description_t Astronomy::Star::getDescription() {
+    return mDescription;
 }

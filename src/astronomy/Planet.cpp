@@ -16,22 +16,8 @@ std::string Astronomy::Planet::getName() {
     return mName;
 }
 
-glm::vec3 Astronomy::Planet::getPosition(float time) {
-
-    time = time * 100.0f;
-
-    float x = mMinor * cos(time);
-    float y = mMajor * sin(time);
-
-    return glm::vec3(x, 0, y);
-}
-
 float Astronomy::Planet::getDiameter() {
     return static_cast<float>(mDescription.diameter);
-}
-
-glm::vec3 Astronomy::Planet::getRotation(float time) {
-    return glm::vec3(0, 0, 0);
 }
 
 glm::vec2 Astronomy::Planet::getCenterDistance() {
@@ -44,4 +30,8 @@ bool Astronomy::Planet::hasSystem() {
 
 std::shared_ptr<Astronomy::System> Astronomy::Planet::getSystem() {
     return mSystem;
+}
+
+Astronomy::description_t Astronomy::Planet::getDescription() {
+    return mDescription;
 }

@@ -55,6 +55,12 @@ namespace GLTools {
         void moveFront(float t);
 
         /**
+         * Move up
+         * @param t The factor to add
+         */
+        void moveUp(float t);
+
+        /**
          * Rotate left
          * @param t The angle to add
          */
@@ -66,25 +72,9 @@ namespace GLTools {
          */
         void rotateUp(float t);
 
-        /**
-         * Set left rotation
-         * @param t The new angle
-         */
-        void setLeftRotation(float t);
-
-        /**
-         * Set up rotation
-         * @param t The new angle
-         */
-        void setUpRotation(float t);
-
-    protected:
-        void computeDirectionVectors();
-
     private:
         glm::vec3 mPosition;
-        float mPhi, mTheta;
-        glm::vec3 mFront, mLeft, mUp;
+        float mPitch, mRoll, mYaw;
 
     };
 

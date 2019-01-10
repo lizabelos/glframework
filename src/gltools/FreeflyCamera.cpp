@@ -3,12 +3,21 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-GLTools::FreeflyCamera::FreeflyCamera() : GLTools::Camera3D(), mTheta(0.0f), mPhi(0.0f) {
+GLTools::FreeflyCamera::FreeflyCamera() : GLTools::Camera3D(), mPitch(0.0f), mRoll(0.0f), mYaw(0.0f) {
 
 }
 
 glm::mat4 GLTools::FreeflyCamera::getViewMatrix() const {
-	return glm::lookAt(mPosition, mPosition + mFront, mUp);
+	glm::mat4 viewMatrix = glm::mat4(1.0f);
+
+	viewMatrix = glm::rotate(viewMatrix, mPitch, glm::vec3(1.0f, 0.0f, 0.0f));
+	viewMatrix = glm::rotate(viewMatrix, mYaw, glm::vec3(0.0f, 1.0f, 0.0f));
+	viewMatrix = glm::translate(viewMatrix, mPosition);
+
+	//viewMatrix = glm::rotate(viewMatrix, mPitch, glm::vec3(1.0f, 0.0f, 0.0f));
+	//viewMatrix = glm::rotate(viewMatrix, mRoll, glm::vec3(0.0f, 0.0f, 1.0f));
+
+	return viewMatrix;
 }
 
 glm::mat4 GLTools::FreeflyCamera::getMVMatrix() const {
@@ -20,45 +29,23 @@ glm::mat4 GLTools::FreeflyCamera::getNormalMatrix() const {
 }
 
 void GLTools::FreeflyCamera::moveLeft(float t) {
-	mPosition = mPosition + mLeft * t;
+	glm::vec3 mFront = glm::vec3(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), mYaw, glm::vec3(0.0f, 1.0f, 0.0f))) * t;
+	mPosition += mFront;
 }
 
 void GLTools::FreeflyCamera::moveFront(float t) {
-	mPosition = mPosition + mFront * t;
+	glm::vec3 mFront = glm::vec3(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), mYaw, glm::vec3(0.0f, 1.0f, 0.0f))) * t;
+	mPosition += mFront;
 }
 
 void GLTools::FreeflyCamera::rotateLeft(float t) {
-	mPhi = mPhi + t;
-	computeDirectionVectors();
+	mYaw = mYaw + t;
 }
 
 void GLTools::FreeflyCamera::rotateUp(float t) {
-	mTheta = mTheta + t;
-	computeDirectionVectors();
+	mPitch = mPitch - t;
 }
 
-void GLTools::FreeflyCamera::setLeftRotation(float t) {
-	mPhi = t;
-	computeDirectionVectors();
-}
-
-void GLTools::FreeflyCamera::setUpRotation(float t) {
-	mTheta = t;
-	computeDirectionVectors();
-}
-
-void GLTools::FreeflyCamera::computeDirectionVectors() {
-	mFront = glm::vec3(
-		cosf(mTheta) * sinf(mPhi),
-		sinf(mTheta),
-		cosf(mTheta) * sinf(mPhi)
-	);
-
-	mLeft = glm::vec3(
-		sinf(mPhi + M_PI / 2.0f),
-		0,
-		cosf(mPhi + M_PI / 2.0f)
-	);
-
-	mUp = glm::cross(mFront, mLeft);
+void GLTools::FreeflyCamera::moveUp(float t) {
+	mPosition.y = mPosition.y + t;
 }
