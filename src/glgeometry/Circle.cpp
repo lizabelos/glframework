@@ -7,15 +7,15 @@
 
 GLGeometry::Circle::Circle(unsigned int code, unsigned long resolution) : ParametricDrawable2D(code) {
 
-    GLGeometry::SVariable p1 = GLGeometry::make_SVariable();
-    GLGeometry::SVariable p2 = GLGeometry::make_SVariable();
+    Maths::SVariable p1 = Maths::make_SVariable();
+    Maths::SVariable p2 = Maths::make_SVariable();
 
-    GLGeometry::Variable cosTheta = cosav(p1 * M_PI);
-    GLGeometry::Variable sinTheta = sinav(p1 * M_PI);
+    Maths::Variable cosTheta = cosav(p1 * M_PI);
+    Maths::Variable sinTheta = sinav(p1 * M_PI);
 
-    GLGeometry::Variable x = cosTheta * p2;
-    GLGeometry::Variable y = sinTheta * p2;
-    GLGeometry::CVariable z = GLGeometry::make_CVariable(0.0f);
+    Maths::Variable x = cosTheta * p2;
+    Maths::Variable y = sinTheta * p2;
+    Maths::CVariable z = Maths::make_CVariable(0.0f);
 
     initialize(x, y, x, y, p1, p2, resolution, 2);
 

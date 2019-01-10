@@ -9,15 +9,15 @@
 #include "ParametricDrawable.h"
 
 
-GLGeometry::ParametricDrawable3D::ParametricDrawable3D(unsigned int code) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0) {
+GLGeometry::ParametricDrawable3D::ParametricDrawable3D(unsigned int code) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0), mUseLine(false) {
 
 }
 
-void GLGeometry::ParametricDrawable3D::initialize(GLGeometry::Variable x, GLGeometry::Variable y,
-                                                GLGeometry::Variable z, GLGeometry::Variable normX,
-                                                GLGeometry::Variable normY, GLGeometry::Variable normZ,
-                                                GLGeometry::Variable texX, GLGeometry::Variable texY,
-                                                GLGeometry::SVariable p1, GLGeometry::SVariable p2,
+void GLGeometry::ParametricDrawable3D::initialize(Maths::Variable x, Maths::Variable y,
+                                                Maths::Variable z, Maths::Variable normX,
+                                                Maths::Variable normY, Maths::Variable normZ,
+                                                Maths::Variable texX, Maths::Variable texY,
+                                                Maths::SVariable p1, Maths::SVariable p2,
                                                 unsigned long resolution1, unsigned long resolution2) {
 
     mResolution1 = resolution1;
@@ -54,8 +54,13 @@ void GLGeometry::ParametricDrawable3D::render(GLTools::Camera<glm::vec3> &camera
     program->use();
 
     mVertexArrayObject.bind();
-    glDrawElements(GL_TRIANGLES, getIndicesNumber(mResolution1, mResolution2), GL_UNSIGNED_INT, 0);
-    // glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mSize));
+
+    if (mUseLine) {
+        glDrawElements(GL_LINES, getIndicesNumber(mResolution1, mResolution2), GL_UNSIGNED_INT, 0);
+    } else {
+        glDrawElements(GL_TRIANGLES, getIndicesNumber(mResolution1, mResolution2), GL_UNSIGNED_INT, 0);
+    }
+
     glBindVertexArray(0);
 }
 
@@ -102,14 +107,19 @@ GLsizei GLGeometry::ParametricDrawable3D::getIndicesNumber(unsigned long resolut
     return resolution1 * resolution2 * 6;
 }
 
-GLGeometry::ParametricDrawable2D::ParametricDrawable2D(unsigned int code) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0) {
+bool GLGeometry::ParametricDrawable3D::setLine(bool useLine) {
+    mUseLine = useLine;
+}
+
+
+GLGeometry::ParametricDrawable2D::ParametricDrawable2D(unsigned int code) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0), mUseLine(false) {
 
 }
 
 void
-GLGeometry::ParametricDrawable2D::initialize(GLGeometry::Variable x, GLGeometry::Variable y, GLGeometry::Variable texX,
-                                             GLGeometry::Variable texY, GLGeometry::SVariable p1,
-                                             GLGeometry::SVariable p2, unsigned long resolution1,
+GLGeometry::ParametricDrawable2D::initialize(Maths::Variable x, Maths::Variable y, Maths::Variable texX,
+                                             Maths::Variable texY, Maths::SVariable p1,
+                                             Maths::SVariable p2, unsigned long resolution1,
                                              unsigned long resolution2) {
     mResolution1 = resolution1;
     mResolution2 = resolution2;
@@ -145,7 +155,13 @@ void GLGeometry::ParametricDrawable2D::render(GLTools::Camera<glm::vec2> &camera
     program->use();
 
     mVertexArrayObject.bind();
-    glDrawElements(GL_TRIANGLES, getIndicesNumber(mResolution1, mResolution2), GL_UNSIGNED_INT, 0);
+
+    if (mUseLine) {
+        glDrawElements(GL_LINES, getIndicesNumber(mResolution1, mResolution2), GL_UNSIGNED_INT, 0);
+    } else {
+        glDrawElements(GL_TRIANGLES, getIndicesNumber(mResolution1, mResolution2), GL_UNSIGNED_INT, 0);
+    }
+
     // glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mSize));
     glBindVertexArray(0);
 
@@ -193,4 +209,8 @@ GLGeometry::ParametricDrawable2D::getIndices(unsigned long resolution1, unsigned
 
 GLsizei GLGeometry::ParametricDrawable2D::getIndicesNumber(unsigned long resolution1, unsigned long resolution2) const {
     return resolution1 * resolution2 * 6;
+}
+
+bool GLGeometry::ParametricDrawable2D::setLine(bool useLine) {
+    mUseLine = useLine;
 }

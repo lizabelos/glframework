@@ -8,6 +8,8 @@
 
 Astronomy::Planet::Planet(const std::string &name, Astronomy::description_t description) : mName(name), mDescription(description) {
     mSystem = std::make_shared<Astronomy::System>();
+    mMajor = description.sunDistance;
+    mMinor = sqrt(mMajor * (1 - (description.orbitalEccentricity * description.orbitalEccentricity)));
 }
 
 std::string Astronomy::Planet::getName() {
@@ -15,7 +17,13 @@ std::string Astronomy::Planet::getName() {
 }
 
 glm::vec3 Astronomy::Planet::getPosition(float time) {
-    return glm::vec3(glm::vec4(0, 0, static_cast<float>(mDescription.sunDistance), 1) * glm::rotate(glm::mat4(1.0f), static_cast<float>(time * mDescription.orbitalPeriod), glm::vec3(0, 1, 0)));
+
+    time = time * 100.0f;
+
+    float x = mMinor * cos(time);
+    float y = mMajor * sin(time);
+
+    return glm::vec3(x, 0, y);
 }
 
 float Astronomy::Planet::getDiameter() {
@@ -26,8 +34,8 @@ glm::vec3 Astronomy::Planet::getRotation(float time) {
     return glm::vec3(0, 0, 0);
 }
 
-float Astronomy::Planet::getCenterDistance() {
-    return mDescription.sunDistance;
+glm::vec2 Astronomy::Planet::getCenterDistance() {
+    return glm::vec2(mMinor, mMajor);
 }
 
 bool Astronomy::Planet::hasSystem() {

@@ -21,7 +21,7 @@ namespace Astronomy {
         glm::vec3 getPosition(float time) override;
         glm::vec3 getRotation(float time) override;
         float getDiameter() override;
-        float getCenterDistance() override;
+        glm::vec2 getCenterDistance() override;
 
         bool hasSystem() override;
         std::shared_ptr<System> getSystem() override;

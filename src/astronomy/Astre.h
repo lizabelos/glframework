@@ -19,7 +19,7 @@ namespace Astronomy {
         virtual std::string getName() = 0;
         virtual glm::vec3 getPosition(float time) = 0;
         virtual glm::vec3 getRotation(float time) = 0;
-        virtual float getCenterDistance() = 0;
+        virtual glm::vec2 getCenterDistance() = 0;
         virtual float getDiameter() = 0;
 
         virtual bool hasSystem() = 0;

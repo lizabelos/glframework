@@ -13,6 +13,7 @@ namespace Astronomy {
         double orbitalPeriod;
         double orbitalVelocity;
         double orbitalInclination;
+        double orbitalEccentricity;
         int moonNumber;
         bool ringSystem;
     } description_t;

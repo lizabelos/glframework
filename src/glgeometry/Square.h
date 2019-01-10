@@ -4,7 +4,7 @@
 #define TANGRAM_SQUARE_H
 
 #include "../gltools/Drawable"
-#include "Variable"
+#include "../maths/Variable"
 #include "../gltools/Buffer"
 #include "../gltools/Program"
 

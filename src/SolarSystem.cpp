@@ -18,7 +18,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mSquare(1), mMouseRotation(false), mProportionalView(true), selectionHover(0), mFreefly(false), mPlay(true) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mSquare(1), mMouseRotation(false), mProportionalView(true), selectionHover(0), mFreefly(false), mPlay(true) {
 
     std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
 
@@ -35,6 +35,7 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
     if (entryMap.count("Orbital Period") != 1) throw std::runtime_error("Columns Orbital Period not found");
     if (entryMap.count("Orbital Velocity") != 1) throw std::runtime_error("Columns Orbital Velocity not found");
     if (entryMap.count("Orbital Inclination") != 1) throw std::runtime_error("Columns Orbital Inclination not found");
+    if (entryMap.count("Orbital Eccentricity") != 1) throw std::runtime_error("Columns Orbital Inclination not found");
     if (entryMap.count("Number of Moons") != 1) throw std::runtime_error("Columns Number of Moons not found");
     if (entryMap.count("Ring System") != 1) throw std::runtime_error("Columns Ring System not found");
 
@@ -53,6 +54,7 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
         description.orbitalPeriod = atof(csv[entryMap["Orbital Period"]][i].c_str());
         description.orbitalVelocity = atof(csv[entryMap["Orbital Velocity"]][i].c_str());
         description.orbitalInclination = atof(csv[entryMap["Orbital Inclination"]][i].c_str());
+        description.orbitalEccentricity = atof(csv[entryMap["Orbital Eccentricity"]][i].c_str());
         description.moonNumber = atoi(csv[entryMap["Number of Moons"]][i].c_str());
         description.ringSystem = csv[entryMap["Ring System"]][i] == "Yes";
 
@@ -75,6 +77,7 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mSelection3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/selection3d.fs.glsl");
+    mLine3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/white3d.fs.glsl");
 
     mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mSelection2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
@@ -163,7 +166,7 @@ void SolarSystem::renderButton(GLTools::RenderStep renderStep, std::shared_ptr<G
 void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int &i) {
 
     std::vector<std::shared_ptr<Astronomy::Astre>> astres = system->getAstres();
-    std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance() < b->getCenterDistance(); });
+    std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance().y < b->getCenterDistance().y; });
 
 
 
@@ -181,9 +184,20 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
     texture->activate(GL_TEXTURE0);
     program->postTexture("uTexture", 0);
 
+
+    if (renderStep == GLTools::RENDER_SCREEN) {
+        camera.pushMatrix();
+        camera.scale(glm::vec3(translationScaleOneAxis(astre->getCenterDistance().x, i), 1.0f, translationScaleOneAxis(astre->getCenterDistance().y, i)));
+        program->post(camera);
+        mCircle3D.setLine(true);
+        mCircle3D.render(camera, mLine3DProgram, renderStep);
+        camera.popMatrix();
+    }
+
     camera.pushMatrix();
 
-    camera.translate(translationScale(astre->getPosition(currentTime), i));
+    glm::vec3 translation = glm::vec3(translationScaleOneAxis(astre->getCenterDistance().x, i) * cos(currentTime * 100.0f), 0.0f, translationScaleOneAxis(astre->getCenterDistance().y, i) * sin(currentTime * 100.0f));
+    camera.translate(translation);
 
     camera.pushMatrix();
     camera.scale(radiusScale(astre->getDiameter()));
@@ -209,21 +223,26 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
 
 
 glm::vec3 SolarSystem::translationScale(glm::vec3 translation, int i) {
-    //translation = glm::log(translation);
-    // todo : need to normalize thanks to the center point of the astre
-    float currentDistance = glm::distance(translation, glm::vec3(0, 0, 0));
+    translation.x = translationScaleOneAxis(translation.x, i);
+    translation.y = translationScaleOneAxis(translation.y, i);
+    translation.z = translationScaleOneAxis(translation.z, i);
+    return translation;
+}
 
-    if (currentDistance == 0) return translation;
-    // float wantedDistance = (float)(i * 3) + currentDistance * 0.000000001f;
-    float wantedDistance;
-    if (mProportionalView) wantedDistance = (float)(i * 3) + sqrtf(currentDistance) / 1000.0f;
-    else wantedDistance = i * 6;
-    return translation / currentDistance * wantedDistance;
+float SolarSystem::translationScaleOneAxis(float translation, int i) {
+
+    if (translation == 0) return translation;
+
+    if (!mProportionalView) {
+        return i * 6;
+    }
+
+    return logf(translation + 1.0f) * i * 0.15f;
 }
 
 float SolarSystem::radiusScale(float radius) {
     if (!mProportionalView) return 1;
-    radius = (1.0f + sqrtf(radius)) / 100.0f;
+    radius = (1.0f + sqrtf(radius)) / 1000.0f;
     return radius;
 }
 
