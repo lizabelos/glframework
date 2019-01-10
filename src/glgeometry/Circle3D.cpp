@@ -4,7 +4,7 @@
 
 #include "Circle3D.h"
 
-GLGeometry::Circle3D::Circle3D(unsigned int code, unsigned long resolution, bool onlyBorder) : ParametricDrawable3D(code) {
+GLGeometry::Circle3D::Circle3D(unsigned int code, unsigned long resolution, bool onlyBorder, float ring) : ParametricDrawable3D(code) {
 
     Maths::SVariable p1 = Maths::make_SVariable();
     Maths::SVariable p2 = Maths::make_SVariable();
@@ -12,8 +12,8 @@ GLGeometry::Circle3D::Circle3D(unsigned int code, unsigned long resolution, bool
     Maths::Variable cosTheta = cosav(p1 * M_PI * 2);
     Maths::Variable sinTheta = sinav(p1 * M_PI * 2);
 
-    Maths::Variable x = cosTheta * p2;
-    Maths::Variable y = sinTheta * p2;
+    Maths::Variable x = cosTheta * (p2 + (ring * 2));
+    Maths::Variable y = sinTheta * (p2 + (ring * 2));
 
     if (onlyBorder) {
         x = cosTheta;

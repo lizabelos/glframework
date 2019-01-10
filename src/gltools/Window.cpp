@@ -160,15 +160,7 @@ void GLTools::Window::processEvent(const SDL_Event &event, bool &loop) {
     }
     if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
     {
-        switch (event.key.keysym.sym)
-        {
-            case SDLK_ESCAPE:
-                loop = false;
-                break;
-            default:
-                keyboard(event.key.type, event.key.repeat, event.key.keysym);
-                break;
-        }
+        keyboard(event.key.type, event.key.repeat, event.key.keysym);
     }
     if (event.type == SDL_WINDOWEVENT) {
         switch (event.window.event) {

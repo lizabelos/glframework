@@ -35,3 +35,93 @@ std::shared_ptr<Astronomy::System> Astronomy::Planet::getSystem() {
 Astronomy::description_t Astronomy::Planet::getDescription() {
     return mDescription;
 }
+
+Astronomy::TimePath Astronomy::Planet::getTimePath(Astronomy::PathScale scale) {
+    Astronomy::TimePath path;
+
+    if (mDescription.rotationPeriod == 0) {
+        path.rotation = Maths::make_CVariable(0.0f);
+    } else {
+        path.rotation = path.time * 1000.0f / mDescription.rotationPeriod;
+    }
+
+    if (mDescription.orbitalPeriod == 0) {
+        path.x = Maths::make_CVariable(0.0f);
+        path.y = Maths::make_CVariable(0.0f);
+        path.z = Maths::make_CVariable(0.0f);
+        return path;
+    }
+
+    Maths::Variable orbitalTime = path.time * 1000.0f / mDescription.orbitalPeriod;
+
+    switch (scale.type) {
+        case NORMAL:
+            path.x = Maths::cosav(orbitalTime) * mMinor;
+            path.z = Maths::sinav(orbitalTime) * mMajor;
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / 2.0f));
+            break;
+        case LOG:
+            path.x = Maths::cosav(orbitalTime) * log(mMinor);
+            path.z = Maths::sinav(orbitalTime) * log(mMajor);
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            break;
+        case LOGMUL:
+            path.x = Maths::cosav(orbitalTime) * log(mMinor) * scale.param;
+            path.z = Maths::sinav(orbitalTime) * log(mMajor) * scale.param;
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            break;
+        case INDEX:
+            path.x = Maths::cosav(orbitalTime) * scale.param;
+            path.z = Maths::sinav(orbitalTime) * scale.param;
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(1.0f);
+            break;
+    }
+
+    return path;
+}
+
+Astronomy::AnglePath Astronomy::Planet::getAnglePath(Astronomy::PathScale scale) {
+    Astronomy::AnglePath path;
+
+    path.rotation = Maths::make_CVariable(0.0f);
+
+    if (mDescription.orbitalPeriod == 0) {
+        path.x = Maths::make_CVariable(0.0f);
+        path.y = Maths::make_CVariable(0.0f);
+        path.z = Maths::make_CVariable(0.0f);
+        return path;
+    }
+
+    switch (scale.type) {
+        case NORMAL:
+            path.x = Maths::cosav(path.angle * M_PI * 2) * mMinor;
+            path.z = Maths::sinav(path.angle * M_PI * 2) * mMajor;
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / 2.0f));
+            break;
+        case LOG:
+            path.x = Maths::cosav(path.angle * M_PI * 2) * log(mMinor);
+            path.z = Maths::sinav(path.angle * M_PI * 2) * log(mMajor);
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            break;
+        case LOGMUL:
+            path.x = Maths::cosav(path.angle * M_PI * 2) * log(mMinor) * scale.param;
+            path.z = Maths::sinav(path.angle * M_PI * 2) * log(mMajor) * scale.param;
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            break;
+        case INDEX:
+            path.x = Maths::cosav(path.angle * M_PI * 2) * scale.param;
+            path.z = Maths::sinav(path.angle * M_PI * 2) * scale.param;
+            path.y = Maths::make_CVariable(0.0f);
+            path.radius = Maths::make_CVariable(1.0f);
+            break;
+    }
+
+    return path;
+}

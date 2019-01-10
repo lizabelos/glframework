@@ -50,6 +50,9 @@ namespace Maths {
     std::shared_ptr<Maths::AbstractVariable> cosav(Maths::Variable a);
     std::shared_ptr<Maths::AbstractVariable> sinav(Maths::Variable a);
     std::shared_ptr<Maths::AbstractVariable> atanav(Maths::Variable a, Maths::Variable b);
+    std::shared_ptr<Maths::AbstractVariable> logav(Maths::Variable a);
+
+    void rotate(Variable &x, Variable &y, Variable &z, float angle, float ax, float ay, float az);
 
 }
 

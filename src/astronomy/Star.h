@@ -26,6 +26,9 @@ namespace Astronomy {
         bool hasSystem() override;
         std::shared_ptr<System> getSystem() override;
 
+        TimePath getTimePath(PathScale scale) override;
+        AnglePath getAnglePath(PathScale scale) override;
+
     private:
         std::string mName;
         description_t mDescription;

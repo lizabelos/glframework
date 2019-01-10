@@ -35,11 +35,14 @@ protected:
     void render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program);
     void render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program);
     void renderButton(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover);
-    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int &i);
-    void renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre, int &i);
+    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
+                          std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system,
+                          int &i, int &subi, int &mousei);
+    void renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
+                         std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre,
+                         int &i, int &subi, int &mousei);
+    std::shared_ptr<Astronomy::Astre> searchAstre(std::shared_ptr<Astronomy::Astre> astre, int index, int &i);
 
-    glm::vec3 translationScale(glm::vec3 translation, int i);
-    float translationScaleOneAxis(float translation, int i);
     float radiusScale(float radius);
 
     std::shared_ptr<GLTools::Texture> getTexture(const std::string &name);
@@ -54,10 +57,11 @@ private:
     GLTools::FreeflyCamera mFreeflyCamera;
     GLTools::Camera2D mCamera2D;
     GLGeometry::Sphere mSphere;
-    GLGeometry::Circle3D mCircle3D;
+    GLGeometry::Circle3D mCircle3D, mRing3D;
     GLGeometry::Square mSquare;
 
     std::shared_ptr<Astronomy::Star> mStarSystem;
+    std::shared_ptr<Astronomy::Astre> mCurrentSystem;
     std::map<std::string, std::shared_ptr<Astronomy::Astre>> mAstres;
 
     std::shared_ptr<GLTools::Program> mRender3DProgram, mLine3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram;

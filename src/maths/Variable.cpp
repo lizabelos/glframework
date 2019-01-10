@@ -124,6 +124,25 @@ private:
 
 };
 
+class LogavVariable : public Maths::AbstractVariable {
+public:
+    explicit LogavVariable(Maths::Variable a) : mA(a) {
+
+    }
+
+    void next() override {
+        mA->next();
+    }
+
+    float get() const override {
+        return logf(mA->get());
+    }
+
+private:
+    Maths::Variable  mA;
+
+};
+
 class AtanVariable : public Maths::AbstractVariable {
 public:
     AtanVariable(Maths::Variable a, Maths::Variable b) : mA(a), mB(b) {
@@ -186,6 +205,10 @@ std::shared_ptr<Maths::AbstractVariable> Maths::sinav(Maths::Variable a) {
 
 std::shared_ptr<Maths::AbstractVariable> Maths::atanav(Maths::Variable a, Maths::Variable b) {
     return std::shared_ptr<Maths::AbstractVariable>(new AtanVariable(a, b));
+}
+
+std::shared_ptr<Maths::AbstractVariable> Maths::logav(Maths::Variable a) {
+    return std::shared_ptr<Maths::AbstractVariable>(new LogavVariable(a));
 }
 
 Maths::ConstantVariable::ConstantVariable(float constant) {

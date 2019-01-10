@@ -1,6 +1,5 @@
 #include <memory>
-
-#include <memory>
+#include <iostream>
 
 //
 // Created by thomas on 11/14/18.

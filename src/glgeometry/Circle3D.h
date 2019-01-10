@@ -13,7 +13,7 @@ namespace GLGeometry {
     class Circle3D : public ParametricDrawable3D {
 
     public:
-        Circle3D(unsigned int code, unsigned long resolution, bool onlyBorder = false);
+        Circle3D(unsigned int code, unsigned long resolution, bool onlyBorder = false, float ring = 0.0f);
 
     };
 

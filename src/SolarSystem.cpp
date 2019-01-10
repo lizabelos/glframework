@@ -18,7 +18,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mSquare(1), mMouseRotation(false), mProportionalView(true), selectionHover(0), mFreefly(false), mPlay(true) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mMouseRotation(false), mProportionalView(true), selectionHover(0), mFreefly(false), mPlay(true) {
 
     std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
 
@@ -82,6 +82,8 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
     mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mSelection2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
 
+
+    mCurrentSystem = mStarSystem;
 }
 
 void SolarSystem::render(GLTools::RenderStep renderStep) {
@@ -128,8 +130,9 @@ void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &ca
 
     camera.identity();
 
-    int i = 1;
-    renderAstre(renderStep, camera, program, mStarSystem, i);
+    int i = 1, subi = 0, mousei = 1;
+    renderAstre(renderStep, camera, program, mCurrentSystem,
+                i, subi, mousei);
 }
 
 void SolarSystem::render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program) {
@@ -163,20 +166,26 @@ void SolarSystem::renderButton(GLTools::RenderStep renderStep, std::shared_ptr<G
 
 }
 
-void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system, int &i) {
+void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
+                               std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system,
+                               int &i, int &subi, int &mousei) {
 
     std::vector<std::shared_ptr<Astronomy::Astre>> astres = system->getAstres();
     std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance().y < b->getCenterDistance().y; });
 
 
-
+    int ni = 1; subi++;
     for (const std::shared_ptr<Astronomy::Astre> &astre : astres) {
-        renderAstre(renderStep, camera, program, astre, i);
+        renderAstre(renderStep, camera, program, astre,
+                    ni, subi, mousei);
     }
+    subi--;
 
 }
 
-void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre, int &i) {
+void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
+                              std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre,
+                              int &i, int &subi, int &mousei) {
     float currentTime = getTime() / 1000.0f;
     if (!mPlay) currentTime = lastTime;
 
@@ -185,71 +194,92 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
     program->postTexture("uTexture", 0);
 
 
-    if (renderStep == GLTools::RENDER_SCREEN) {
+    Astronomy::PathScale pathScale;
+
+    if (mProportionalView) {
+        pathScale.type = Astronomy::PathScaleType::LOGMUL;
+        pathScale.param->set((float)i / (float)subi);
+    } else {
+        pathScale.type = Astronomy::PathScaleType::INDEX;
+        pathScale.param->set((float)i * 6.0f / (float)subi);
+    }
+
+
+    if (renderStep == GLTools::RENDER_SCREEN && subi != 0) {
         camera.pushMatrix();
-        if (mProportionalView) camera.rotate(astre->getDescription().orbitalInclination / 180.0f * M_PI, glm::vec3(1.0f, 0.0f, 1.0f));
-        camera.scale(glm::vec3(translationScaleOneAxis(astre->getCenterDistance().x, i), 1.0f, translationScaleOneAxis(astre->getCenterDistance().y, i)));
-        program->post(camera);
-        mCircle3D.setLine(true);
-        mCircle3D.render(camera, mLine3DProgram, renderStep);
+
+        Astronomy::AnglePath path = astre->getAnglePath(pathScale);
+
+        GLGeometry::ParametricDrawable3D ellipse(0);
+
+        Maths::SVariable p2 = Maths::make_SVariable();
+
+        ellipse.initialize(path.x, path.y, path.z, path.x, path.y, path.z, path.x, path.y, path.angle, p2, 256, 1);
+        ellipse.setLine(true);
+
+        if (mProportionalView) camera.rotate(
+                    static_cast<float>(astre->getDescription().orbitalInclination / 180.0 * M_PI), glm::vec3(1.0f, 0.0f, 1.0f));
+
+        ellipse.render(camera, mLine3DProgram, renderStep);
         camera.popMatrix();
     }
 
     camera.pushMatrix();
 
-    float orbitalTime = currentTime * 1000.0f / (astre->getDescription().orbitalPeriod + 1.0f);
-    float rotationTime = currentTime * 1000.0f / (astre->getDescription().rotationPeriod + 1.0f);
 
-    glm::vec3 translation = glm::vec3(translationScaleOneAxis(astre->getCenterDistance().x, i) * cos(orbitalTime), 0.0f, translationScaleOneAxis(astre->getCenterDistance().y, i) * sin(orbitalTime));
-    if (mProportionalView) camera.rotate(astre->getDescription().orbitalInclination / 180.0f * M_PI, glm::vec3(1.0f, 0.0f, 1.0f));
-    camera.translate(translation);
+    Astronomy::TimePath path = astre->getTimePath(pathScale);
+    path.time->set(currentTime);
+
+    glm::vec3 translation = glm::vec3(path.x->get(), path.y->get(), path.z->get());
+
+
+    if (mProportionalView) {
+        camera.rotate(static_cast<float>(astre->getDescription().orbitalInclination / 180.0 * M_PI), glm::vec3(1.0f, 0.0f, 1.0f));
+    }
+
+    if (subi != 0) {
+        camera.translate(glm::vec3(path.x->get(), path.y->get(), path.z->get()));
+    }
 
     camera.pushMatrix();
-    camera.scale(radiusScale(astre->getDiameter()));
-    camera.rotate(rotationTime * M_PI * 2, glm::vec3(0.0f, 1.0f, 0.0f));
-
+    camera.scale(path.radius->get());
+    camera.rotate(path.rotation->get(), glm::vec3(0.0f, 1.0f, 0.0f));
 
     program->post(camera);
-    program->post("uId", 255 - i);
+    program->post("uId", 255 - mousei);
 
     mSphere.render(camera, program, renderStep);
+    i++;
+    mousei++;
 
-    camera.popMatrix();
-
-    if (astre->hasSystem()) {
-        renderSystem(renderStep, camera, program, astre->getSystem(), i);
+    if (renderStep == GLTools::RENDER_SCREEN && astre->getDescription().ringSystem) {
+        camera.scale(1.0f);
+        mRing3D.render(camera, mLine3DProgram, renderStep);
     }
 
     camera.popMatrix();
+    if (astre->hasSystem()) {
+        renderSystem(renderStep, camera, program, astre->getSystem(), i, subi, mousei);
+    }
+    camera.popMatrix();
 
 
+}
+
+std::shared_ptr<Astronomy::Astre> SolarSystem::searchAstre(std::shared_ptr<Astronomy::Astre> astre, int index, int &i) {
+
+    if (index == i) return astre;
 
     i++;
-}
-
-
-glm::vec3 SolarSystem::translationScale(glm::vec3 translation, int i) {
-    translation.x = translationScaleOneAxis(translation.x, i);
-    translation.y = translationScaleOneAxis(translation.y, i);
-    translation.z = translationScaleOneAxis(translation.z, i);
-    return translation;
-}
-
-float SolarSystem::translationScaleOneAxis(float translation, int i) {
-
-    if (translation == 0) return translation;
-
-    if (!mProportionalView) {
-        return i * 6;
+    if (astre->hasSystem()) {
+        for (const std::shared_ptr<Astronomy::Astre> &sastre : astre->getSystem()->getAstres()) {
+            std::shared_ptr<Astronomy::Astre> result = searchAstre(sastre, index, i);
+            if (result != nullptr) return result;
+        }
     }
 
-    return logf(translation + 1.0f) * i * 0.15f;
-}
+    return nullptr;
 
-float SolarSystem::radiusScale(float radius) {
-    if (!mProportionalView) return 1;
-    radius = (1.0f + sqrtf(radius)) / 1000.0f;
-    return radius;
 }
 
 std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &name) {
@@ -295,7 +325,17 @@ void SolarSystem::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button,
     }
 
     if (state == SDL_RELEASED) {
-        mMouseRotation = false;
+        if (mMouseRotation) {
+            mMouseRotation = false;
+        }
+    }
+
+    if (state == SDL_PRESSED) {
+        int planetid = 255 - selection; int i = 1;
+        std::cout << "Click on planet : " << planetid << std::endl;
+        std::shared_ptr<Astronomy::Astre> astre = searchAstre(mCurrentSystem, planetid, i);
+        if (astre != nullptr) mCurrentSystem = astre;
+        std::cout << "New system center : " << mCurrentSystem->getName() << std::endl;
     }
 }
 
@@ -314,6 +354,11 @@ void SolarSystem::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
     
 
     selectionHover = selection;
+
+
+    int planetid = 255 - selection; int i = 1;
+    std::shared_ptr<Astronomy::Astre> astre = searchAstre(mCurrentSystem, planetid, i);
+    if (astre != nullptr) std::cout << "Mouse on planet : " << planetid << " " << astre->getName() << std::endl;
 
 }
 
@@ -349,6 +394,10 @@ void SolarSystem::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
     switch (key.sym) {
         case SDLK_c:
             if (type == SDL_KEYUP) mFreefly = !mFreefly;
+            break;
+        case SDLK_ESCAPE:
+            mCurrentSystem = mStarSystem;
+            std::cout << "New system center : " << mCurrentSystem->getName() << std::endl;
             break;
         default:
             break;
