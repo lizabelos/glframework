@@ -13,6 +13,9 @@ namespace Astronomy {
         NORMAL = 0, LOG = 1, LOGMUL = 2, INDEX = 3
     };
 
+    const float LOG_RADIUS_SCALE = 1000.0f;
+    const float NORMAL_SIZE_SCALE = 1391016.0f;
+
     class PathScale {
 
     public:

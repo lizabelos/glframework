@@ -47,13 +47,13 @@ Astronomy::TimePath Astronomy::Star::getTimePath(Astronomy::PathScale scale) {
 
     switch (scale.type) {
         case NORMAL:
-            path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / 2.0f));
+            path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / (2.0f * NORMAL_SIZE_SCALE)));
             break;
         case LOG:
-            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;
         case LOGMUL:
-            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;
         case INDEX:
             path.radius = Maths::make_CVariable(1.0f);
@@ -74,13 +74,13 @@ Astronomy::AnglePath Astronomy::Star::getAnglePath(Astronomy::PathScale scale) {
 
     switch (scale.type) {
         case NORMAL:
-            path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / 2.0f));
+            path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / (2.0f * NORMAL_SIZE_SCALE)));
             break;
         case LOG:
-            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;
         case LOGMUL:
-            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
+            path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;
         case INDEX:
             path.radius = Maths::make_CVariable(1.0f);
