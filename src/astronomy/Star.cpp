@@ -17,7 +17,7 @@ float Astronomy::Star::getDiameter() {
 }
 
 glm::vec2 Astronomy::Star::getCenterDistance() {
-    return glm::vec2(mDescription.sunDistance, mDescription.sunDistance);
+    return glm::vec2(0, 0);
 }
 
 bool Astronomy::Star::hasSystem() {

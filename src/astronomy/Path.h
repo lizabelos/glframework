@@ -10,7 +10,7 @@
 namespace Astronomy {
 
     enum PathScaleType {
-        NORMAL, LOG, LOGMUL, INDEX
+        NORMAL = 0, LOG = 1, LOGMUL = 2, INDEX = 3
     };
 
     class PathScale {

@@ -8,8 +8,8 @@
 
 Astronomy::Planet::Planet(const std::string &name, Astronomy::description_t description) : mName(name), mDescription(description) {
     mSystem = std::make_shared<Astronomy::System>();
-    mMajor = description.sunDistance;
-    mMinor = sqrt(mMajor * (1 - (description.orbitalEccentricity * description.orbitalEccentricity)));
+    mMajor = description.aphelion;
+    mMinor = description.perihelion;
 }
 
 std::string Astronomy::Planet::getName() {
@@ -54,22 +54,26 @@ Astronomy::TimePath Astronomy::Planet::getTimePath(Astronomy::PathScale scale) {
 
     Maths::Variable orbitalTime = path.time * 1000.0f / mDescription.orbitalPeriod;
 
+    float h_radius = (mMajor + mMinor) / 2;
+    float l_radius = sqrt(h_radius * (1 - (mDescription.orbitalEccentricity * mDescription.orbitalEccentricity)));
+    float shift = mMajor - (mMajor + mMinor) / 2;
+
     switch (scale.type) {
         case NORMAL:
-            path.x = Maths::cosav(orbitalTime) * mMinor;
-            path.z = Maths::sinav(orbitalTime) * mMajor;
+            path.x = Maths::cosav(orbitalTime) * l_radius;
+            path.z = Maths::sinav(orbitalTime) * h_radius + shift;
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / 2.0f));
             break;
         case LOG:
-            path.x = Maths::cosav(orbitalTime) * log(mMinor);
-            path.z = Maths::sinav(orbitalTime) * log(mMajor);
+            path.x = Maths::cosav(orbitalTime) * log(l_radius);
+            path.z = Maths::sinav(orbitalTime) * log(h_radius) + log(shift);
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
             break;
         case LOGMUL:
-            path.x = Maths::cosav(orbitalTime) * log(mMinor) * scale.param;
-            path.z = Maths::sinav(orbitalTime) * log(mMajor) * scale.param;
+            path.x = Maths::cosav(orbitalTime) * log(l_radius) * scale.param;
+            path.z = Maths::sinav(orbitalTime) * log(h_radius) * scale.param + log(shift);
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
             break;
@@ -96,22 +100,26 @@ Astronomy::AnglePath Astronomy::Planet::getAnglePath(Astronomy::PathScale scale)
         return path;
     }
 
+    float h_radius = (mMajor + mMinor) / 2;
+    float l_radius = sqrt(h_radius * (1 - (mDescription.orbitalEccentricity * mDescription.orbitalEccentricity)));
+    float shift = mMajor - (mMajor + mMinor) / 2;
+
     switch (scale.type) {
         case NORMAL:
-            path.x = Maths::cosav(path.angle * M_PI * 2) * mMinor;
-            path.z = Maths::sinav(path.angle * M_PI * 2) * mMajor;
+            path.x = Maths::cosav(path.angle * M_PI * 2) * l_radius;
+            path.z = Maths::sinav(path.angle * M_PI * 2) * h_radius + shift;
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / 2.0f));
             break;
         case LOG:
-            path.x = Maths::cosav(path.angle * M_PI * 2) * log(mMinor);
-            path.z = Maths::sinav(path.angle * M_PI * 2) * log(mMajor);
+            path.x = Maths::cosav(path.angle * M_PI * 2) * log(l_radius);
+            path.z = Maths::sinav(path.angle * M_PI * 2) * log(h_radius) + log(shift);
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
             break;
         case LOGMUL:
-            path.x = Maths::cosav(path.angle * M_PI * 2) * log(mMinor) * scale.param;
-            path.z = Maths::sinav(path.angle * M_PI * 2) * log(mMajor) * scale.param;
+            path.x = Maths::cosav(path.angle * M_PI * 2) * log(l_radius) * scale.param;
+            path.z = Maths::sinav(path.angle * M_PI * 2) * log(h_radius) * scale.param + log(shift);
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / 1000.0f));
             break;

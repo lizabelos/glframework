@@ -69,10 +69,11 @@ private:
 
     std::shared_ptr<GLTools::Texture> mTextureProp, mTexturePlay, mTextureCamera;
 
+    Astronomy::PathScaleType mScaleType;
+
     bool mMouseRotation;
     glm::vec2 mMouseStart;
 
-    bool mProportionalView;
     bool mFreefly;
     bool mPlay;
 

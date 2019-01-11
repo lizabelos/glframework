@@ -9,7 +9,8 @@ namespace Astronomy {
     typedef struct description_t {
         double diameter;
         double rotationPeriod;
-        double sunDistance;
+        double perihelion;
+        double aphelion;
         double orbitalPeriod;
         double orbitalVelocity;
         double orbitalInclination;

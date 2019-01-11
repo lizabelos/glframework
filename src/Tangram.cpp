@@ -129,7 +129,7 @@ void Tangram::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, uns
     }
 
     if (id < drawables.size() && id >= 0 && state == SDL_RELEASED && button == SDL_BUTTON_RIGHT) {
-        drawables[id].rotate(M_PIf32 / 2, glm::vec2(1.0f, 1.0f));
+        drawables[id].rotate(M_PI / 2, glm::vec2(1.0f, 1.0f));
         mNeedRender = true;
     }
 

@@ -18,7 +18,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mMouseRotation(false), mProportionalView(true), selectionHover(0), mFreefly(false), mPlay(true) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mMouseRotation(false), mScaleType(Astronomy::PathScaleType::INDEX), selectionHover(0), mFreefly(false), mPlay(true) {
 
     std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
 
@@ -31,7 +31,8 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
     if (entryMap.count("Parent") != 1) throw std::runtime_error("Columns Parent not found");
     if (entryMap.count("Diameter") != 1) throw std::runtime_error("Columns Diameter not found");
     if (entryMap.count("Rotation Period") != 1) throw std::runtime_error("Columns Rotation Period not found");
-    if (entryMap.count("Distance from Sun") != 1) throw std::runtime_error("Columns Distance from Sun not found");
+    if (entryMap.count("Perihelion") != 1) throw std::runtime_error("Columns Perihelion not found");
+    if (entryMap.count("Aphelion") != 1) throw std::runtime_error("Columns Aphelion not found");
     if (entryMap.count("Orbital Period") != 1) throw std::runtime_error("Columns Orbital Period not found");
     if (entryMap.count("Orbital Velocity") != 1) throw std::runtime_error("Columns Orbital Velocity not found");
     if (entryMap.count("Orbital Inclination") != 1) throw std::runtime_error("Columns Orbital Inclination not found");
@@ -50,7 +51,8 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
 
         description.diameter = atof(csv[entryMap["Diameter"]][i].c_str());
         description.rotationPeriod = atof(csv[entryMap["Rotation Period"]][i].c_str());
-        description.sunDistance = atof(csv[entryMap["Distance from Sun"]][i].c_str()) * 10e6;
+        description.perihelion = atof(csv[entryMap["Perihelion"]][i].c_str()) * 10e6;
+        description.aphelion = atof(csv[entryMap["Aphelion"]][i].c_str()) * 10e6;
         description.orbitalPeriod = atof(csv[entryMap["Orbital Period"]][i].c_str());
         description.orbitalVelocity = atof(csv[entryMap["Orbital Velocity"]][i].c_str());
         description.orbitalInclination = atof(csv[entryMap["Orbital Inclination"]][i].c_str());
@@ -196,11 +198,10 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
 
     Astronomy::PathScale pathScale;
 
-    if (mProportionalView) {
-        pathScale.type = Astronomy::PathScaleType::LOGMUL;
-        pathScale.param->set((float)i / (float)subi);
-    } else {
-        pathScale.type = Astronomy::PathScaleType::INDEX;
+    pathScale.type = mScaleType;
+    pathScale.param->set((float)i / (float)subi);
+    
+    if (mScaleType == Astronomy::PathScaleType::INDEX) {
         pathScale.param->set((float)i * 6.0f / (float)subi);
     }
 
@@ -217,7 +218,7 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
         ellipse.initialize(path.x, path.y, path.z, path.x, path.y, path.z, path.x, path.y, path.angle, p2, 256, 1);
         ellipse.setLine(true);
 
-        if (mProportionalView) camera.rotate(
+        if (mScaleType != Astronomy::PathScaleType::INDEX) camera.rotate(
                     static_cast<float>(astre->getDescription().orbitalInclination / 180.0 * M_PI), glm::vec3(1.0f, 0.0f, 1.0f));
 
         ellipse.render(camera, mLine3DProgram, renderStep);
@@ -233,7 +234,7 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
     glm::vec3 translation = glm::vec3(path.x->get(), path.y->get(), path.z->get());
 
 
-    if (mProportionalView) {
+    if (mScaleType != Astronomy::PathScaleType::INDEX) {
         camera.rotate(static_cast<float>(astre->getDescription().orbitalInclination / 180.0 * M_PI), glm::vec3(1.0f, 0.0f, 1.0f));
     }
 
@@ -313,7 +314,11 @@ void SolarSystem::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button,
     }
 
     if (selection == RENDERCODE_BUTTON_PROPVIEW && state == SDL_RELEASED) {
-        mProportionalView = !mProportionalView;
+        if (mScaleType == Astronomy::PathScaleType::INDEX) {
+            mScaleType = Astronomy::PathScaleType::NORMAL;
+        } else {
+            mScaleType = (Astronomy::PathScaleType)(mScaleType + 1);
+        }
     }
 
     if (selection == RENDERCODE_BUTTON_CAMERAMODE && state == SDL_RELEASED) {
