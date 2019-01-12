@@ -57,3 +57,7 @@ void GLTools::FreeflyCamera::enableTranslation() {
 void GLTools::FreeflyCamera::disableTranslation() {
 	mTranslate = false;
 }
+
+glm::mat4 GLTools::FreeflyCamera::getModelMatrix() const {
+	return Camera3D::getMVMatrix();
+}

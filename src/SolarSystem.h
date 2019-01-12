@@ -66,7 +66,7 @@ private:
     std::shared_ptr<Astronomy::Astre> mCurrentSystem;
     std::map<std::string, std::shared_ptr<Astronomy::Astre>> mAstres;
 
-    std::shared_ptr<GLTools::Program> mRender3DProgram, mLine3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram, mBackgroundProgram;
+    std::shared_ptr<GLTools::Program> mRender3DProgram, mLine3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram, mBackgroundProgram, mLightProgram;
     std::map<std::string, std::shared_ptr<GLTools::Texture>> mTextures;
 
     std::shared_ptr<GLTools::Texture> mTextureProp, mTexturePlay, mTextureCamera;

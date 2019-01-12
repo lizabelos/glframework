@@ -46,3 +46,7 @@ void GLTools::TrackballCamera::enableTranslation() {
 void GLTools::TrackballCamera::disableTranslation() {
     mTranslate = false;
 }
+
+glm::mat4 GLTools::TrackballCamera::getModelMatrix() const {
+    return Camera3D::getMVMatrix();
+}

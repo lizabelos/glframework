@@ -75,11 +75,12 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
     mTexturePlay = std::make_shared<GLTools::Texture>("res/play.png");
     mTextureCamera = std::make_shared<GLTools::Texture>("res/camera.png");
 
-    mBackground = std::make_shared<GLTools::TextureCubeMap>("res/background/xpos.png", "res/background/xneg.png", "res/background/ypos.png", "res/background/yneg.png", "res/background/zpos.png", "res/background/zneg.png");
+    mBackground = std::make_shared<GLTools::TextureCubeMap>("res/background/lf.jpg", "res/background/dn.jpg", "res/background/up.jpg", "res/background/dn.jpg", "res/background/ft.jpg", "res/background/bk.jpg");
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mSelection3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/selection3d.fs.glsl");
     mLine3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/white3d.fs.glsl");
+    mLightProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/light.fs.glsl");
 
     mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mSelection2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
@@ -95,7 +96,8 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
     switch (renderStep) {
 
         case GLTools::RENDER_SCREEN:
-            program3D = mRender3DProgram;
+            program3D = mLightProgram;
+            program3D->post("uLightPosition", glm::vec4(0,0,0,1));
             program2D = mRender2DProgram;
             break;
         case GLTools::RENDER_SELECTION:
@@ -144,8 +146,7 @@ void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &ca
 
     int i = 1, subi = 0, mousei = 1;
     program->use();
-    renderAstre(renderStep, camera, program, mCurrentSystem,
-                i, subi, mousei);
+    renderAstre(renderStep, camera, program, mCurrentSystem, i, subi, mousei);
 }
 
 void SolarSystem::render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program) {

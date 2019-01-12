@@ -25,6 +25,11 @@ namespace GLTools {
         virtual glm::mat4 getProjectionMatrix() const = 0;
 
         /**
+         * @return The model matrix
+         */
+        virtual glm::mat4 getModelMatrix() const;
+
+        /**
          * @return The MV matrix
          */
         virtual glm::mat4 getMVMatrix() const = 0;

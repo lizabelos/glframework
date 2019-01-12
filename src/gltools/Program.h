@@ -88,6 +88,7 @@ namespace GLTools {
          * @param camera The camera to post
          */
         template<typename vecType> inline void post(const Camera<vecType> &camera) {
+            post("uModelMatrix", camera.getModelMatrix());
             post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
         }
 

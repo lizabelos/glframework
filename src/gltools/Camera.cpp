@@ -4,6 +4,10 @@
 
 #include "Camera.h"
 
+template<typename vecType> glm::mat4 GLTools::Camera<vecType>::getModelMatrix() const {
+    return getMVMatrix();
+}
+
 GLTools::Camera3D::Camera3D() {
     resize(1,1);
     mMVMatrix = glm::mat4(1.0f);

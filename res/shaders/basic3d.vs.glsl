@@ -11,11 +11,12 @@ out vec3 vNormal;
 out vec2 vTexCoord;
 
 uniform mat4 uMVPMatrix;
+uniform mat4 uModelMatrix;
 
 
 void main() {
-	vPosition = aVertexPosition;
-	vNormal = aVertexNormal;
+	vPosition = (uModelMatrix * vec4(aVertexPosition,1)).xyz;
+	vNormal = (uModelMatrix * vec4(aVertexNormal,0)).xyz;
 	vTexCoord = aVertexTexCoord.xy;
-    gl_Position = (uMVPMatrix * vec4(vPosition, 1));
+    gl_Position = (uMVPMatrix * vec4(aVertexPosition, 1));
 }

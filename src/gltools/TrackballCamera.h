@@ -40,6 +40,11 @@ namespace GLTools {
         glm::mat4 getViewMatrix() const;
 
         /**
+         * @return The model matrix
+         */
+        virtual glm::mat4 getModelMatrix() const;
+
+        /**
          * @return The MV Matrix
          */
         glm::mat4 getMVMatrix() const override;
