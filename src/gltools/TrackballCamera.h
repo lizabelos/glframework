@@ -67,10 +67,21 @@ namespace GLTools {
          */
         void rotateUp(float delta);
 
+        /**
+         * Disable the translation
+         */
+         void enableTranslation() override;
+
+         /**
+          * Enable the translation
+          */
+         void disableTranslation() override;
+
     private:
         float mFront;
         float mLeft;
         float mUp;
+        bool mTranslate;
 
 
     };

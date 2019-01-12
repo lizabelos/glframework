@@ -5,6 +5,7 @@
 #include "Variable.h"
 
 #include <cmath>
+#include <iostream>
 
 class AdditionVariable : public Maths::AbstractVariable {
 public:

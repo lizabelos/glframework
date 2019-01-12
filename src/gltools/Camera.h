@@ -92,6 +92,16 @@ namespace GLTools {
         void identity();
         void resize(unsigned int width, unsigned int height);
 
+        /**
+         * Disable the translation
+         */
+        virtual void enableTranslation();
+
+        /**
+         * Enable the translation
+         */
+        virtual void disableTranslation();
+
     private:
         glm::mat4 mProjectionMatrix;
         glm::mat4 mMVMatrix;

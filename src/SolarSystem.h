@@ -19,6 +19,7 @@
 #include "glgeometry/Square"
 #include "gltools/TrackballCamera"
 #include "gltools/FreeflyCamera"
+#include "glgeometry/Cube.h"
 
 #define RENDERCODE_BUTTON_PROPVIEW     1
 #define RENDERCODE_BUTTON_CAMERAMODE   2
@@ -59,15 +60,17 @@ private:
     GLGeometry::Sphere mSphere;
     GLGeometry::Circle3D mCircle3D, mRing3D;
     GLGeometry::Square mSquare;
+    GLGeometry::Cube mCube;
 
     std::shared_ptr<Astronomy::Star> mStarSystem;
     std::shared_ptr<Astronomy::Astre> mCurrentSystem;
     std::map<std::string, std::shared_ptr<Astronomy::Astre>> mAstres;
 
-    std::shared_ptr<GLTools::Program> mRender3DProgram, mLine3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram;
+    std::shared_ptr<GLTools::Program> mRender3DProgram, mLine3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram, mBackgroundProgram;
     std::map<std::string, std::shared_ptr<GLTools::Texture>> mTextures;
 
     std::shared_ptr<GLTools::Texture> mTextureProp, mTexturePlay, mTextureCamera;
+    std::shared_ptr<GLTools::TextureCubeMap> mBackground;
 
     Astronomy::PathScaleType mScaleType;
 

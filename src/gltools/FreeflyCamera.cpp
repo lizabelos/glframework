@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-GLTools::FreeflyCamera::FreeflyCamera() : GLTools::Camera3D(), mPitch(0.0f), mRoll(0.0f), mYaw(0.0f) {
+GLTools::FreeflyCamera::FreeflyCamera() : GLTools::Camera3D(), mPitch(0.0f), mRoll(0.0f), mYaw(0.0f), mTranslate(true) {
 
 }
 
@@ -12,7 +12,7 @@ glm::mat4 GLTools::FreeflyCamera::getViewMatrix() const {
 
 	viewMatrix = glm::rotate(viewMatrix, mPitch, glm::vec3(1.0f, 0.0f, 0.0f));
 	viewMatrix = glm::rotate(viewMatrix, mYaw, glm::vec3(0.0f, 1.0f, 0.0f));
-	viewMatrix = glm::translate(viewMatrix, mPosition);
+	if (mTranslate) viewMatrix = glm::translate(viewMatrix, mPosition);
 
 	//viewMatrix = glm::rotate(viewMatrix, mPitch, glm::vec3(1.0f, 0.0f, 0.0f));
 	//viewMatrix = glm::rotate(viewMatrix, mRoll, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -48,4 +48,12 @@ void GLTools::FreeflyCamera::rotateUp(float t) {
 
 void GLTools::FreeflyCamera::moveUp(float t) {
 	mPosition.y = mPosition.y + t;
+}
+
+void GLTools::FreeflyCamera::enableTranslation() {
+	mTranslate = true;
+}
+
+void GLTools::FreeflyCamera::disableTranslation() {
+	mTranslate = false;
 }

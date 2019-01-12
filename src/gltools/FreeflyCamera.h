@@ -72,9 +72,20 @@ namespace GLTools {
          */
         void rotateUp(float t);
 
+        /**
+         * Disable the translation
+         */
+        void enableTranslation() override;
+
+        /**
+         * Enable the translation
+         */
+        void disableTranslation() override;
+
     private:
         glm::vec3 mPosition;
         float mPitch, mRoll, mYaw;
+        bool mTranslate;
 
     };
 

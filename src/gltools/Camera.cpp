@@ -60,6 +60,14 @@ void GLTools::Camera3D::identity() {
     mMVMatrix = glm::mat4(1.0f);
 }
 
+void GLTools::Camera3D::enableTranslation() {
+
+}
+
+void GLTools::Camera3D::disableTranslation() {
+
+}
+
 
 GLTools::Camera2D::Camera2D() {
     resize(1,1);

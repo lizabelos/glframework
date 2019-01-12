@@ -18,7 +18,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mMouseRotation(false), mScaleType(Astronomy::PathScaleType::INDEX), selectionHover(0), mFreefly(false), mPlay(true) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mCube(1), mMouseRotation(false), mScaleType(Astronomy::PathScaleType::INDEX), selectionHover(0), mFreefly(false), mPlay(true) {
 
     std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
 
@@ -75,7 +75,7 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
     mTexturePlay = std::make_shared<GLTools::Texture>("res/play.png");
     mTextureCamera = std::make_shared<GLTools::Texture>("res/camera.png");
 
-
+    mBackground = std::make_shared<GLTools::TextureCubeMap>("res/background/xpos.png", "res/background/xneg.png", "res/background/ypos.png", "res/background/yneg.png", "res/background/zpos.png", "res/background/zneg.png");
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mSelection3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/selection3d.fs.glsl");
@@ -84,6 +84,7 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
     mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mSelection2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
 
+    mBackgroundProgram = std::make_shared<GLTools::Program>("res/shaders/cubmap.vs.glsl", "res/shaders/cubmap.fs.glsl");
 
     mCurrentSystem = mStarSystem;
 }
@@ -122,17 +123,27 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
 
 void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program)
 {
+    glDepthMask(GL_FALSE);
     camera.identity();
-    camera.scale(1000.0f);
-    std::shared_ptr<GLTools::Texture> startexture = getTexture("Stars");
-    startexture->activate(GL_TEXTURE0);
-    program->post("uTexture", 0);
-    program->post(camera);
-    //if (renderStep == GLTools::RENDER_SCREEN) mSphere.render(camera, program, renderStep);
+    camera.scale(500.0f);
+    camera.disableTranslation();
+
+    mBackground->activate(GL_TEXTURE0);
+    mBackgroundProgram->use();
+    mBackgroundProgram->post("uCubemap", 0);
+    mBackgroundProgram->post(camera);
+
+    if (renderStep == GLTools::RENDER_SCREEN) {
+        mCube.render(camera, mBackgroundProgram, renderStep);
+    }
+
+    glDepthMask(GL_TRUE);
+    camera.enableTranslation();
 
     camera.identity();
 
     int i = 1, subi = 0, mousei = 1;
+    program->use();
     renderAstre(renderStep, camera, program, mCurrentSystem,
                 i, subi, mousei);
 }
