@@ -42,7 +42,7 @@ Astronomy::TimePath Astronomy::Planet::getTimePath(Astronomy::PathScale scale) {
     if (mDescription.rotationPeriod == 0) {
         path.rotation = Maths::make_CVariable(0.0f);
     } else {
-        path.rotation = path.time * 1000.0f / mDescription.rotationPeriod;
+        path.rotation = path.time * 100000.0f / mDescription.rotationPeriod;
     }
 
     if (mDescription.orbitalPeriod == 0) {

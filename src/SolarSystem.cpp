@@ -164,8 +164,14 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
                     program->post("uDiffuseMin", 0.1f);
                 }
             }
-            mPlanetDayTexture[astre->getName()]->activate(GL_TEXTURE0);
-            program->postTexture("uTexture", 0);
+
+            if (astre->getDescription().texture) {
+                mPlanetDayTexture[astre->getName()]->activate(GL_TEXTURE0);
+                program->postTexture("uTexture", 0);
+            } else {
+                mPlanetDayTexture["Default"]->activate(GL_TEXTURE0);
+                program->postTexture("uTexture", 0);
+            }
             program->post("uLightPosition", glm::vec4(0,0,0,1));
             break;
         case GLTools::RENDER_SELECTION:

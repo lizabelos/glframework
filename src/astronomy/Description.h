@@ -12,12 +12,12 @@ namespace Astronomy {
         double perihelion;
         double aphelion;
         double orbitalPeriod;
-        double orbitalVelocity;
         double orbitalInclination;
         double orbitalEccentricity;
         int moonNumber;
         bool ringSystem;
         bool nightLight;
+        bool texture;
     } description_t;
 
 }

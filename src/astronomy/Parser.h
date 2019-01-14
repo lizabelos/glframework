@@ -15,7 +15,7 @@ namespace Astronomy {
 
     namespace Parser {
 
-        void readCSV(const std::string &csvPath, std::shared_ptr<Astronomy::Star> &starSystem, std::map<std::string, std::shared_ptr<Astronomy::Astre>> astres);
+        void readCSV(const std::string &csvPath, std::shared_ptr<Astronomy::Star> &starSystem, std::map<std::string, std::shared_ptr<Astronomy::Astre>> &astres);
 
     };
 
