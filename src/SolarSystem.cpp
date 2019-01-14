@@ -9,6 +9,7 @@
 #include "SolarSystem.h"
 #include "utility/CSVReader.h"
 #include "astronomy/Description.h"
+#include "astronomy/Parser.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,58 +19,9 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mCube(1), mMouseRotation(false), mScaleType(Astronomy::PathScaleType::INDEX), selectionHover(0), mFreefly(false), mPlay(true) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mPlanetDayTexture("res/planet_day"), mPlanetNightTexture("res/planet_night"), mRingColorTexture("res/ring_color"), mRingAlphaTexture("res/ring_alpha"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mCube(1), mMouseRotation(false), mScaleType(Astronomy::PathScaleType::INDEX), selectionHover(0), mFreefly(false) {
 
-    std::vector<std::vector<std::string>> csv = CSVReader::read("res/system.csv");
-
-    std::map<std::string, int> entryMap;
-    for (int i = 1; i < csv.size(); i++) {
-        std::cout << "Property found " << csv[i][0] << std::endl;
-        entryMap[csv[i][0]] = i;
-    }
-
-    if (entryMap.count("Parent") != 1) throw std::runtime_error("Columns Parent not found");
-    if (entryMap.count("Diameter") != 1) throw std::runtime_error("Columns Diameter not found");
-    if (entryMap.count("Rotation Period") != 1) throw std::runtime_error("Columns Rotation Period not found");
-    if (entryMap.count("Perihelion") != 1) throw std::runtime_error("Columns Perihelion not found");
-    if (entryMap.count("Aphelion") != 1) throw std::runtime_error("Columns Aphelion not found");
-    if (entryMap.count("Orbital Period") != 1) throw std::runtime_error("Columns Orbital Period not found");
-    if (entryMap.count("Orbital Velocity") != 1) throw std::runtime_error("Columns Orbital Velocity not found");
-    if (entryMap.count("Orbital Inclination") != 1) throw std::runtime_error("Columns Orbital Inclination not found");
-    if (entryMap.count("Orbital Eccentricity") != 1) throw std::runtime_error("Columns Orbital Inclination not found");
-    if (entryMap.count("Number of Moons") != 1) throw std::runtime_error("Columns Number of Moons not found");
-    if (entryMap.count("Ring System") != 1) throw std::runtime_error("Columns Ring System not found");
-
-    for (int i = 2; i < csv[0].size(); i++) {
-
-        Astronomy::description_t description;
-
-        std::string name = csv[0][i];
-        std::cout << "Parsing " << name << std::endl;
-
-        std::string parent = csv[entryMap["Parent"]][i];
-
-        description.diameter = atof(csv[entryMap["Diameter"]][i].c_str());
-        description.rotationPeriod = atof(csv[entryMap["Rotation Period"]][i].c_str());
-        description.perihelion = atof(csv[entryMap["Perihelion"]][i].c_str()) * 10e6;
-        description.aphelion = atof(csv[entryMap["Aphelion"]][i].c_str()) * 10e6;
-        description.orbitalPeriod = atof(csv[entryMap["Orbital Period"]][i].c_str());
-        description.orbitalVelocity = atof(csv[entryMap["Orbital Velocity"]][i].c_str());
-        description.orbitalInclination = atof(csv[entryMap["Orbital Inclination"]][i].c_str());
-        description.orbitalEccentricity = atof(csv[entryMap["Orbital Eccentricity"]][i].c_str());
-        description.moonNumber = atoi(csv[entryMap["Number of Moons"]][i].c_str());
-        description.ringSystem = csv[entryMap["Ring System"]][i] == "Yes";
-
-        if (i == 2) {
-            mStarSystem = std::make_shared<Astronomy::Star>(name, description);
-            mAstres[name] = mStarSystem;
-        } else {
-            std::shared_ptr<Astronomy::Astre> planet = std::make_shared<Astronomy::Planet>(name, description);
-            mAstres[parent]->getSystem()->add(planet);
-            mAstres[name] = planet;
-        }
-
-    }
+    Astronomy::Parser::readCSV("res/system.csv", mStarSystem, mAstres);
 
     mTextureProp = std::make_shared<GLTools::Texture>("res/prop.png");
     mTexturePlay = std::make_shared<GLTools::Texture>("res/play.png");
@@ -81,6 +33,8 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
     mSelection3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/selection3d.fs.glsl");
     mLine3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/white3d.fs.glsl");
     mLightProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/light.fs.glsl");
+    mLightNightProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/lightnight.fs.glsl");
+    mRingProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/ring.fs.glsl");
 
     mRender2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mSelection2DProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");
@@ -92,38 +46,20 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mSphere(255, 256, 
 
 void SolarSystem::render(GLTools::RenderStep renderStep) {
 
-    std::shared_ptr<GLTools::Program> program3D, program2D;
-    switch (renderStep) {
-
-        case GLTools::RENDER_SCREEN:
-            program3D = mLightProgram;
-            program3D->post("uLightPosition", glm::vec4(0,0,0,1));
-            program2D = mRender2DProgram;
-            break;
-        case GLTools::RENDER_SELECTION:
-            program3D = mSelection3DProgram;
-            program2D = mSelection2DProgram;
-            break;
-    }
-
-    program3D->use();
-
 
     if (!mFreefly) {
-        render3d(renderStep, mTrackballCamera, program3D);
+        render3d(renderStep, mTrackballCamera);
     } else {
-        render3d(renderStep, mFreeflyCamera, program3D);
+        render3d(renderStep, mFreeflyCamera);
     }  
 
-    render2d(renderStep, program2D);
+    render2d(renderStep);
 
 
 
-
-    if (mPlay) lastTime = getTime() / 1000.0f;
 }
 
-void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program)
+void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera)
 {
     glDepthMask(GL_FALSE);
     camera.identity();
@@ -145,26 +81,36 @@ void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &ca
     camera.identity();
 
     int i = 1, subi = 0, mousei = 1;
-    program->use();
-    renderAstre(renderStep, camera, program, mCurrentSystem, i, subi, mousei);
+    renderAstre(renderStep, camera, mCurrentSystem, i, subi, mousei);
 }
 
-void SolarSystem::render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program) {
+void SolarSystem::render2d(GLTools::RenderStep renderStep) {
 
-    program->use();
     mCamera2D.identity();
 
-    renderButton(renderStep, program, RENDERCODE_BUTTON_PROPVIEW, glm::vec2(0, 0), mTextureProp, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    renderButton(renderStep, RENDERCODE_BUTTON_PROPVIEW, glm::vec2(0, 0), mTextureProp, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-    renderButton(renderStep, program, RENDERCODE_BUTTON_CAMERAMODE, glm::vec2(1, 0), mTextureCamera, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    renderButton(renderStep, RENDERCODE_BUTTON_CAMERAMODE, glm::vec2(1, 0), mTextureCamera, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-    renderButton(renderStep, program, RENDERCODE_BUTTON_PLAY, glm::vec2(2, 0), mTexturePlay, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+    renderButton(renderStep, RENDERCODE_BUTTON_PLAY, glm::vec2(2, 0), mTexturePlay, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 
 
 }
 
-void SolarSystem::renderButton(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover) {
+void SolarSystem::renderButton(GLTools::RenderStep renderStep, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover) {
+
+    std::shared_ptr<GLTools::Program> program;
+    switch (renderStep) {
+
+        case GLTools::RENDER_SCREEN:
+            program = mRender2DProgram;
+            break;
+        case GLTools::RENDER_SELECTION:
+            program = mSelection2DProgram;
+            break;
+    }
+    program->use();
 
     mCamera2D.pushMatrix();
     mCamera2D.scale(0.1);
@@ -180,9 +126,7 @@ void SolarSystem::renderButton(GLTools::RenderStep renderStep, std::shared_ptr<G
 
 }
 
-void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
-                               std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system,
-                               int &i, int &subi, int &mousei) {
+void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::System> system, int &i, int &subi, int &mousei) {
 
     std::vector<std::shared_ptr<Astronomy::Astre>> astres = system->getAstres();
     std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance().y < b->getCenterDistance().y; });
@@ -190,22 +134,46 @@ void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D
 
     int ni = 1; subi++;
     for (const std::shared_ptr<Astronomy::Astre> &astre : astres) {
-        renderAstre(renderStep, camera, program, astre,
-                    ni, subi, mousei);
+        renderAstre(renderStep, camera, astre, ni, subi, mousei);
     }
     subi--;
 
 }
 
-void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
-                              std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre,
-                              int &i, int &subi, int &mousei) {
-    float currentTime = getTime() / 1000.0f;
-    if (!mPlay) currentTime = lastTime;
+void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::Astre> astre, int &i, int &subi, int &mousei) {
 
-    std::shared_ptr<GLTools::Texture> texture = getTexture(astre->getName());
-    texture->activate(GL_TEXTURE0);
-    program->postTexture("uTexture", 0);
+
+    float currentTime = mTimeManager.getTime() / 1000.0f;
+
+    std::shared_ptr<GLTools::Program> program;
+    switch (renderStep) {
+
+        case GLTools::RENDER_SCREEN:
+            if (astre->getDescription().nightLight) {
+                program = mLightNightProgram;
+                program->post("uDiffuseMin", 0.0f);
+                mPlanetNightTexture[astre->getName()]->activate(GL_TEXTURE1);
+                program->postTexture("uNightTexture", 1);
+
+            } else {
+                program = mLightProgram;
+
+                if (subi == 0) {
+                    program->post("uDiffuseMin", 1.0f);
+                } else {
+                    program->post("uDiffuseMin", 0.1f);
+                }
+            }
+            mPlanetDayTexture[astre->getName()]->activate(GL_TEXTURE0);
+            program->postTexture("uTexture", 0);
+            program->post("uLightPosition", glm::vec4(0,0,0,1));
+            break;
+        case GLTools::RENDER_SELECTION:
+            program = mSelection3DProgram;
+            break;
+    }
+
+    program->use();
 
 
     Astronomy::PathScale pathScale;
@@ -267,12 +235,21 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
 
     if (renderStep == GLTools::RENDER_SCREEN && astre->getDescription().ringSystem) {
         camera.scale(1.0f);
-        mRing3D.render(camera, mLine3DProgram, renderStep);
+
+        mRingAlphaTexture[astre->getName()]->activate(GL_TEXTURE0);
+        mRingProgram->postTexture("uRingAlplha", 0);
+
+        mRingColorTexture[astre->getName()]->activate(GL_TEXTURE1);
+        mRingProgram->postTexture("uRingColor", 1);
+
+        mRingProgram->post("uDiffuseMin", 0.1f);
+
+        mRing3D.render(camera, mRingProgram, renderStep);
     }
 
     camera.popMatrix();
     if (astre->hasSystem()) {
-        renderSystem(renderStep, camera, program, astre->getSystem(), i, subi, mousei);
+        renderSystem(renderStep, camera, astre->getSystem(), i, subi, mousei);
     }
     camera.popMatrix();
 
@@ -293,13 +270,6 @@ std::shared_ptr<Astronomy::Astre> SolarSystem::searchAstre(std::shared_ptr<Astro
 
     return nullptr;
 
-}
-
-std::shared_ptr<GLTools::Texture> SolarSystem::getTexture(const std::string &name) {
-    if (mTextures.count(name) == 0) {
-        mTextures[name] = std::make_shared<GLTools::Texture>("res/textures/" + name + ".jpg");
-    }
-    return mTextures[name];
 }
 
 void SolarSystem::resize(unsigned int width, unsigned int height) {
@@ -338,7 +308,7 @@ void SolarSystem::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button,
     }
 
     if (selection == RENDERCODE_BUTTON_PLAY && state == SDL_RELEASED) {
-        mPlay = !mPlay;
+        mTimeManager.pauseplay();
     }
 
     if (state == SDL_RELEASED) {
@@ -415,6 +385,12 @@ void SolarSystem::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
         case SDLK_ESCAPE:
             mCurrentSystem = mStarSystem;
             std::cout << "New system center : " << mCurrentSystem->getName() << std::endl;
+            break;
+        case SDLK_o:
+            mTimeManager.speedup();
+            break;
+        case SDLK_p:
+            mTimeManager.seepdown();
             break;
         default:
             break;

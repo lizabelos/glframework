@@ -9,6 +9,7 @@ in vec2 vTexCoord;
 out vec4 fFragColor;
 
 uniform sampler2D uTexture;
+uniform sampler2D uNightTexture;
 uniform vec4 uLightPosition;
 uniform float uDiffuseMin;
 
@@ -18,6 +19,7 @@ void main() {
 
     float diffuse = max(dot(normal, lightDirection), uDiffuseMin);
 
-    vec4 color = texture2D(uTexture,vTexCoord);
-    fFragColor = vec4(color.rgb * diffuse, color.a);
+    vec4 colorDay = texture2D(uTexture,vTexCoord);
+    vec4 colorNight = texture2D(uNightTexture,vTexCoord);
+    fFragColor = vec4(colorDay.rgb * diffuse + colorNight.rgb * (1.0 - diffuse), colorDay.a);
 }

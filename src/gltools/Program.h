@@ -61,6 +61,13 @@ namespace GLTools {
         void post(const std::string &name, int number);
 
         /**
+         * Post a uniform float to the shader
+         * @param name Name of the uniform
+         * @param number Value to pass
+         */
+        void post(const std::string &name, float number);
+
+        /**
          * Post a uniform mat4 to the shader
          * @param name Name of the uniform
          * @param mat Value to pass

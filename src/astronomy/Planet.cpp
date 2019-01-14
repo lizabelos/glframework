@@ -52,7 +52,7 @@ Astronomy::TimePath Astronomy::Planet::getTimePath(Astronomy::PathScale scale) {
         return path;
     }
 
-    Maths::Variable orbitalTime = path.time * 1000.0f / mDescription.orbitalPeriod;
+    Maths::Variable orbitalTime = path.time * 100000.0f / mDescription.orbitalPeriod;
 
     float h_radius = (mMajor + mMinor) / 2;
     float l_radius = h_radius * (1.0f - mDescription.orbitalEccentricity);
@@ -67,14 +67,14 @@ Astronomy::TimePath Astronomy::Planet::getTimePath(Astronomy::PathScale scale) {
             path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / (2.0f * NORMAL_SIZE_SCALE)));
             break;
         case LOG:
-            path.x = Maths::cosav(orbitalTime) * log(l_radius);
-            path.z = Maths::sinav(orbitalTime) * log(h_radius) + log(shift);
+            path.x = Maths::cosav(orbitalTime) * sqrt(l_radius) / 1000.0f;
+            path.z = Maths::sinav(orbitalTime) * sqrt(h_radius) / 1000.0f  + sqrt(shift) / 1000.0f;
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;
         case LOGMUL:
             path.x = Maths::cosav(orbitalTime) * log(l_radius) * scale.param;
-            path.z = Maths::sinav(orbitalTime) * log(h_radius) * scale.param + log(shift);
+            path.z = Maths::sinav(orbitalTime) * log(h_radius) * scale.param + log(shift) / 4.0f;
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;
@@ -114,14 +114,14 @@ Astronomy::AnglePath Astronomy::Planet::getAnglePath(Astronomy::PathScale scale)
             path.radius = Maths::make_CVariable(static_cast<float>(mDescription.diameter / (2.0f * NORMAL_SIZE_SCALE)));
             break;
         case LOG:
-            path.x = Maths::cosav(path.angle * M_PI * 2) * log(l_radius);
-            path.z = Maths::sinav(path.angle * M_PI * 2) * log(h_radius) + log(shift);
+            path.x = Maths::cosav(path.angle * M_PI * 2) * sqrt(l_radius) / 1000.0f;
+            path.z = Maths::sinav(path.angle * M_PI * 2) * sqrt(h_radius) / 1000.0f + sqrt(shift) / 1000.0f;
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;
         case LOGMUL:
             path.x = Maths::cosav(path.angle * M_PI * 2) * log(l_radius) * scale.param;
-            path.z = Maths::sinav(path.angle * M_PI * 2) * log(h_radius) * scale.param + log(shift);
+            path.z = Maths::sinav(path.angle * M_PI * 2) * log(h_radius) * scale.param + log(shift) / 4.0f;
             path.y = Maths::make_CVariable(0.0f);
             path.radius = Maths::make_CVariable(logf(static_cast<float>(mDescription.diameter / 2.0f) / LOG_RADIUS_SCALE));
             break;

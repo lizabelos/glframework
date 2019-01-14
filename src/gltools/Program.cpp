@@ -69,6 +69,12 @@ void GLTools::Program::post(const std::string &name, int number) {
     glUniform1i(mUniformMap[name], number);
 }
 
+void GLTools::Program::post(const std::string &name, float number) {
+    uniform(name);
+    use();
+    glUniform1f(mUniformMap[name], number);
+}
+
 void GLTools::Program::post(const std::string &name, const glm::mat4 &mat) {
     uniform(name);
     use();

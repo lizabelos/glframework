@@ -24,7 +24,7 @@ GLGeometry::Circle3D::Circle3D(unsigned int code, unsigned long resolution, bool
 
 
 
-    initialize(x, z, y, x, z, y, x, y, p1, p2, resolution, 2);
+    initialize(x, z, y, x, z, y, p2, p1, p1, p2, resolution, 2);
 
 
 }

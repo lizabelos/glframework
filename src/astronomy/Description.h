@@ -17,6 +17,7 @@ namespace Astronomy {
         double orbitalEccentricity;
         int moonNumber;
         bool ringSystem;
+        bool nightLight;
     } description_t;
 
 }

@@ -20,6 +20,8 @@
 #include "gltools/TrackballCamera"
 #include "gltools/FreeflyCamera"
 #include "glgeometry/Cube.h"
+#include "utility/TimeManager"
+#include "gltools/TextureManager"
 
 #define RENDERCODE_BUTTON_PROPVIEW     1
 #define RENDERCODE_BUTTON_CAMERAMODE   2
@@ -33,20 +35,12 @@ public:
 protected:
     void resize(unsigned int width, unsigned int height) override;
     void render(GLTools::RenderStep renderStep) override;
-    void render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<GLTools::Program> program);
-    void render2d(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program);
-    void renderButton(GLTools::RenderStep renderStep, std::shared_ptr<GLTools::Program> program, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover);
-    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
-                          std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::System> system,
-                          int &i, int &subi, int &mousei);
-    void renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera,
-                         std::shared_ptr<GLTools::Program> program, std::shared_ptr<Astronomy::Astre> astre,
-                         int &i, int &subi, int &mousei);
+    void render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera);
+    void render2d(GLTools::RenderStep renderStep);
+    void renderButton(GLTools::RenderStep renderStep, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover);
+    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::System> system, int &i, int &subi, int &mousei);
+    void renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::Astre> astre, int &i, int &subi, int &mousei);
     std::shared_ptr<Astronomy::Astre> searchAstre(std::shared_ptr<Astronomy::Astre> astre, int index, int &i);
-
-    float radiusScale(float radius);
-
-    std::shared_ptr<GLTools::Texture> getTexture(const std::string &name);
 
     void scroll(int x, int y) override;
     void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
@@ -66,22 +60,24 @@ private:
     std::shared_ptr<Astronomy::Astre> mCurrentSystem;
     std::map<std::string, std::shared_ptr<Astronomy::Astre>> mAstres;
 
-    std::shared_ptr<GLTools::Program> mRender3DProgram, mLine3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram, mBackgroundProgram, mLightProgram;
-    std::map<std::string, std::shared_ptr<GLTools::Texture>> mTextures;
+    std::shared_ptr<GLTools::Program> mRender3DProgram, mLine3DProgram, mSelection3DProgram, mRender2DProgram, mSelection2DProgram, mBackgroundProgram, mLightProgram, mLightNightProgram, mRingProgram;
+
+
+    GLTools::TextureManager mPlanetDayTexture, mPlanetNightTexture, mRingColorTexture, mRingAlphaTexture;
 
     std::shared_ptr<GLTools::Texture> mTextureProp, mTexturePlay, mTextureCamera;
     std::shared_ptr<GLTools::TextureCubeMap> mBackground;
 
     Astronomy::PathScaleType mScaleType;
 
+    TimeManager mTimeManager;
+
     bool mMouseRotation;
     glm::vec2 mMouseStart;
 
     bool mFreefly;
-    bool mPlay;
 
     int selectionHover;
-    float lastTime;
 };
 
 

@@ -8,7 +8,8 @@ in vec2 vTexCoord;
 
 out vec4 fFragColor;
 
-uniform sampler2D uTexture;
+uniform sampler2D uRingAlplha;
+uniform sampler2D uRingColor;
 uniform vec4 uLightPosition;
 uniform float uDiffuseMin;
 
@@ -18,6 +19,7 @@ void main() {
 
     float diffuse = max(dot(normal, lightDirection), uDiffuseMin);
 
-    vec4 color = texture2D(uTexture,vTexCoord);
-    fFragColor = vec4(color.rgb * diffuse, color.a);
+    vec4 ringAlpha = texture2D(uRingAlplha,vTexCoord);
+    vec4 ringColor = texture2D(uRingColor,vTexCoord);
+    fFragColor = vec4(ringColor.rgb * diffuse, ringAlpha.a);
 }
