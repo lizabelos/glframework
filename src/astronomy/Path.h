@@ -22,7 +22,7 @@ namespace Astronomy {
         PathScale();
 
         PathScaleType type;
-        Maths::SVariable param;
+        Maths::SVariable param, param2;
 
     };
 
@@ -34,7 +34,7 @@ namespace Astronomy {
         Maths::SVariable time;
         Maths::Variable x, y, z;
         Maths::Variable rotation;
-        Maths::CVariable radius;
+        Maths::Variable radius;
 
     };
 
@@ -45,7 +45,7 @@ namespace Astronomy {
         Maths::SVariable angle;
         Maths::Variable x, y, z;
         Maths::Variable rotation;
-        Maths::CVariable radius;
+        Maths::Variable radius;
 
 
     };

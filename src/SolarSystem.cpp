@@ -186,9 +186,10 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
 
     pathScale.type = mScaleType;
     pathScale.param->set((float)i / (float)subi);
-    
+    pathScale.param2->set(1.0f / powf(10, subi - 1));
+
     if (mScaleType == Astronomy::PathScaleType::INDEX) {
-        pathScale.param->set((float)i * 6.0f / (float)subi);
+        pathScale.param->set((float)i * 6.0f / powf(10, subi - 1));
     }
 
 

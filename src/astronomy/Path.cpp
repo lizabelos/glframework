@@ -14,4 +14,5 @@ Astronomy::AnglePath::AnglePath() {
 
 Astronomy::PathScale::PathScale() {
     param = Maths::make_SVariable();
+    param2 = Maths::make_SVariable();
 }
