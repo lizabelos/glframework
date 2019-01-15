@@ -8,18 +8,34 @@ template<typename vecType> glm::mat4 GLTools::Camera<vecType>::getModelMatrix() 
     return getMVMatrix();
 }
 
+template<typename vecType> vecType GLTools::Camera<vecType>::getPosition() {
+    return vecType(0.0f);
+}
+
 GLTools::Camera3D::Camera3D() {
     resize(1,1);
     mMVMatrix = glm::mat4(1.0f);
+    mFar = 1000.0f;
+    mNear = 0.1f;
 }
 
 GLTools::Camera3D::Camera3D(unsigned int width, unsigned int height) {
     resize(width, height);
     mMVMatrix = glm::mat4(1.0f);
+    mFar = 1000.0f;
+    mNear = 0.1f;
 }
 
 void GLTools::Camera3D::resize(unsigned int width, unsigned int height) {
-    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)width / (float)height, 0.1f, 1000.0f);
+    mWidth = width;
+    mHeight = height;
+    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)width / (float)height, mNear, mFar);
+}
+
+void GLTools::Camera3D::setPerspective(float far, float near) {
+    mFar = far;
+    mNear = near;
+    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)mWidth / (float)mHeight, mNear, mFar);
 }
 
 glm::mat4 GLTools::Camera3D::getProjectionMatrix() const {

@@ -87,6 +87,8 @@ namespace GLTools {
          */
         void disableTranslation() override;
 
+        glm::vec3 getPosition() override;
+
     private:
         glm::vec3 mPosition;
         float mPitch, mRoll, mYaw;

@@ -61,3 +61,7 @@ void GLTools::FreeflyCamera::disableTranslation() {
 glm::mat4 GLTools::FreeflyCamera::getModelMatrix() const {
 	return Camera3D::getMVMatrix();
 }
+
+glm::vec3 GLTools::FreeflyCamera::getPosition() {
+	return mPosition;
+}

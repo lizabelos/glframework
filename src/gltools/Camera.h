@@ -74,6 +74,8 @@ namespace GLTools {
          */
         virtual void scale(float scaling) = 0;
 
+        virtual vecType getPosition();
+
     };
 
     class Camera3D : public Camera<glm::vec3> {
@@ -81,6 +83,8 @@ namespace GLTools {
     public:
         Camera3D();
         Camera3D(unsigned int width, unsigned int height);
+
+        void setPerspective(float far, float near);
 
         glm::mat4 getProjectionMatrix() const override;
         glm::mat4 getMVMatrix() const override;
@@ -112,6 +116,8 @@ namespace GLTools {
         glm::mat4 mMVMatrix;
 
         std::vector<glm::mat4> mMVMatrixStack;
+        float mFar, mNear;
+        unsigned int mWidth, mHeight;
 
     };
 

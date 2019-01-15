@@ -19,7 +19,10 @@ GLTools::Texture::Texture(const std::string &path) {
     int x, y, n;
     unsigned char *data = stbi_load(path.c_str(), &x, &y, &n, 4);
     if(!data) {
-        throw std::runtime_error("Can't open " + path);
+        data = stbi_load((path + ".jpg").c_str(), &x, &y, &n, 4);
+        if(!data) {
+            throw std::runtime_error("Can't open " + path);
+        }
     }
 
     glActiveTexture(GL_TEXTURE0);

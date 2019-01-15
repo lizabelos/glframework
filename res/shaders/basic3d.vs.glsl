@@ -12,6 +12,7 @@ out vec2 vTexCoord;
 
 uniform mat4 uMVPMatrix;
 uniform mat4 uModelMatrix;
+uniform mat4 uNormalMatrix;
 
 
 void main() {

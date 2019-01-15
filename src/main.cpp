@@ -1,9 +1,9 @@
+#include "OpenglNoel.h"
 #include "SolarSystem.h"
-#include "Tangram.h"
 
 int main(int argc, char **argv) {
+    // OpenglNoel openglNoel;
+    // openglNoel.run();
     SolarSystem solarSystem;
-    return solarSystem.run();
-    // Tangram tangram;
-    // return tangram.run();
+    solarSystem.run();
 }

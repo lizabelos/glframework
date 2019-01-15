@@ -11,6 +11,7 @@ find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
+find_package(ASSIMP REQUIRED)
 
 # Include directories
 include_directories(${SDL2_INCLUDE_DIRS})
@@ -23,5 +24,5 @@ add_custom_target(copy_shader_files ${CMAKE_COMMAND} -D SOURCE_DIR=${CMAKE_CURRE
 
 # Executable
 add_executable(tangram ${source_files})
-target_link_libraries (tangram ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${GLM_LIBRARIES})
+target_link_libraries (tangram ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${SDL2_LIBRARIES} ${GLM_LIBRARIES} ${ASSIMP_LIBRARIES})
 add_dependencies(tangram copy_shader_files)

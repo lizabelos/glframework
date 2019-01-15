@@ -61,6 +61,14 @@ namespace GLTools {
         void post(const std::string &name, int number);
 
         /**
+         * Post a uniform boolean to the shader
+         * @param name Name of the uniform
+         * @param number Value to pass
+         */
+        void post(const std::string &name, bool value);
+
+
+        /**
          * Post a uniform float to the shader
          * @param name Name of the uniform
          * @param number Value to pass
@@ -96,6 +104,7 @@ namespace GLTools {
          */
         template<typename vecType> inline void post(const Camera<vecType> &camera) {
             post("uModelMatrix", camera.getModelMatrix());
+            post("uNormalMatrix", camera.getNormalMatrix());
             post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
         }
 
