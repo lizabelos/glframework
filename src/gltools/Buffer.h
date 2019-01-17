@@ -28,14 +28,16 @@ namespace GLTools {
         /**
          * Create an array buffer from a 2D vector
          * @param vector The vector to send to the video memory
+         * @param staticDraw True if no update will be done on the array (faster)
          */
-        explicit ArrayBuffer(std::vector<glm::vec2> vector);
+        explicit ArrayBuffer(std::vector<glm::vec2> vector, bool staticDraw = true);
 
         /**
          * Create an array buffer from a 2D vector
          * @param vector The vector to send to the video memory
+         * @param staticDraw True if no update will be done on the array (faster)
          */
-        explicit ArrayBuffer(std::vector<glm::vec3> vector);
+        explicit ArrayBuffer(std::vector<glm::vec3> vector, bool staticDraw = true);
 
         /**
          * Destruct the array buffer from the video memory
@@ -63,6 +65,18 @@ namespace GLTools {
          */
         unsigned long getSize() const;
 
+        /**
+         * Update an array buffer from a 2D vector
+         * @param vector The vector to send to the video memory
+         */
+        void update(std::vector<glm::vec2> vector);
+
+        /**
+         * Update an array buffer from a 3D vector
+         * @param vector The vector to send to the video memory
+         */
+        void update(std::vector<glm::vec3> vector);
+
     private:
         GLuint mId;
         unsigned long mStep;
@@ -84,8 +98,9 @@ namespace GLTools {
         /**
          * Create an array buffer from an integer vector
          * @param vector The vector to send to the video memory
+         * @param staticDraw True if no update will be done on the array (faster)
          */
-        explicit ElementArrayBuffer(std::vector<uint32_t> vector);
+        explicit ElementArrayBuffer(std::vector<uint32_t> vector, bool staticDraw = true);
 
         /**
          * Destruct the element array buffer from the video memory
@@ -112,6 +127,12 @@ namespace GLTools {
          * @return the size of the buffer
          */
         unsigned long getSize() const;
+
+        /**
+         * Update an array buffer from a index vector
+         * @param vector The vector to send to the video memory
+         */
+        void update(std::vector<uint32_t> vector);
 
     private:
         GLuint mId;

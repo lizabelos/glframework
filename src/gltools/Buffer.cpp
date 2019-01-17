@@ -6,19 +6,28 @@
 
 #include <iostream>
 
-GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec2> vector) {
+GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec2> vector, bool staticDraw) {
     glGenBuffers(1, &mId);
     glBindBuffer(GL_ARRAY_BUFFER, mId);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
+    if (staticDraw) {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
+    } else {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vector.size(), static_cast<void*>(vector.data()), GL_DYNAMIC_DRAW);
+    }
     mStep = 2;
     mSize = vector.size();
     std::cout << "Sending a array of " << vector.size() << " 2d vector to the video memory with id " << mId << "." << std::endl;
 }
 
-GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec3> vector) {
+GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec3> vector, bool staticDraw) {
     glGenBuffers(1, &mId);
     glBindBuffer(GL_ARRAY_BUFFER, mId);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
+    if (staticDraw) {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
+    }
+    else {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vector.size(), static_cast<void*>(vector.data()), GL_DYNAMIC_DRAW);
+    }
     mStep = 3;
     mSize = vector.size();
     std::cout << "Sending a array of " << vector.size() << " 3d vector to the video memory with id " << mId << "." << std::endl;
@@ -26,6 +35,16 @@ GLTools::ArrayBuffer::ArrayBuffer(std::vector<glm::vec3> vector) {
 
 GLTools::ArrayBuffer::~ArrayBuffer() {
     glDeleteBuffers(1, &mId);
+}
+
+void GLTools::ArrayBuffer::update(std::vector<glm::vec2> vector) {
+    glBindBuffer(GL_ARRAY_BUFFER, mId);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vector.size(), static_cast<void*>(vector.data()), GL_DYNAMIC_DRAW);
+}
+
+void GLTools::ArrayBuffer::update(std::vector<glm::vec3> vector) {
+    glBindBuffer(GL_ARRAY_BUFFER, mId);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vector.size(), static_cast<void*>(vector.data()), GL_DYNAMIC_DRAW);
 }
 
 void GLTools::ArrayBuffer::bind() const {
@@ -40,10 +59,14 @@ unsigned long GLTools::ArrayBuffer::getSize() const {
     return mSize;
 }
 
-GLTools::ElementArrayBuffer::ElementArrayBuffer(std::vector<uint32_t> vector) {
+GLTools::ElementArrayBuffer::ElementArrayBuffer(std::vector<uint32_t> vector, bool staticDraw) {
     glGenBuffers(1, &mId);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mId);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
+    if (staticDraw) {
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * vector.size(), static_cast<void*>(vector.data()), GL_STATIC_DRAW);
+    } else {
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * vector.size(), static_cast<void*>(vector.data()), GL_DYNAMIC_DRAW);
+    }
     mStep = 1;
     mSize = vector.size();
 }
@@ -87,4 +110,9 @@ void GLTools::VertexArrayObject::set(std::shared_ptr<GLTools::ElementArrayBuffer
     mElementBuffer = elementBuffer;
     bind();
     elementBuffer->bind();
+}
+
+void GLTools::ElementArrayBuffer::update(std::vector<uint32_t> vector) {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mId);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * vector.size(), static_cast<void*>(vector.data()), GL_DYNAMIC_DRAW);
 }

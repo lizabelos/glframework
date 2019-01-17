@@ -55,6 +55,7 @@ private:
     GLGeometry::Circle3D mCircle3D, mRing3D;
     GLGeometry::Square mSquare;
     GLGeometry::Cube mCube;
+    GLGeometry::ParametricDrawable3D mDynamicOrbit;
 
     std::shared_ptr<Astronomy::Star> mStarSystem;
     std::shared_ptr<Astronomy::Astre> mCurrentSystem;

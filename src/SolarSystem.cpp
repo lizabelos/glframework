@@ -19,7 +19,7 @@
 #include <algorithm>
 
 
-SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mPlanetDayTexture("res/planet_day"), mPlanetNightTexture("res/planet_night"), mRingColorTexture("res/ring_color"), mRingAlphaTexture("res/ring_alpha"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mCube(1), mMouseRotation(false), mScaleType(Astronomy::PathScaleType::INDEX), selectionHover(0), mFreefly(false) {
+SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mPlanetDayTexture("res/planet_day"), mPlanetNightTexture("res/planet_night"), mRingColorTexture("res/ring_color"), mRingAlphaTexture("res/ring_alpha"), mSphere(255, 256, 256), mCircle3D(1, 256, true), mRing3D(1, 256, false, 0.75f), mSquare(1), mCube(1), mDynamicOrbit(1, false), mMouseRotation(false), mScaleType(Astronomy::PathScaleType::INDEX), selectionHover(0), mFreefly(false) {
 
     Astronomy::Parser::readCSV("res/system.csv", mStarSystem, mAstres);
 
@@ -198,17 +198,16 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
 
         Astronomy::AnglePath path = astre->getAnglePath(pathScale);
 
-        GLGeometry::ParametricDrawable3D ellipse(0);
 
         Maths::SVariable p2 = Maths::make_SVariable();
 
-        ellipse.initialize(path.x, path.y, path.z, path.x, path.y, path.z, path.x, path.y, path.angle, p2, 256, 1);
-        ellipse.setLine(true);
+        mDynamicOrbit.initialize(path.x, path.y, path.z, path.x, path.y, path.z, path.x, path.y, path.angle, p2, 256, 1);
+        mDynamicOrbit.setLine(true);
 
         if (mScaleType != Astronomy::PathScaleType::INDEX) camera.rotate(
                     static_cast<float>(astre->getDescription().orbitalInclination / 180.0 * M_PI), glm::vec3(1.0f, 0.0f, 1.0f));
 
-        ellipse.render(camera, mLine3DProgram, renderStep);
+        mDynamicOrbit.render(camera, mLine3DProgram, renderStep);
         camera.popMatrix();
     }
 

@@ -8,7 +8,7 @@
 #include "ParametricDrawable.h"
 
 
-GLGeometry::ParametricDrawable3D::ParametricDrawable3D(unsigned int code) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0), mUseLine(false) {
+GLGeometry::ParametricDrawable3D::ParametricDrawable3D(unsigned int code, bool isStatic) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0), mUseLine(false), mIsInit(false), mStatic(isStatic) {
 
 }
 
@@ -42,10 +42,23 @@ void GLGeometry::ParametricDrawable3D::initialize(Maths::Variable x, Maths::Vari
 
     mSize = resolution1 * resolution2;
 
-    mVertexArrayObject.add(VERTEX_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
-    mVertexArrayObject.add(NORMAL_ID, std::make_shared<GLTools::ArrayBuffer>(normals));
-    mVertexArrayObject.add(TEXTCOORD_ID, std::make_shared<GLTools::ArrayBuffer>(textcoords));
-    mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(getIndices(mResolution1, mResolution2)));
+    if (!mIsInit) {
+        mVertexBuffer = std::make_shared<GLTools::ArrayBuffer>(vertexs, mStatic);
+        mNormalBuffer = std::make_shared<GLTools::ArrayBuffer>(normals, mStatic);
+        mTexCoordBuffer = std::make_shared<GLTools::ArrayBuffer>(textcoords, mStatic);
+
+        mVertexArrayObject.add(VERTEX_ID, mVertexBuffer);
+        mVertexArrayObject.add(NORMAL_ID, mNormalBuffer);
+        mVertexArrayObject.add(TEXTCOORD_ID, mTexCoordBuffer);
+        mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(getIndices(mResolution1, mResolution2)));
+
+        mIsInit = true;
+    } else {
+        mVertexBuffer->update(vertexs);
+        mNormalBuffer->update(normals);
+        mTexCoordBuffer->update(textcoords);
+    }
+
 }
 
 void GLGeometry::ParametricDrawable3D::render(GLTools::Camera<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
@@ -111,7 +124,7 @@ bool GLGeometry::ParametricDrawable3D::setLine(bool useLine) {
 }
 
 
-GLGeometry::ParametricDrawable2D::ParametricDrawable2D(unsigned int code) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0), mUseLine(false) {
+GLGeometry::ParametricDrawable2D::ParametricDrawable2D(unsigned int code, bool isStatic) : Drawable(code), mResolution1(0), mResolution2(0), mSize(0), mUseLine(false), mIsInit(false), mStatic(isStatic) {
 
 }
 
@@ -141,10 +154,22 @@ GLGeometry::ParametricDrawable2D::initialize(Maths::Variable x, Maths::Variable 
 
     mSize = resolution1 * resolution2;
 
-    mVertexArrayObject.add(VERTEX_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
-    mVertexArrayObject.add(NORMAL_ID, std::make_shared<GLTools::ArrayBuffer>(vertexs));
-    mVertexArrayObject.add(TEXTCOORD_ID, std::make_shared<GLTools::ArrayBuffer>(textcoords));
-    mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(getIndices(mResolution1, mResolution2)));
+    if (!mIsInit) {
+        mVertexBuffer = std::make_shared<GLTools::ArrayBuffer>(vertexs, mStatic);
+        mNormalBuffer = std::make_shared<GLTools::ArrayBuffer>(vertexs, mStatic);
+        mTexCoordBuffer = std::make_shared<GLTools::ArrayBuffer>(textcoords, mStatic);
+
+        mVertexArrayObject.add(VERTEX_ID, mVertexBuffer);
+        mVertexArrayObject.add(NORMAL_ID, mNormalBuffer);
+        mVertexArrayObject.add(TEXTCOORD_ID, mTexCoordBuffer);
+        mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(getIndices(mResolution1, mResolution2)));
+
+        mIsInit = true;
+    } else {
+        mVertexBuffer->update(vertexs);
+        mNormalBuffer->update(vertexs);
+        mTexCoordBuffer->update(textcoords);
+    }
 }
 
 void GLGeometry::ParametricDrawable2D::render(GLTools::Camera<glm::vec2> &camera,

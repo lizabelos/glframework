@@ -1,7 +1,15 @@
 # Solar System by BELOS Thomas
 
-![Screenshot](res/screenshot.png)
+![Screenshot](res/screenshot_earth.png)
 
+## Compilation and installation
+
+```
+mkdir build
+cmake ..
+make
+./solarsystem
+```
 
 ## References
 

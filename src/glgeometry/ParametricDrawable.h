@@ -16,7 +16,7 @@ namespace GLGeometry {
     class ParametricDrawable3D : public GLTools::Drawable<glm::vec3> {
 
     public:
-        explicit ParametricDrawable3D(unsigned int code);
+        explicit ParametricDrawable3D(unsigned int code, bool isStatic = true);
 
         void initialize(Maths::Variable x, Maths::Variable y, Maths::Variable z, Maths::Variable normX, Maths::Variable normY, Maths::Variable normZ, Maths::Variable texX, Maths::Variable texY, Maths::SVariable p1, Maths::SVariable p2, unsigned long resolution1, unsigned long resolution2);
 
@@ -29,15 +29,18 @@ namespace GLGeometry {
 
     private:
         unsigned long mSize, mResolution1, mResolution2;
+        std::shared_ptr<GLTools::ArrayBuffer> mVertexBuffer, mNormalBuffer, mTexCoordBuffer;
         GLTools::VertexArrayObject mVertexArrayObject;
         bool mUseLine;
+        bool mIsInit;
+        bool mStatic;
 
     };
 
     class ParametricDrawable2D : public GLTools::Drawable<glm::vec2> {
 
     public:
-        explicit ParametricDrawable2D(unsigned int code);
+        explicit ParametricDrawable2D(unsigned int code, bool isStatic = true);
 
         void initialize(Maths::Variable x, Maths::Variable y, Maths::Variable texX, Maths::Variable texY, Maths::SVariable p1, Maths::SVariable p2, unsigned long resolution1, unsigned long resolution2);
 
@@ -51,8 +54,11 @@ namespace GLGeometry {
 
     private:
         unsigned long mSize, mResolution1, mResolution2;
+        std::shared_ptr<GLTools::ArrayBuffer> mVertexBuffer, mNormalBuffer, mTexCoordBuffer;
         GLTools::VertexArrayObject mVertexArrayObject;
         bool mUseLine;
+        bool mIsInit;
+        bool mStatic;
 
     };
 
