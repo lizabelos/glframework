@@ -98,13 +98,13 @@ namespace GLTools {
 
         /**
          * Post the information of the camera.
-         * Same as post(uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
          * @tparam vecType Either 2D or 3D
          * @param camera The camera to post
          */
         template<typename vecType> inline void post(const Camera<vecType> &camera) {
             post("uModelMatrix", camera.getModelMatrix());
             post("uNormalMatrix", camera.getNormalMatrix());
+            post("uMVMatrix", camera.getMVMatrix());
             post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
         }
 

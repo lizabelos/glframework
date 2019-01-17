@@ -27,7 +27,12 @@ namespace GLTools {
         /**
          * @return The model matrix
          */
-        virtual glm::mat4 getModelMatrix() const;
+        virtual glm::mat4 getModelMatrix() const = 0;
+
+        /**
+         * @return The model matrix
+         */
+        virtual glm::mat4 getViewMatrix() const = 0;
 
         /**
          * @return The MV matrix
@@ -87,6 +92,8 @@ namespace GLTools {
         void setPerspective(float far, float near);
 
         glm::mat4 getProjectionMatrix() const override;
+        glm::mat4 getModelMatrix() const override;
+        glm::mat4 getViewMatrix() const override;
         glm::mat4 getMVMatrix() const override;
         glm::mat4 getNormalMatrix() const override;
 
@@ -128,6 +135,8 @@ namespace GLTools {
         Camera2D(unsigned int width, unsigned int height);
 
         glm::mat4 getProjectionMatrix() const override;
+        glm::mat4 getModelMatrix() const override;
+        glm::mat4 getViewMatrix() const override;
         glm::mat4 getMVMatrix() const override;
         glm::mat4 getNormalMatrix() const override;
 

@@ -18,15 +18,6 @@ glm::mat4 GLTools::TrackballCamera::getViewMatrix() const {
     return viewMatrix;
 }
 
-glm::mat4 GLTools::TrackballCamera::getMVMatrix() const {
-    return getViewMatrix() * Camera3D::getMVMatrix();
-}
-
-glm::mat4 GLTools::TrackballCamera::getNormalMatrix() const {
-    return glm::transpose(glm::inverse(getMVMatrix()));
-}
-
-
 void GLTools::TrackballCamera::moveFront(float delta) {
 	mFront *= delta;
 }
@@ -45,8 +36,4 @@ void GLTools::TrackballCamera::enableTranslation() {
 
 void GLTools::TrackballCamera::disableTranslation() {
     mTranslate = false;
-}
-
-glm::mat4 GLTools::TrackballCamera::getModelMatrix() const {
-    return Camera3D::getMVMatrix();
 }

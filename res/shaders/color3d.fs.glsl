@@ -27,6 +27,7 @@ uniform bool uSpecularHasTexture;
 uniform bool uShininessHasTexture;
 uniform bool uNormalHasTexture;
 
+uniform mat4 uModelMatrix;
 uniform mat4 uNormalMatrix;
 
 vec4 getDiffuseColor() {
@@ -62,15 +63,16 @@ float getShininessNumber() {
 }
 
 vec3 getNormal() {
-    if (!uNormalHasTexture) {
+    return normalize(vNormal);
+    /*if (!uNormalHasTexture) {
         return normalize(vNormal);
     } else {
         float textureHeight = texture2D(uNormalTexture,vTexCoord).x;
         float textureHeightX = texture2D(uNormalTexture,vTexCoord + vec2(1.0 / 512.0, 0)).x;
         float textureHeightY = texture2D(uNormalTexture,vTexCoord + vec2(0, 1.0 / 512.0)).x;
         vec3 normal = normalize(vec3(textureHeight - textureHeightX, 0.5, textureHeight - textureHeightY));
-        return (uNormalMatrix * vec4(normal, 0.0)).xyz;
-    }
+        return vec3(uNormalMatrix * vec4(normalize((vec4(normal, 0.0)).xyz * normalize(vNormal)), 0.0));
+    }*/
 }
 
 void main() {
@@ -83,9 +85,11 @@ void main() {
     vec4 ambient = vec4(getAmbientColor().rgb * 0.3, 1.0);
 
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), getShininessNumber());
-    vec4 specular = vec4(0.5 * spec * getSpecularColor().rgb, 1.0);  
+    vec4 specular = vec4(0.1 * spec * getSpecularColor().rgb, 1.0);  
 
+    // fFragColor = vec4(normalize(uLightPosition.xyz),1.0f);
     fFragColor = diffuse + ambient + specular;
+    //fFragColor = vec4(getNormal(), 1.0);
 
 
 }

@@ -172,7 +172,7 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D 
                 mPlanetDayTexture["Default"]->activate(GL_TEXTURE0);
                 program->postTexture("uTexture", 0);
             }
-            program->post("uLightPosition", glm::vec4(0,0,0,1));
+            program->post("uLightPosition", camera.getViewMatrix() * glm::vec4(0,0,0,1));
             break;
         case GLTools::RENDER_SELECTION:
             program = mSelection3DProgram;

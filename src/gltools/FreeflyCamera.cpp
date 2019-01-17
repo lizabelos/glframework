@@ -20,14 +20,6 @@ glm::mat4 GLTools::FreeflyCamera::getViewMatrix() const {
 	return viewMatrix;
 }
 
-glm::mat4 GLTools::FreeflyCamera::getMVMatrix() const {
-	return getViewMatrix() * Camera3D::getMVMatrix();
-}
-
-glm::mat4 GLTools::FreeflyCamera::getNormalMatrix() const {
-	return glm::transpose(glm::inverse(getMVMatrix()));
-}
-
 void GLTools::FreeflyCamera::moveLeft(float t) {
 	glm::vec3 mFront = glm::vec3(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), mYaw, glm::vec3(0.0f, 1.0f, 0.0f))) * t;
 	mPosition += mFront;
@@ -56,10 +48,6 @@ void GLTools::FreeflyCamera::enableTranslation() {
 
 void GLTools::FreeflyCamera::disableTranslation() {
 	mTranslate = false;
-}
-
-glm::mat4 GLTools::FreeflyCamera::getModelMatrix() const {
-	return Camera3D::getMVMatrix();
 }
 
 glm::vec3 GLTools::FreeflyCamera::getPosition() {

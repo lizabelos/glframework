@@ -40,7 +40,7 @@ private:
     GLGeometry::Sphere mSphere;
     GLGeometry::Cube mCube;
 
-    GLTools::FreeflyCamera mFreeflyCamera;
+    std::shared_ptr<GLTools::FreeflyCamera> mFreeflyCamera;
 
     std::shared_ptr<GLTools::Program> mRender3DProgram, mBackgroundProgram;
     std::shared_ptr<GLScene::Scene> mScene;
