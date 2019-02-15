@@ -32,6 +32,7 @@ protected:
     void render(GLTools::RenderStep renderStep) override;
     void keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
+    void resize(unsigned int width, unsigned int height) override;
 
 private:
     GLGeometry::Sphere mSphere;
@@ -39,10 +40,8 @@ private:
 
     std::shared_ptr<GLTools::FreeflyCamera> mFreeflyCamera;
 
-    std::shared_ptr<GLTools::Program> mRender3DProgram, mBackgroundProgram;
+    std::shared_ptr<GLTools::Program> mRender3DProgram;
     std::shared_ptr<GLScene::Scene> mScene;
-
-    std::shared_ptr<GLTools::TextureCubeMap> mBackground;
 
     GLTools::TextureManager mTextureManager;
 

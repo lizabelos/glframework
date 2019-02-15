@@ -19,6 +19,6 @@ uniform mat4 uNormalMatrix;
 void main() {
 	vPosition = (uMVMatrix * vec4(aVertexPosition,1)).xyz;
 	vNormal = (uNormalMatrix * vec4(aVertexNormal,0)).xyz;
-	vTexCoord = aVertexTexCoord.xy;
+	vTexCoord = vec2(aVertexTexCoord.x,-aVertexTexCoord.y);
     gl_Position = (uMVPMatrix * vec4(aVertexPosition, 1));
 }
