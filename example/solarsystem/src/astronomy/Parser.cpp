@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "Parser.h"
-#include "../utility/CSVReader.h"
+#include "utility/CSVReader.h"
 
 void Astronomy::Parser::readCSV(const std::string &csvPath, std::shared_ptr<Astronomy::Star> &starSystem, std::map<std::string, std::shared_ptr<Astronomy::Astre>> &astres) {
 

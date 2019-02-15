@@ -1,6 +1,16 @@
-# Solar System by BELOS Thomas
+# OpenGL Framework by BELOS Thomas
 
-![Screenshot](res/screenshot_earth.png)
+![Screenshot](example/solarsystem/res/screenshot_earth.png)
+
+## Required packages
+
+OpenGL, SDL2, GLEW, GLM, and ASSIMP are required.
+
+You can install these packages on Ubuntu by using : 
+
+```
+sudo apt install libsdl2-dev libglew-dev libglm-dev libassimp-dev
+```
 
 ## Compilation and installation
 
@@ -8,6 +18,12 @@
 mkdir build
 cmake ..
 make
+```
+
+## Run the examples
+
+From the build directory, run on of the generated binaries
+```
 ./solarsystem
 ```
 

@@ -8,7 +8,7 @@
 #include "Tangram.h"
 
 
-Tangram::Tangram() : Window("Tangram"), mMouseMovement(false), mSquare(0), mNeedRender(true) {
+Tangram::Tangram() : Window("tangram"), mMouseMovement(false), mSquare(0), mNeedRender(true) {
     mRenderProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/button2d.fs.glsl");
     mShadowProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/basic2d.fs.glsl");
     mSelectionProgram = std::make_shared<GLTools::Program>("res/shaders/basic2d.vs.glsl", "res/shaders/selection2d.fs.glsl");

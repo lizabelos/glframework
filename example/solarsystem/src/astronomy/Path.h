@@ -5,7 +5,7 @@
 #ifndef SOLAR_SYSTEM_PATH_H
 #define SOLAR_SYSTEM_PATH_H
 
-#include "../maths/Variable"
+#include "maths/Variable"
 
 namespace Astronomy {
 
