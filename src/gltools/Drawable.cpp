@@ -21,7 +21,7 @@ template<typename vecType> GLTools::TransformDrawable<vecType>::TransformDrawabl
 
 }
 
-template<typename vecType> void GLTools::TransformDrawable<vecType>::render(Camera <vecType> &camera,
+template<typename vecType> void GLTools::TransformDrawable<vecType>::render(ModelView <vecType> &camera,
                                                                              std::shared_ptr<GLTools::Program> program,
                                                                              GLTools::RenderStep renderStep) const {
     camera.pushMatrix();

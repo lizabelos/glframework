@@ -19,13 +19,13 @@ namespace GLTools {
     /**
      * A FreeflyCamera 3D Camera
      */
-    class FreeflyCamera : public Camera3D {
+    class FreeflyModelView : public ModelView3D {
 
     public:
         /**
          * Default constructor to FreeflyCamera. Initialize each angles to zeros.
          */
-        FreeflyCamera();
+        FreeflyModelView();
 
         /**
          * @return The view matrix

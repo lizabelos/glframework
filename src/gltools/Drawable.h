@@ -19,14 +19,33 @@ namespace GLTools {
      */
     typedef enum RenderStep {
         /**
-         * Render on the screen.
+         * Render directly on the screen.
          */
         RENDER_SCREEN,
         /**
          * Render on a selection buffer.
          */
-        RENDER_SELECTION
+        RENDER_SELECTION,
+        /**
+         * Deferred render on the framebuffer.
+         */
+        RENDER_DEFERRED_FRAMEBUFFER,
+        /**
+         * Deferred render on the screen
+         */
+        RENDER_DEFERRED_SCREEN
     } RenderStep;
+
+    typedef enum GBufferTextureType
+    {
+        GPosition = 0,
+        GNormal,
+        GAmbient,
+        GDiffuse,
+        GGlossyShininess,
+        GDepth, // On doit créer une texture de depth mais on écrit pas directement dedans dans le FS. OpenGL le fait pour nous (et l'utilise).
+        GBufferTextureCount
+    } GBufferTextureType;
 
     /**
      * An abstract class to drawable object
@@ -52,7 +71,7 @@ namespace GLTools {
          * @param program The shader to use to draw the object
          * @param renderStep The render step
          */
-        virtual void render(Camera <vecType> &camera, std::shared_ptr<Program> program, RenderStep renderStep) const = 0;
+        virtual void render(ModelView <vecType> &camera, std::shared_ptr<Program> program, RenderStep renderStep) const = 0;
 
         /**
          * @return The selection buffer code of this drawable
@@ -89,7 +108,7 @@ namespace GLTools {
          * @param program The shader to use to draw the object
          * @param renderStep The render step
          */
-        void render(Camera <vecType> &camera, std::shared_ptr<Program> program, RenderStep renderStep) const override;
+        void render(ModelView <vecType> &camera, std::shared_ptr<Program> program, RenderStep renderStep) const override;
 
         /**
          * @return The selection buffer code of the son drawable

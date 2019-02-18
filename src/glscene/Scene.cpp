@@ -206,7 +206,7 @@ GLScene::Scene::Scene(const std::string &path) : GLTools::Drawable<glm::vec3>(0)
 
 }
 
-void GLScene::Scene::render(GLTools::Camera<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
+void GLScene::Scene::render(GLTools::ModelView<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
 
 
     program->post(camera);

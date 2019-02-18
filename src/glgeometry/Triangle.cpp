@@ -29,7 +29,7 @@ GLGeometry::Triangle::Triangle(unsigned int code) : Drawable(code) {
     mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(indices));
 }
 
-void GLGeometry::Triangle::render(GLTools::Camera<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
+void GLGeometry::Triangle::render(GLTools::ModelView<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
     program->post(camera);
     program->use();
 

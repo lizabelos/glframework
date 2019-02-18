@@ -31,7 +31,7 @@ protected:
     void roundObject(GLTools::TransformDrawable<glm::vec2> &transformDrawable);
 
 private:
-    GLTools::Camera2D mCamera;
+    GLTools::ModelView2D mCamera;
     std::vector<GLTools::TransformDrawable<glm::vec2>> drawables;
     GLGeometry::Square mSquare;
 

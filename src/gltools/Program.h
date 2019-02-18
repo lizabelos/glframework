@@ -101,7 +101,7 @@ namespace GLTools {
          * @tparam vecType Either 2D or 3D
          * @param camera The camera to post
          */
-        template<typename vecType> inline void post(const Camera<vecType> &camera) {
+        template<typename vecType> inline void post(const ModelView<vecType> &camera) {
             post("uModelMatrix", camera.getModelMatrix());
             post("uNormalMatrix", camera.getNormalMatrix());
             post("uMVMatrix", camera.getMVMatrix());

@@ -35,22 +35,22 @@ public:
 protected:
     void resize(unsigned int width, unsigned int height) override;
     void render(GLTools::RenderStep renderStep) override;
-    void render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera);
+    void render3d(GLTools::RenderStep renderStep, GLTools::ModelView3D &camera);
     void render2d(GLTools::RenderStep renderStep);
     void renderButton(GLTools::RenderStep renderStep, int uId, glm::vec2 position, std::shared_ptr<GLTools::Texture> texture, glm::vec4 color, glm::vec4 hover);
-    void renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::System> system, int &i, int &subi, int &mousei);
-    void renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::Astre> astre, int &i, int &subi, int &mousei);
+    void renderSystem(GLTools::RenderStep renderStep, GLTools::ModelView3D &camera, std::shared_ptr<Astronomy::System> system, int &i, int &subi, int &mousei);
+    void renderAstre(GLTools::RenderStep renderStep, GLTools::ModelView3D &camera, std::shared_ptr<Astronomy::Astre> astre, int &i, int &subi, int &mousei);
     std::shared_ptr<Astronomy::Astre> searchAstre(std::shared_ptr<Astronomy::Astre> astre, int index, int &i);
 
     void scroll(int x, int y) override;
     void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
-    void keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) override;
+    void keyboard(Uint32 type, bool repeat, int key) override;
 
 private:
-    GLTools::TrackballCamera mTrackballCamera;
-    GLTools::FreeflyCamera mFreeflyCamera;
-    GLTools::Camera2D mCamera2D;
+    GLTools::TrackballModelView mTrackballCamera;
+    GLTools::FreeflyModelView mFreeflyCamera;
+    GLTools::ModelView2D mCamera2D;
     GLGeometry::Sphere mSphere;
     GLGeometry::Circle3D mCircle3D, mRing3D;
     GLGeometry::Square mSquare;

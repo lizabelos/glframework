@@ -16,7 +16,7 @@ namespace GLTools {
      * A virtual camera class, containing the essential function to manipulate the matrix
      * @tparam vecType The dimension of the camera. Either 2D or 3D.
      */
-    template<typename vecType> class Camera {
+    template<typename vecType> class ModelView {
 
     public:
         /**
@@ -83,11 +83,11 @@ namespace GLTools {
 
     };
 
-    class Camera3D : public Camera<glm::vec3> {
+    class ModelView3D : public ModelView<glm::vec3> {
 
     public:
-        Camera3D();
-        Camera3D(unsigned int width, unsigned int height);
+        ModelView3D();
+        ModelView3D(unsigned int width, unsigned int height);
 
         void setPerspective(float far, float near);
 
@@ -128,11 +128,11 @@ namespace GLTools {
 
     };
 
-    class Camera2D : public Camera<glm::vec2> {
+    class ModelView2D : public ModelView<glm::vec2> {
 
     public:
-        Camera2D();
-        Camera2D(unsigned int width, unsigned int height);
+        ModelView2D();
+        ModelView2D(unsigned int width, unsigned int height);
 
         glm::mat4 getProjectionMatrix() const override;
         glm::mat4 getModelMatrix() const override;

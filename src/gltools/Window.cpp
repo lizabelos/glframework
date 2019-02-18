@@ -60,18 +60,22 @@ int GLTools::Window::run() {
 
     while (loop) {
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (mSelectionBuffer) {
 
-        // Depth Test
-        glEnable(GL_DEPTH_TEST);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Disable Alpha Blending
-        glDisable(GL_BLEND);
+            // Depth Test
+            glEnable(GL_DEPTH_TEST);
 
-        // Disable multisampling
-        glDisable(GL_MULTISAMPLE_ARB);
-        render(RENDER_SELECTION);
+            // Disable Alpha Blending
+            glDisable(GL_BLEND);
+
+            // Disable multisampling
+            glDisable(GL_MULTISAMPLE_ARB);
+            render(RENDER_SELECTION);
+
+        }
 
         do {
             SDL_Event event;
@@ -80,27 +84,39 @@ int GLTools::Window::run() {
                 processEvent(event, loop);
             }
 
+            for (int key : mPressedKey) {
+                keyboard(SDL_KEYDOWN, true, key);
+            }
+
             while (SDL_PollEvent(&event)) {
                 processEvent(event, loop);
             }
 
         } while (!needRender() && loop);
 
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (!mDeferred) {
 
-        // Depth Test
-        glEnable(GL_DEPTH_TEST);
+            glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Enable Alpha Blending
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            // Depth Test
+            glEnable(GL_DEPTH_TEST);
 
-        // Enable multisampling
-        glEnable(GL_MULTISAMPLE_ARB);
+            // Enable Alpha Blending
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        render(RENDER_SCREEN);
-        SDL_GL_SwapWindow(mWindow);
+            // Enable multisampling
+            glEnable(GL_MULTISAMPLE_ARB);
+
+            render(RENDER_SCREEN);
+            SDL_GL_SwapWindow(mWindow);
+
+        } else {
+
+            // todo : deferred rendering
+
+        }
 
     }
 
@@ -150,7 +166,7 @@ void GLTools::Window::mouseMove(glm::vec2 mousePosition, unsigned int selection)
 
 }
 
-void GLTools::Window::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
+void GLTools::Window::keyboard(Uint32 type, bool repeat, int key) {
 
 }
 
@@ -158,9 +174,16 @@ void GLTools::Window::processEvent(const SDL_Event &event, bool &loop) {
     if (event.type == SDL_QUIT) {
         loop = false;
     }
-    if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+    if (event.type == SDL_KEYDOWN)
     {
-        keyboard(event.key.type, event.key.repeat, event.key.keysym);
+        if (mPressedKey.count(event.key.keysym.sym) == 0) {
+            mPressedKey.insert(event.key.keysym.sym);
+            keyboard(SDL_KEYDOWN, false, event.key.keysym.sym);
+        }
+    }
+    if (event.type == SDL_KEYUP) {
+        mPressedKey.erase(event.key.keysym.sym);
+        keyboard(SDL_KEYUP, false, event.key.keysym.sym);
     }
     if (event.type == SDL_WINDOWEVENT) {
         switch (event.window.event) {
@@ -193,4 +216,12 @@ bool GLTools::Window::waitEvent() {
 
 bool GLTools::Window::needRender() {
     return true;
+}
+
+void GLTools::Window::setDeferred(bool state) {
+    mDeferred = state;
+}
+
+void GLTools::Window::setSelectionBuffer(bool state) {
+    mSelectionBuffer = state;
 }

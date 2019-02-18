@@ -19,7 +19,7 @@ namespace GLGeometry {
     public:
         explicit Parallelogram(unsigned int code);
 
-        void render(GLTools::Camera<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
+        void render(GLTools::ModelView<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
 
     private:
         Square mSquare;

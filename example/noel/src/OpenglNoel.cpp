@@ -8,7 +8,7 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
 
-    mFreeflyCamera = std::make_shared<GLTools::FreeflyCamera>();
+    mFreeflyCamera = std::make_shared<GLTools::FreeflyModelView>();
     mFreeflyCamera->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
 
 
@@ -30,9 +30,9 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 }
 
 
-void OpenglNoel::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
+void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
 
-    switch (key.sym) {
+    switch (key) {
         case SDLK_UP:
         case SDLK_z:
             mFreeflyCamera->moveFront(3.0f);

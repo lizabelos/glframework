@@ -20,7 +20,7 @@ namespace GLGeometry {
 
         void initialize(Maths::Variable x, Maths::Variable y, Maths::Variable z, Maths::Variable normX, Maths::Variable normY, Maths::Variable normZ, Maths::Variable texX, Maths::Variable texY, Maths::SVariable p1, Maths::SVariable p2, unsigned long resolution1, unsigned long resolution2);
 
-        void render(GLTools::Camera<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
+        void render(GLTools::ModelView<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
         bool setLine(bool useLine);
 
     protected:
@@ -44,7 +44,7 @@ namespace GLGeometry {
 
         void initialize(Maths::Variable x, Maths::Variable y, Maths::Variable texX, Maths::Variable texY, Maths::SVariable p1, Maths::SVariable p2, unsigned long resolution1, unsigned long resolution2);
 
-        void render(GLTools::Camera<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
+        void render(GLTools::ModelView<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
         bool setLine(bool useLine);
 
 

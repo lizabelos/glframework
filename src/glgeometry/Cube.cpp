@@ -48,7 +48,7 @@ GLGeometry::Cube::Cube(unsigned int code) : Drawable(code) {
 
 }
 
-void GLGeometry::Cube::render(GLTools::Camera<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
+void GLGeometry::Cube::render(GLTools::ModelView<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
     program->post(camera);
     program->use();
 

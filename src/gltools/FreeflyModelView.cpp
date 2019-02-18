@@ -1,13 +1,13 @@
-#include "FreeflyCamera.h"
+#include "FreeflyModelView.h"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-GLTools::FreeflyCamera::FreeflyCamera() : GLTools::Camera3D(), mPitch(0.0f), mRoll(0.0f), mYaw(0.0f), mTranslate(true) {
+GLTools::FreeflyModelView::FreeflyModelView() : GLTools::ModelView3D(), mPitch(0.0f), mRoll(0.0f), mYaw(0.0f), mTranslate(true) {
 
 }
 
-glm::mat4 GLTools::FreeflyCamera::getViewMatrix() const {
+glm::mat4 GLTools::FreeflyModelView::getViewMatrix() const {
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 
 	viewMatrix = glm::rotate(viewMatrix, mPitch, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -20,36 +20,36 @@ glm::mat4 GLTools::FreeflyCamera::getViewMatrix() const {
 	return viewMatrix;
 }
 
-void GLTools::FreeflyCamera::moveLeft(float t) {
+void GLTools::FreeflyModelView::moveLeft(float t) {
 	glm::vec3 mFront = glm::vec3(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), mYaw, glm::vec3(0.0f, 1.0f, 0.0f))) * t;
 	mPosition += mFront;
 }
 
-void GLTools::FreeflyCamera::moveFront(float t) {
+void GLTools::FreeflyModelView::moveFront(float t) {
 	glm::vec3 mFront = glm::vec3(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * glm::rotate(glm::mat4(1.0f), mYaw, glm::vec3(0.0f, 1.0f, 0.0f))) * t;
 	mPosition += mFront;
 }
 
-void GLTools::FreeflyCamera::rotateLeft(float t) {
+void GLTools::FreeflyModelView::rotateLeft(float t) {
 	mYaw = mYaw + t;
 }
 
-void GLTools::FreeflyCamera::rotateUp(float t) {
+void GLTools::FreeflyModelView::rotateUp(float t) {
 	mPitch = mPitch - t;
 }
 
-void GLTools::FreeflyCamera::moveUp(float t) {
+void GLTools::FreeflyModelView::moveUp(float t) {
 	mPosition.y = mPosition.y + t;
 }
 
-void GLTools::FreeflyCamera::enableTranslation() {
+void GLTools::FreeflyModelView::enableTranslation() {
 	mTranslate = true;
 }
 
-void GLTools::FreeflyCamera::disableTranslation() {
+void GLTools::FreeflyModelView::disableTranslation() {
 	mTranslate = false;
 }
 
-glm::vec3 GLTools::FreeflyCamera::getPosition() {
+glm::vec3 GLTools::FreeflyModelView::getPosition() {
 	return mPosition;
 }

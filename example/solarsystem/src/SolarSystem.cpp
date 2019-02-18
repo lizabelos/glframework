@@ -59,7 +59,7 @@ void SolarSystem::render(GLTools::RenderStep renderStep) {
 
 }
 
-void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::Camera3D &camera)
+void SolarSystem::render3d(GLTools::RenderStep renderStep, GLTools::ModelView3D &camera)
 {
     glDepthMask(GL_FALSE);
     camera.identity();
@@ -126,7 +126,7 @@ void SolarSystem::renderButton(GLTools::RenderStep renderStep, int uId, glm::vec
 
 }
 
-void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::System> system, int &i, int &subi, int &mousei) {
+void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::ModelView3D &camera, std::shared_ptr<Astronomy::System> system, int &i, int &subi, int &mousei) {
 
     std::vector<std::shared_ptr<Astronomy::Astre>> astres = system->getAstres();
     std::sort(astres.begin(), astres.end(), [](const std::shared_ptr<Astronomy::Astre> &a, const std::shared_ptr<Astronomy::Astre> &b) { return a->getCenterDistance().y < b->getCenterDistance().y; });
@@ -140,7 +140,7 @@ void SolarSystem::renderSystem(GLTools::RenderStep renderStep, GLTools::Camera3D
 
 }
 
-void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::Camera3D &camera, std::shared_ptr<Astronomy::Astre> astre, int &i, int &subi, int &mousei) {
+void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::ModelView3D &camera, std::shared_ptr<Astronomy::Astre> astre, int &i, int &subi, int &mousei) {
 
 
     float currentTime = mTimeManager.getTime() / 1000.0f;
@@ -355,9 +355,9 @@ void SolarSystem::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 
 }
 
-void SolarSystem::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
+void SolarSystem::keyboard(Uint32 type, bool repeat, int key) {
     if (mFreefly) {
-        switch (key.sym) {
+        switch (key) {
             case SDLK_UP:
             case SDLK_z:
                 mFreeflyCamera.moveFront(1.0f);
@@ -384,7 +384,7 @@ void SolarSystem::keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key) {
                 break;
         }
     }
-    switch (key.sym) {
+    switch (key) {
         case SDLK_c:
             if (type == SDL_KEYUP) mFreefly = !mFreefly;
             break;

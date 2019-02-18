@@ -17,7 +17,7 @@ namespace GLGeometry {
     public:
         explicit Cube(unsigned int code);
 
-        void render(GLTools::Camera<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
+        void render(GLTools::ModelView<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
 
     private:
         GLTools::VertexArrayObject mVertexArrayObject;

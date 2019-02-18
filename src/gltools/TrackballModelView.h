@@ -18,13 +18,13 @@ namespace GLTools {
      * A 3D Trackball camera
      * @see Camera3D
      */
-    class TrackballCamera : public Camera3D {
+    class TrackballModelView : public ModelView3D {
 
     public:
         /**
          * Default construction for TrackballCamera. Intialize left and up with 0, and front with 50.
          */
-        TrackballCamera();
+        TrackballModelView();
 
         /**
          * Construct TrackballCamera with custom front, left and up orientation.
@@ -32,7 +32,7 @@ namespace GLTools {
          * @param left Left angle
          * @param up Up angle
          */
-        TrackballCamera(float front, float left, float up);
+        TrackballModelView(float front, float left, float up);
 
         /**
          * @return The view matrix

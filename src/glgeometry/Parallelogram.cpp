@@ -8,7 +8,7 @@ GLGeometry::Parallelogram::Parallelogram(unsigned int code) : Drawable(code), mS
 
 }
 
-void GLGeometry::Parallelogram::render(GLTools::Camera<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program,
+void GLGeometry::Parallelogram::render(GLTools::ModelView<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program,
                                        GLTools::RenderStep renderStep) const {
 
     mSquare.render(camera, program, renderStep);

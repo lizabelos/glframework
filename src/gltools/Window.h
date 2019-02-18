@@ -8,6 +8,7 @@
 #include <list>
 #include <memory>
 #include <chrono>
+#include <set>
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
@@ -112,7 +113,7 @@ namespace GLTools {
          * @param repeat 0 if no repetition
          * @param key The SDL2 key id
          */
-        virtual void keyboard(Uint32 type, Uint8 repeat, SDL_Keysym key);
+        virtual void keyboard(Uint32 type, bool repeat, int key);
 
         /**
          * A virtual function which if return true, wait for an event before rendering
@@ -126,9 +127,24 @@ namespace GLTools {
          */
         virtual bool needRender();
 
+        /**
+         * Enable or disable the deferred rendering
+         * @param state true to enable or false to disable
+         */
+        void setDeferred(bool state);
+
+        /**
+         * Enable or disable the selection buffer
+         * @param state true to enable or false to disable
+         */
+        void setSelectionBuffer(bool state);
+
     private:
         void processEvent(const SDL_Event &event, bool &loop);
         unsigned int processSelection(int x, int y);
+
+        bool mDeferred = false;
+        bool mSelectionBuffer = false;
 
         SDL_Window *mWindow;
         SDL_GLContext mContext;
@@ -136,6 +152,8 @@ namespace GLTools {
         int mMouseX, mMouseY;
 
         std::chrono::steady_clock::time_point mBegin;
+
+        std::set<int> mPressedKey;
 
     };
 
