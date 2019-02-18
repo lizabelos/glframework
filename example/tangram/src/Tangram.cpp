@@ -47,6 +47,8 @@ Tangram::Tangram() : Window("tangram"), mMouseMovement(false), mSquare(0), mNeed
         drawables.emplace_back(transformDrawable);
     }
 
+    setSelectionBuffer(true);
+
 }
 
 void Tangram::render(GLTools::RenderStep renderStep) {

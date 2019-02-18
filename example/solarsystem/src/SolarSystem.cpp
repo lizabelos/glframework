@@ -42,6 +42,8 @@ SolarSystem::SolarSystem() : GLTools::Window("Solar System"), mPlanetDayTexture(
     mBackgroundProgram = std::make_shared<GLTools::Program>("res/shaders/cubmap.vs.glsl", "res/shaders/cubmap.fs.glsl");
 
     mCurrentSystem = mStarSystem;
+
+    setSelectionBuffer(true);
 }
 
 void SolarSystem::render(GLTools::RenderStep renderStep) {

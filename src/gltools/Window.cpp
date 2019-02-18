@@ -116,8 +116,20 @@ int GLTools::Window::run() {
 
             if (!mGBufferIsInit) initGBuffer();
 
+            GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
 
-            // todo : deferred rendering
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
+            glDrawBuffers(5, drawBuffers);
+
+            render(RENDER_DEFERRED_FRAMEBUFFER);
+
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, mFBO);
+            glDrawBuffer(GL_BACK);
+
+            render(RENDER_DEFERRED_SCREEN);
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
         }
 
@@ -232,16 +244,35 @@ void GLTools::Window::setSelectionBuffer(bool state) {
 void GLTools::Window::initGBuffer() {
     if (mGBufferIsInit) uninitGBuffer();
 
+    int width, height;
+    SDL_GetWindowSize(mWindow, &width, &height);
+
     for (int i = 0; i < GBufferTextureCount; i++) {
         glGenTextures(1, &mGBufferTextures[i]);
-        // glBindTexture(mGBufferTextures[i]);
-        // glTexStorage2D();
+        glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GBufferTextureFormat[i], width, height);
     }
 
+    glGenFramebuffers(1, &mFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
 
+    for (int i = 0; i < GBufferTextureCount; i++) {
+        if (GBufferTextureFormat[i] == GDepth) {
+            glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mGBufferTextures[i], 0);
+        } else {
+            glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, mGBufferTextures[i], 0);
+        }
+
+    }
     mGBufferIsInit = true;
 }
 
 void GLTools::Window::uninitGBuffer() {
     if (!mGBufferIsInit) return;
+
+    glDeleteFramebuffers(1, &mFBO);
+
+    for (int i = 0; i < GBufferTextureCount; i++) {
+        glDeleteTextures(1, &mGBufferTextures[i]);
+    }
 }

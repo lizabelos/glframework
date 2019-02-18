@@ -2,30 +2,55 @@
 #include "OpenglNoel.h"
 
 
-OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256), mCube(0), mMouseSet(false), mTextureManager("res/textures") {
+OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256), mCube(0), mSquare(0), mMouseSet(false), mTextureManager("res/textures") {
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
+    mGeometryProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/geometry/light.fs.glsl");
+    mShadingProgram =  std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/default.fs.glsl");
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
 
     mFreeflyCamera = std::make_shared<GLTools::FreeflyModelView>();
     mFreeflyCamera->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
 
+    mModelView2D = std::make_shared<GLTools::ModelView2D>();
+
 
 }
 
 void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
-    if (renderStep != GLTools::RENDER_SCREEN) {
-        return;
+    if (renderStep == GLTools::RENDER_SCREEN) {
+
+        mFreeflyCamera->identity();
+
+        mRender3DProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
+        mRender3DProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
+
+        mScene->render(*mFreeflyCamera, mRender3DProgram, renderStep);
+
     }
 
-    mFreeflyCamera->identity();
+    if (renderStep == GLTools::RENDER_DEFERRED_FRAMEBUFFER) {
 
-    mRender3DProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
-    mRender3DProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
 
-    mScene->render(*mFreeflyCamera, mRender3DProgram, renderStep);
+        mFreeflyCamera->identity();
+
+        mGeometryProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
+        mGeometryProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
+
+        mScene->render(*mFreeflyCamera, mGeometryProgram, renderStep);
+
+
+    }
+
+    if (renderStep == GLTools::RENDER_DEFERRED_SCREEN) {
+
+        mModelView2D->identity();
+
+        mSquare->render(*mModelView2D, mModelView2D, renderStep);
+
+    }
 
 }
 

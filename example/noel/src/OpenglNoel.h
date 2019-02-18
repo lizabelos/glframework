@@ -37,10 +37,13 @@ protected:
 private:
     GLGeometry::Sphere mSphere;
     GLGeometry::Cube mCube;
+    GLGeometry::Square mSquare;
 
     std::shared_ptr<GLTools::FreeflyModelView> mFreeflyCamera;
+    std::shared_ptr<GLTools::ModelView2D> mModelView2D;
 
-    std::shared_ptr<GLTools::Program> mRender3DProgram;
+
+    std::shared_ptr<GLTools::Program> mRender3DProgram, mGeometryProgram, mShadingProgram;
     std::shared_ptr<GLScene::Scene> mScene;
 
     GLTools::TextureManager mTextureManager;

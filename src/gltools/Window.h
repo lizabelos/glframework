@@ -161,7 +161,7 @@ namespace GLTools {
         std::set<int> mPressedKey;
 
         GLuint mGBufferTextures[GBufferTextureCount];
-
+        GLuint mFBO;
     };
 
 }
