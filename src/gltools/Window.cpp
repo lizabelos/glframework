@@ -71,8 +71,6 @@ int GLTools::Window::run() {
             // Disable Alpha Blending
             glDisable(GL_BLEND);
 
-            // Disable multisampling
-            glDisable(GL_MULTISAMPLE_ARB);
             render(RENDER_SELECTION);
 
         }
@@ -106,9 +104,6 @@ int GLTools::Window::run() {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            // Enable multisampling
-            glEnable(GL_MULTISAMPLE_ARB);
-
             render(RENDER_SCREEN);
             SDL_GL_SwapWindow(mWindow);
 
@@ -116,10 +111,17 @@ int GLTools::Window::run() {
 
             if (!mGBufferIsInit) initGBuffer();
 
-            GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+            glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // Depth Test
+            glEnable(GL_DEPTH_TEST);
+
 
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
-            glDrawBuffers(5, drawBuffers);
+            glDrawBuffers(5, GDrawBuffers);
 
             render(RENDER_DEFERRED_FRAMEBUFFER);
 
@@ -247,23 +249,41 @@ void GLTools::Window::initGBuffer() {
     int width, height;
     SDL_GetWindowSize(mWindow, &width, &height);
 
-    for (int i = 0; i < GBufferTextureCount; i++) {
-        glGenTextures(1, &mGBufferTextures[i]);
-        glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
-        glTexStorage2D(GL_TEXTURE_2D, 1, GBufferTextureFormat[i], width, height);
-    }
+    std::cout << "Creating frame buffer object of size " << width << "x" << height << "..." << std::endl;
+
 
     glGenFramebuffers(1, &mFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
 
     for (int i = 0; i < GBufferTextureCount; i++) {
+        glGenTextures(1, &mGBufferTextures[i]);
+        glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GBufferTextureFormat[i], width, height);
+
         if (GBufferTextureFormat[i] == GDepth) {
             glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mGBufferTextures[i], 0);
         } else {
             glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, mGBufferTextures[i], 0);
         }
+    }
+
+    glDrawBuffers(5, GDrawBuffers);
+
+    GLenum framebufferStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+    switch (framebufferStatus) {
+        case GL_FRAMEBUFFER_COMPLETE:
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:  throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+        case GL_FRAMEBUFFER_UNSUPPORTED: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_UNSUPPORTED");
+        case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
+        case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS");
+        default:
+            throw std::runtime_error("gl draw framebuffer is not complete. unknown error :(");
 
     }
+
     mGBufferIsInit = true;
 }
 

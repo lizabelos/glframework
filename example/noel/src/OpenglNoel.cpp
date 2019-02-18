@@ -6,7 +6,7 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mGeometryProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/geometry/light.fs.glsl");
-    mShadingProgram =  std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/default.fs.glsl");
+    mShadingProgram =  std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/default.fs.glsl");
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
 
@@ -36,9 +36,6 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mFreeflyCamera->identity();
 
-        mGeometryProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
-        mGeometryProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
-
         mScene->render(*mFreeflyCamera, mGeometryProgram, renderStep);
 
 
@@ -48,7 +45,10 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mModelView2D->identity();
 
-        mSquare->render(*mModelView2D, mModelView2D, renderStep);
+        mShadingProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
+        mShadingProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
+
+        mSquare.render(*mModelView2D, mShadingProgram, renderStep);
 
     }
 
@@ -79,6 +79,12 @@ void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
             break;
         case SDLK_SPACE:
             mFreeflyCamera->moveUp(-3.0f);
+            break;
+        case SDLK_f:
+            setDeferred(true);
+            break;
+        case SDLK_g:
+            setDeferred(false);
             break;
         default:
             break;
