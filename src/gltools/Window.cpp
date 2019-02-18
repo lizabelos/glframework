@@ -42,7 +42,7 @@ GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
 }
 
 GLTools::Window::~Window() {
-
+    uninitGBuffer();
     SDL_GL_DeleteContext(mContext);
     SDL_DestroyWindow(mWindow);
 
@@ -113,6 +113,9 @@ int GLTools::Window::run() {
             SDL_GL_SwapWindow(mWindow);
 
         } else {
+
+            if (!mGBufferIsInit) initGBuffer();
+
 
             // todo : deferred rendering
 
@@ -224,4 +227,21 @@ void GLTools::Window::setDeferred(bool state) {
 
 void GLTools::Window::setSelectionBuffer(bool state) {
     mSelectionBuffer = state;
+}
+
+void GLTools::Window::initGBuffer() {
+    if (mGBufferIsInit) uninitGBuffer();
+
+    for (int i = 0; i < GBufferTextureCount; i++) {
+        glGenTextures(1, &mGBufferTextures[i]);
+        // glBindTexture(mGBufferTextures[i]);
+        // glTexStorage2D();
+    }
+
+
+    mGBufferIsInit = true;
+}
+
+void GLTools::Window::uninitGBuffer() {
+    if (!mGBufferIsInit) return;
 }

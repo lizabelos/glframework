@@ -140,11 +140,16 @@ namespace GLTools {
         void setSelectionBuffer(bool state);
 
     private:
+        void initGBuffer();
+        void uninitGBuffer();
+
         void processEvent(const SDL_Event &event, bool &loop);
         unsigned int processSelection(int x, int y);
 
         bool mDeferred = false;
         bool mSelectionBuffer = false;
+
+        bool mGBufferIsInit = false;
 
         SDL_Window *mWindow;
         SDL_GLContext mContext;
@@ -154,6 +159,8 @@ namespace GLTools {
         std::chrono::steady_clock::time_point mBegin;
 
         std::set<int> mPressedKey;
+
+        GLuint mGBufferTextures[GBufferTextureCount];
 
     };
 

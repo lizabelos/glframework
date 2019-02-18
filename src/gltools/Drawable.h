@@ -47,6 +47,8 @@ namespace GLTools {
         GBufferTextureCount
     } GBufferTextureType;
 
+    const GLenum GBufferTextureFormat[GBufferTextureCount] = { GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGB32F, GL_RGBA32F, GL_DEPTH_COMPONENT32F };
+
     /**
      * An abstract class to drawable object
      * @tparam vecType The dimension of the drawable. Either 2D or 3D.
