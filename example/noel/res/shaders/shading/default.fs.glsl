@@ -34,5 +34,7 @@ void main() {
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), specularColor.a);
     vec3 specular = 0.1 * spec * specularColor.rgb;
 
-    fFragColor = vec4(diffuse + ambient + specular, 1.0);
+    // fFragColor = vec4(diffuse + ambient + specular, 1.0);
+    // fFragColor = vec4(normal, 1.0);
+    fFragColor = vec4(diffuse + ambient, 1.0);
 }

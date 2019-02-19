@@ -5,7 +5,7 @@
 OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256), mCube(0), mSquare(0), mMouseSet(false), mTextureManager("res/textures") {
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
-    mGeometryProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/geometry/light.fs.glsl");
+    mGeometryProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/geometry/default.fs.glsl");
     mShadingProgram =  std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/default.fs.glsl");
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
@@ -47,6 +47,11 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mShadingProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
         mShadingProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
+        mShadingProgram->postTexture("uGPosition", 0);
+        mShadingProgram->postTexture("uGNormal", 1);
+        mShadingProgram->postTexture("uGAmbient", 2);
+        mShadingProgram->postTexture("uGDiffuse", 3);
+        mShadingProgram->postTexture("uGlossyShininess", 4);
 
         mSquare.render(*mModelView2D, mShadingProgram, renderStep);
 

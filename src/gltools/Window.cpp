@@ -111,25 +111,36 @@ int GLTools::Window::run() {
 
             if (!mGBufferIsInit) initGBuffer();
 
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-            glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
             // Depth Test
             glEnable(GL_DEPTH_TEST);
 
 
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
-            glDrawBuffers(5, GDrawBuffers);
+            glDrawBuffers(GDrawBuffersSize, GDrawBuffers);
+
+            glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             render(RENDER_DEFERRED_FRAMEBUFFER);
 
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, mFBO);
-            glDrawBuffer(GL_BACK);
+
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Use a different color to see the bug
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            for (int i = 0; i < GDrawBuffersSize; i++) {
+                glActiveTexture(GL_TEXTURE0 + i);
+                glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
+            }
 
             render(RENDER_DEFERRED_SCREEN);
+
+            for (int i = 0; i < GDrawBuffersSize; i++) {
+                glActiveTexture(GL_TEXTURE0 + i);
+                glBindTexture(GL_TEXTURE_2D, 0);
+            }
+
+            SDL_GL_SwapWindow(mWindow);
 
             glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
@@ -244,6 +255,7 @@ void GLTools::Window::setSelectionBuffer(bool state) {
 }
 
 void GLTools::Window::initGBuffer() {
+    // Todo : Create a GBuffer class
     if (mGBufferIsInit) uninitGBuffer();
 
     int width, height;
@@ -252,22 +264,31 @@ void GLTools::Window::initGBuffer() {
     std::cout << "Creating frame buffer object of size " << width << "x" << height << "..." << std::endl;
 
 
+    for (int i = 0; i < GBufferTextureCount; i++) {
+        std::cout << "Creating texture " << i << std::endl;
+        glGenTextures(1, &mGBufferTextures[i]);
+        glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GBufferTextureFormat[i], width, height);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    std::cout << "Generating framebuffer..." << std::endl;
     glGenFramebuffers(1, &mFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
 
     for (int i = 0; i < GBufferTextureCount; i++) {
-        glGenTextures(1, &mGBufferTextures[i]);
-        glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
-        glTexStorage2D(GL_TEXTURE_2D, 1, GBufferTextureFormat[i], width, height);
-
-        if (GBufferTextureFormat[i] == GDepth) {
+        
+        if ((GBufferTextureType)i == GDepth) {
+            std::cout << "Creating Depth Attachment..." << std::endl;
             glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mGBufferTextures[i], 0);
         } else {
+            std::cout << "Creating Color Attachment " << i << " ..." << std::endl;
             glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, mGBufferTextures[i], 0);
         }
+
     }
 
-    glDrawBuffers(5, GDrawBuffers);
+    glDrawBuffers(GDrawBuffersSize, GDrawBuffers);
 
     GLenum framebufferStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
     switch (framebufferStatus) {
@@ -283,6 +304,8 @@ void GLTools::Window::initGBuffer() {
             throw std::runtime_error("gl draw framebuffer is not complete. unknown error :(");
 
     }
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     mGBufferIsInit = true;
 }
