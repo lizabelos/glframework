@@ -49,6 +49,29 @@ namespace GLTools {
 
     };
 
+    class ShadowFramebuffer {
+
+    public:
+        ShadowFramebuffer();
+        ~ShadowFramebuffer();
+
+        void use();
+        void bindTexture();
+
+        /**
+         * You can't copy a Framebuffer.
+         */
+        ShadowFramebuffer( const Framebuffer& ) = delete;
+        ShadowFramebuffer& operator=( const Framebuffer& ) = delete;
+
+    private:
+        GLuint mDirectionalSMTexture;
+        GLuint mDirectionalSMFBO;
+        GLuint mDirectionalSMSampler;
+        int mDirectionalSMResolution = 512;
+
+    };
+
 }
 
 

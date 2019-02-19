@@ -7,11 +7,16 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mGeometryProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/geometry/default.fs.glsl");
     mShadingProgram =  std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/default.fs.glsl");
+    mShadowProgram = std::make_shared<GLTools::Program>("res/shaders/shadow/directionalSM.vs.glsl", "res/shaders/shadow/directionalSM.fs.glsl");
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
 
     mFreeflyCamera = std::make_shared<GLTools::FreeflyModelView>();
     mFreeflyCamera->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
+
+    mLightView = std::make_shared<>(GLTools::FreeflyModelView);
+    // todo : ortogprahic projection
+    mLightView->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
 
     mModelView2D = std::make_shared<GLTools::ModelView2D>();
 
@@ -33,11 +38,15 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
     if (renderStep == GLTools::RENDER_DEFERRED_FRAMEBUFFER) {
 
-
         mFreeflyCamera->identity();
-
         mScene->render(*mFreeflyCamera, mGeometryProgram, renderStep);
 
+    }
+
+    if (renderStep == GLTools::RENDER_DEFERRED_SHADOW) {
+
+        mLightView->identity();
+        mScene->render(*mLightView, mShadingProgram, renderStep);
 
     }
 
@@ -111,4 +120,8 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 
 void OpenglNoel::resize(unsigned int width, unsigned int height) {
     mFreeflyCamera->resize(width, height);
+}
+
+bool needRenderShadow() override {
+    return true; // todo : true only if the light change position
 }

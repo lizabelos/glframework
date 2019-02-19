@@ -33,17 +33,18 @@ protected:
     void keyboard(Uint32 type, bool repeat, int key) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
     void resize(unsigned int width, unsigned int height) override;
+    bool needRenderShadow() override;
 
 private:
     GLGeometry::Sphere mSphere;
     GLGeometry::Cube mCube;
     GLGeometry::Square mSquare;
 
-    std::shared_ptr<GLTools::FreeflyModelView> mFreeflyCamera;
+    std::shared_ptr<GLTools::FreeflyModelView> mFreeflyCamera, mLightView;
     std::shared_ptr<GLTools::ModelView2D> mModelView2D;
 
 
-    std::shared_ptr<GLTools::Program> mRender3DProgram, mGeometryProgram, mShadingProgram;
+    std::shared_ptr<GLTools::Program> mRender3DProgram, mGeometryProgram, mShadingProgram, mShadowProgram;
     std::shared_ptr<GLScene::Scene> mScene;
 
     GLTools::TextureManager mTextureManager;

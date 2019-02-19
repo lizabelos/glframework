@@ -31,9 +31,13 @@ namespace GLTools {
          */
         RENDER_DEFERRED_FRAMEBUFFER,
         /**
+         * Deferred render on the shadow
+         */,
+         RENDER_DEFERRED_SHADOW,
+         /**
          * Deferred render on the screen
          */
-        RENDER_DEFERRED_SCREEN
+         RENDER_DEFERRED_SCREEN
     } RenderStep;
 
     /**

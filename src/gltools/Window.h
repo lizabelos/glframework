@@ -129,6 +129,12 @@ namespace GLTools {
         virtual bool needRender();
 
         /**
+         * A virtual function which need to return true if we need a render of the shadow (only in deferred mode)
+         * @return true if need a render
+         */
+        virtual bool needRenderShadow();
+
+        /**
          * Enable or disable the deferred rendering
          * @param state true to enable or false to disable
          */
@@ -156,6 +162,7 @@ namespace GLTools {
         std::set<int> mPressedKey;
 
         std::shared_ptr<Framebuffer> mFramebuffer;
+        std::shared_ptr<ShadowFramebuffer> mShadowFramebuffer;
 
     };
 

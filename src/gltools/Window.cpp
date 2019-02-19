@@ -110,7 +110,15 @@ int GLTools::Window::run() {
 
             // Depth Test
             glEnable(GL_DEPTH_TEST);
-            
+
+            if (needRenderShadow()) {
+
+                mShadowFramebuffer->use();
+                glClear(GL_DEPTH_BUFFER_BIT);
+                render(RENDER_DEFERRED_SHADOW);
+
+            }
+
             mFramebuffer->use();
 
             glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -120,10 +128,11 @@ int GLTools::Window::run() {
 
             mFramebuffer->useScreen();
 
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Use a different color to see the bug
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             mFramebuffer->bindTextures();
+            mShadowFramebuffer->bindTexture();
 
             render(RENDER_DEFERRED_SCREEN);
 
@@ -232,14 +241,20 @@ bool GLTools::Window::needRender() {
     return true;
 }
 
+bool GLTools::Window::needRenderShadow() {
+    return false;
+}
+
 void GLTools::Window::setDeferred(bool state) {
     mDeferred = state;
     if (mDeferred) {
         int w, h;
         SDL_GetWindowSize(mWindow, &w, &h);
         mFramebuffer = std::make_shared<Framebuffer>(w, h);
+        mShadowFramebuffer = std::make_shared<ShadowFramebuffer>();
     } else {
         mFramebuffer = std::shared_ptr<Framebuffer>(nullptr);
+        mShadowFramebuffer = std::shared_ptr<ShadowFramebuffer>(nullptr);
     }
 }
 
