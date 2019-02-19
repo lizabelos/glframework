@@ -15,6 +15,7 @@
 
 #include "Drawable"
 #include "Camera"
+#include "Framebuffer"
 
 /**
  * A namespace regrouping all the GLTools OpenGL wrapper.
@@ -146,22 +147,16 @@ namespace GLTools {
         void processEvent(const SDL_Event &event, bool &loop);
         unsigned int processSelection(int x, int y);
 
-        bool mDeferred = false;
-        bool mSelectionBuffer = false;
-
-        bool mGBufferIsInit = false;
-
         SDL_Window *mWindow;
         SDL_GLContext mContext;
 
         int mMouseX, mMouseY;
 
         std::chrono::steady_clock::time_point mBegin;
-
         std::set<int> mPressedKey;
 
-        GLuint mGBufferTextures[GBufferTextureCount];
-        GLuint mFBO;
+        std::shared_ptr<Framebuffer> mFramebuffer;
+
     };
 
 }

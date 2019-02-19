@@ -36,23 +36,6 @@ namespace GLTools {
         RENDER_DEFERRED_SCREEN
     } RenderStep;
 
-    typedef enum GBufferTextureType
-    {
-        GPosition = 0,
-        GNormal,
-        GAmbient,
-        GDiffuse,
-        GGlossyShininess,
-        GDepth, // On doit créer une texture de depth mais on écrit pas directement dedans dans le FS. OpenGL le fait pour nous (et l'utilise).
-        GBufferTextureCount
-    } GBufferTextureType;
-
-    // Warning : GL_RGB32F is unsupported of a lot of computer. Using GL_RGBA32F instead.
-    const GLenum GBufferTextureFormat[GBufferTextureCount] = { GL_RGBA32F, GL_RGBA32F, GL_RGBA32F, GL_RGBA32F, GL_RGBA32F, GL_DEPTH_COMPONENT32F };
-
-    const GLenum GDrawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-    const int GDrawBuffersSize = 5;
-
     /**
      * An abstract class to drawable object
      * @tparam vecType The dimension of the drawable. Either 2D or 3D.
