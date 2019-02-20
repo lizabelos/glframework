@@ -1,12 +1,23 @@
 
 #include "OpenglNoel.h"
 
+#include <iostream>
 
-OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256), mCube(0), mSquare(0), mMouseSet(false), mTextureManager("res/textures") {
+OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256), mCube(0), mMouseSet(false), mTextureManager("res/textures") {
+
+    mSquare = std::make_shared<GLGeometry::Square>(0);
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mGeometryProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/geometry/default.fs.glsl");
-    mShadingProgram =  std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/default.fs.glsl");
+
+    mShadingProgram = std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/default.fs.glsl");
+    mShadingAmbienProgram = std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/ambient.fs.glsl");
+    mShadingDiffuseProgram = std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/diffuse.fs.glsl");
+    mShadingNormalProgram = std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/normal.fs.glsl");
+    mShadingShadowProgram = std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/shadow.fs.glsl");
+    mShadingSpecularProgram = std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/specular.fs.glsl");
+
+
     mShadowProgram = std::make_shared<GLTools::Program>("res/shaders/shadow/directionalSM.vs.glsl", "res/shaders/shadow/directionalSM.fs.glsl");
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
@@ -14,7 +25,7 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
     mFreeflyCamera = std::make_shared<GLTools::FreeflyModelView>();
     mFreeflyCamera->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
 
-    mLightView = std::make_shared<>(GLTools::FreeflyModelView);
+    mLightView = std::make_shared<GLTools::FreeflyModelView>();
     // todo : ortogprahic projection
     mLightView->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
 
@@ -54,20 +65,50 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mModelView2D->identity();
 
-        mShadingProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
-        mShadingProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
-        mShadingProgram->postTexture("uGPosition", 0);
-        mShadingProgram->postTexture("uGNormal", 1);
-        mShadingProgram->postTexture("uGAmbient", 2);
-        mShadingProgram->postTexture("uGDiffuse", 3);
-        mShadingProgram->postTexture("uGlossyShininess", 4);
+        if (mSplittedMode) {
 
-        mSquare.render(*mModelView2D, mShadingProgram, renderStep);
+            renderDeferred(mShadingAmbienProgram, glm::vec2(-2.0 / 3.0,-1.0 / 2.0), glm::vec2(1.0 / 3.0,1.0 / 2.0));
+            renderDeferred(mShadingDiffuseProgram, glm::vec2(-0.0 / 3.0,-1.0 / 2.0), glm::vec2(1.0 / 3.0,1.0 / 2.0));
+            renderDeferred(mShadingNormalProgram, glm::vec2(2.0 / 3.0,-1.0 / 2.0), glm::vec2(1.0 / 3.0,1.0 / 2.0));
+            renderDeferred(mShadingShadowProgram, glm::vec2(-2.0 / 3.0,1.0 / 2.0), glm::vec2(1.0 / 3.0,1.0 / 2.0));
+            renderDeferred(mShadingSpecularProgram, glm::vec2(0.0 / 3.0,1.0 / 2.0), glm::vec2(1.0 / 3.0,1.0 / 2.0));
+            renderDeferred(mShadingProgram, glm::vec2(2.0 / 3.0,1.0 / 2.0), glm::vec2(1.0 / 3.0,1.0 / 2.0));
+
+        } else {
+            renderDeferred(mShadingProgram, glm::vec2(0,0), glm::vec2(1,1));
+
+        }
+
 
     }
 
 }
 
+void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::vec2 position, glm::vec2 size) {
+
+    program->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
+    program->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
+    program->postTexture("uGPosition", 0);
+    program->postTexture("uGNormal", 1);
+    program->postTexture("uGAmbient", 2);
+    program->postTexture("uGDiffuse", 3);
+    program->postTexture("uGlossyShininess", 4);
+    program->postTexture("uGShadow", 5);
+
+    mModelView2D->pushMatrix();
+
+   // mModelView2D->translate(glm::vec2(-2.0/3.0,-0.5));
+    mModelView2D->translate(position);
+    mModelView2D->scale(size);
+
+
+
+    //mModelView2D->translate(position);
+
+    mSquare->render(*mModelView2D, program, GLTools::RENDER_DEFERRED_SCREEN);
+    mModelView2D->popMatrix();
+
+}
 
 void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
 
@@ -94,11 +135,18 @@ void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
         case SDLK_SPACE:
             mFreeflyCamera->moveUp(-3.0f);
             break;
+        case SDLK_h:
+            setDeferred(true);
+            mSplittedMode = true;
+            std::cout << "Set splitted mode to true" << std::endl;
+            break;
         case SDLK_f:
             setDeferred(true);
+            mSplittedMode = false;
             break;
         case SDLK_g:
             setDeferred(false);
+            mSplittedMode = false;
             break;
         default:
             break;
@@ -120,8 +168,9 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 
 void OpenglNoel::resize(unsigned int width, unsigned int height) {
     mFreeflyCamera->resize(width, height);
+    mModelView2D->resize(width, height);
 }
 
-bool needRenderShadow() override {
-    return true; // todo : true only if the light change position
+bool OpenglNoel::needRenderShadow() {
+    return true;
 }

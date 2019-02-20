@@ -7,20 +7,16 @@ uniform sampler2D uGNormal;
 uniform sampler2D uGAmbient;
 uniform sampler2D uGDiffuse;
 uniform sampler2D uGlossyShininess;
-uniform sampler2D uGShadow;
-
 
 uniform vec4 uLightPosition;
 uniform vec4 uCameraPosition;
 
 in vec2 vPosition;
-in vec2 vTexCoord;
-
 
 out vec4 fFragColor;
 
 void main() {
-    vec2 texPosition = vTexCoord;
+    vec2 texPosition = (vPosition + vec2(1.0, 1.0)) / 2.0;
 
     vec3 position = texture2D(uGPosition, texPosition).xyz;
     vec3 normal = texture2D(uGNormal, texPosition).xyz;
@@ -38,7 +34,7 @@ void main() {
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), specularColor.a);
     vec3 specular = 0.1 * spec * specularColor.rgb;
 
-    vec3 shadow = texture2D(uGShadow, texPosition).xyz;
-
-    fFragColor = vec4(diffuse + ambient, 1.0);
+    // fFragColor = vec4(diffuse + ambient + specular, 1.0);
+    // fFragColor = vec4(normal, 1.0);
+    fFragColor = vec4(ambient, 1.0);
 }

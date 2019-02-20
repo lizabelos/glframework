@@ -164,6 +164,8 @@ namespace GLTools {
         std::shared_ptr<Framebuffer> mFramebuffer;
         std::shared_ptr<ShadowFramebuffer> mShadowFramebuffer;
 
+        bool mSelectionBuffer = false, mDeferred = false;
+
     };
 
 }

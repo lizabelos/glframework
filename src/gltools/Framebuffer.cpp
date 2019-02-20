@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Framebuffer.h"
 
 GLTools::Framebuffer::Framebuffer(int width, int height) {
