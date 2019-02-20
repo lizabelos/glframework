@@ -40,5 +40,5 @@ void main() {
 
     vec3 shadow = texture2D(uGShadow, texPosition).xyz;
 
-    fFragColor = vec4(shadow, 1.0);
+    fFragColor = vec4(shadow / 8.0, 1.0);
 }

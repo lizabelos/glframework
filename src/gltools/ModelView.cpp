@@ -119,12 +119,13 @@ glm::mat4 GLTools::ModelView2D::getMVMatrix() const {
 }
 
 glm::mat4 GLTools::ModelView2D::getModelMatrix() const {
-    glm::mat3 scaleMatrix = {
+    /*glm::mat3 scaleMatrix = {
             1 / mWindowSize.x, 0  , 0,
             0  , 1 / mWindowSize.y, 0,
             0  , 0  , 1
-    };
-    return glm::mat4(scaleMatrix * mMVMatrix);
+    };*/
+    //return glm::mat4(scaleMatrix * mMVMatrix);
+    return glm::mat4(mMVMatrix);
 }
 
 glm::mat4 GLTools::ModelView2D::getViewMatrix() const {

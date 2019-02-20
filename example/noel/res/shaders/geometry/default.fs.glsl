@@ -82,7 +82,7 @@ vec3 getNormal() {
 void main() {
 
     fPosition = vec4(vPosition,1);
-    fNormal = vec4(getNormal(),0);
+    fNormal = vec4(getNormal(),1);
     fAmbient = getAmbientColor();
     fDiffuse = getDiffuseColor();
     fGlossyShininess = vec4(getSpecularColor().rgb, getShininessNumber());

@@ -168,7 +168,7 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 
 void OpenglNoel::resize(unsigned int width, unsigned int height) {
     mFreeflyCamera->resize(width, height);
-    mModelView2D->resize(width, height);
+    //mModelView2D->resize(width, height);
 }
 
 bool OpenglNoel::needRenderShadow() {

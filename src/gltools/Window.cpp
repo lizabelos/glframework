@@ -18,7 +18,7 @@ void glMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, G
 
 GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
 
-    mWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512, SDL_WINDOW_OPENGL);
+    mWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_OPENGL);
     if (!mWindow) throw std::runtime_error("SDL_CreateWindow failed : '" + std::string(SDL_GetError()) + "'");
 
     SDL_SetWindowResizable(mWindow, SDL_TRUE);
@@ -91,7 +91,11 @@ int GLTools::Window::run() {
 
         } while (!needRender() && loop);
 
+        SDL_GetWindowSize(mWindow, &w, &h);
+
         if (!mDeferred) {
+
+            glViewport(0, 0, w, h);
 
             glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -120,6 +124,7 @@ int GLTools::Window::run() {
             }
 
             mFramebuffer->use();
+            glViewport(0, 0, w, h);
 
             glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -127,6 +132,7 @@ int GLTools::Window::run() {
             render(RENDER_DEFERRED_FRAMEBUFFER);
 
             mFramebuffer->useScreen();
+            glViewport(0, 0, w, h);
 
             glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -210,7 +216,7 @@ void GLTools::Window::processEvent(const SDL_Event &event, bool &loop) {
     if (event.type == SDL_WINDOWEVENT) {
         switch (event.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
-                glViewport(0, 0, event.window.data1, event.window.data2);
+                // glViewport(0, 0, event.window.data1, event.window.data2);
                 if (mDeferred) mFramebuffer = std::make_shared<Framebuffer>(event.window.data1, event.window.data2);
                 resize(static_cast<unsigned int>(event.window.data1), static_cast<unsigned int>(event.window.data2));
                 break;
