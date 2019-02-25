@@ -34,6 +34,10 @@ void GLTools::ModelView3D::setPerspective(float far, float near) {
     mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)mWidth / (float)mHeight, mNear, mFar);
 }
 
+void GLTools::ModelView3D::setOrthographic(float sceneRadius) {
+    mProjectionMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
+}
+
 glm::mat4 GLTools::ModelView3D::getProjectionMatrix() const {
     return mProjectionMatrix;
 }

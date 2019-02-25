@@ -119,6 +119,7 @@ GLTools::ShadowFramebuffer::~ShadowFramebuffer() {
 
 void GLTools::ShadowFramebuffer::use() {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDirectionalSMFBO);
+    glDrawBuffer(GL_NONE);
     glViewport(0, 0, mDirectionalSMResolution, mDirectionalSMResolution);
 }
 

@@ -2,9 +2,9 @@
 
 precision mediump float;
 
-out vec3 fColor;
+layout(location = 0) out float fragmentDepth;
 
 void main()
 {
-    fColor = vec3(0);
+    fragmentDepth = gl_FragCoord.z;
 }

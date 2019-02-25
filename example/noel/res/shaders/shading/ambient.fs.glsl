@@ -29,7 +29,7 @@ void main() {
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
     vec3 diffuse = max(dot(normal, lightDirection), 0.0f) * diffuseColor;
-    vec3 ambient = ambientColor * 0.3;
+    vec3 ambient = ambientColor;
 
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), specularColor.a);
     vec3 specular = 0.1 * spec * specularColor.rgb;

@@ -36,7 +36,7 @@ void main() {
     vec3 ambient = ambientColor * 0.3;
 
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), specularColor.a);
-    vec3 specular = 0.1 * spec * specularColor.rgb;
+    vec3 specular = spec * specularColor.rgb;
 
     vec3 shadow = texture2D(uGShadow, texPosition).xyz;
 

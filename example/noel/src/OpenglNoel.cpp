@@ -27,7 +27,7 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
 
     mLightView = std::make_shared<GLTools::FreeflyModelView>();
     // todo : ortogprahic projection
-    mLightView->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
+    mLightView->setOrthographic(mScene->getBoundingBoxDiagonal() / 2.0f);
 
     mModelView2D = std::make_shared<GLTools::ModelView2D>();
 
@@ -40,7 +40,7 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mFreeflyCamera->identity();
 
-        mRender3DProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
+        mRender3DProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, mScene->getBoundingBoxDiagonal() / 4, 2.0f, 1.0f));
         mRender3DProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
 
         mScene->render(*mFreeflyCamera, mRender3DProgram, renderStep);
@@ -55,9 +55,9 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
     }
 
     if (renderStep == GLTools::RENDER_DEFERRED_SHADOW) {
-
-        mLightView->identity();
-        mScene->render(*mLightView, mShadingProgram, renderStep);
+        
+        mFreeflyCamera->identity();
+        mScene->render(*mLightView, mShadowProgram, renderStep);
 
     }
 
@@ -86,7 +86,7 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
 void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::vec2 position, glm::vec2 size) {
 
-    program->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, 5.0f, 2.0f, 1.0f));
+    program->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, mScene->getBoundingBoxDiagonal() / 4, 2.0f, 1.0f));
     program->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
     program->postTexture("uGPosition", 0);
     program->postTexture("uGNormal", 1);

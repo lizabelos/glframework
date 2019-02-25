@@ -38,7 +38,7 @@ void main() {
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), specularColor.a);
     vec3 specular = 0.1 * spec * specularColor.rgb;
 
-    vec3 shadow = texture2D(uGShadow, texPosition).xyz;
+    float shadow = texture2D(uGShadow, texPosition).b;
 
-    fFragColor = vec4(shadow / 8.0, 1.0);
+    fFragColor = vec4(shadow, shadow, shadow, 1.0);
 }

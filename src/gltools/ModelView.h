@@ -90,6 +90,7 @@ namespace GLTools {
         ModelView3D(unsigned int width, unsigned int height);
 
         void setPerspective(float far, float near);
+        void setOrthographic(float sceneRadius);
 
         glm::mat4 getProjectionMatrix() const override;
         glm::mat4 getModelMatrix() const override;

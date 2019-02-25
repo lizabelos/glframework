@@ -104,8 +104,8 @@ int GLTools::Window::run() {
             glEnable(GL_DEPTH_TEST);
 
             // Enable Alpha Blending
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            // glEnable(GL_BLEND);
+            // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             render(RENDER_SCREEN);
             SDL_GL_SwapWindow(mWindow);
