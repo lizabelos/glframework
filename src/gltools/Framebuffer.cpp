@@ -109,6 +109,9 @@ GLTools::ShadowFramebuffer::ShadowFramebuffer() {
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+    glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+
 
 }
 
@@ -126,4 +129,5 @@ void GLTools::ShadowFramebuffer::use() {
 void GLTools::ShadowFramebuffer::bindTexture() {
     glActiveTexture(GL_TEXTURE0 + GDrawBuffersSize);
     glBindTexture(GL_TEXTURE_2D, mDirectionalSMTexture);
+    glBindSampler(GDrawBuffersSize, mDirectionalSMSampler);
 }

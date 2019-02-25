@@ -268,6 +268,11 @@ void GLScene::Scene::render(GLTools::ModelView<glm::vec3> &camera, std::shared_p
 
 
         } else {
+            program->post("uAmbientHasTexture", GL_FALSE);
+            program->post("uDiffuseHasTexture", GL_FALSE);
+            program->post("uSpecularHasTexture", GL_FALSE);
+            program->post("uShininessHasTexture", GL_FALSE);
+            program->post("uNormalHasTexture", GL_FALSE);
             program->post("uAmbient", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
             program->post("uDiffuse", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
             program->post("uSpecular", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));

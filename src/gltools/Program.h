@@ -102,10 +102,14 @@ namespace GLTools {
          * @param camera The camera to post
          */
         template<typename vecType> inline void post(const ModelView<vecType> &camera) {
-            post("uModelMatrix", camera.getModelMatrix());
-            post("uNormalMatrix", camera.getNormalMatrix());
-            post("uMVMatrix", camera.getMVMatrix());
-            post("uMVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
+            post("u", camera);
+        }
+
+        template<typename vecType> inline void post(const std::string &name, const ModelView<vecType> &camera) {
+            post(name + "ModelMatrix", camera.getModelMatrix());
+            post(name + "NormalMatrix", camera.getNormalMatrix());
+            post(name + "MVMatrix", camera.getMVMatrix());
+            post(name + "MVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
         }
 
     protected:

@@ -27,7 +27,9 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
 
     mLightView = std::make_shared<GLTools::FreeflyModelView>();
     // todo : ortogprahic projection
-    mLightView->setOrthographic(mScene->getBoundingBoxDiagonal() / 2.0f);
+    mLightView->setOrthographic(mScene->getBoundingBoxDiagonal());
+    //mLightView->moveUp(mScene->getBoundingBoxDiagonal() / 4);
+    mLightView->rotateUp(-M_PI/2);
 
     mModelView2D = std::make_shared<GLTools::ModelView2D>();
 
@@ -40,10 +42,11 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mFreeflyCamera->identity();
 
-        mRender3DProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, mScene->getBoundingBoxDiagonal() / 4, 2.0f, 1.0f));
+        mRender3DProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(mLightView->getPosition(), 1.0f));
         mRender3DProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
 
         mScene->render(*mFreeflyCamera, mRender3DProgram, renderStep);
+        renderLight(mRender3DProgram, renderStep);
 
     }
 
@@ -51,14 +54,15 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mFreeflyCamera->identity();
         mScene->render(*mFreeflyCamera, mGeometryProgram, renderStep);
+        renderLight(mGeometryProgram, renderStep);
+
 
     }
 
     if (renderStep == GLTools::RENDER_DEFERRED_SHADOW) {
-        
+
         mFreeflyCamera->identity();
         mScene->render(*mLightView, mShadowProgram, renderStep);
-
     }
 
     if (renderStep == GLTools::RENDER_DEFERRED_SCREEN) {
@@ -84,10 +88,36 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
 }
 
+void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) {
+    mFreeflyCamera->pushMatrix();
+
+    mFreeflyCamera->translate(mLightView->getPosition());
+    mFreeflyCamera->scale(10.0f);
+
+    program->post("uAmbientHasTexture", GL_FALSE);
+    program->post("uDiffuseHasTexture", GL_FALSE);
+    program->post("uSpecularHasTexture", GL_FALSE);
+    program->post("uShininessHasTexture", GL_FALSE);
+    program->post("uNormalHasTexture", GL_FALSE);
+    program->post("uAmbient", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    program->post("uDiffuse", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    program->post("uSpecular", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    program->post("uShininess", 1.0f);
+
+    mSphere.render(*mFreeflyCamera, program, renderStep);
+
+
+    mFreeflyCamera->popMatrix();
+}
+
+
 void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::vec2 position, glm::vec2 size) {
 
-    program->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(0.0f, mScene->getBoundingBoxDiagonal() / 4, 2.0f, 1.0f));
+    program->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(mLightView->getPosition(), 1.0f));
     program->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
+    program->post("uLight", *mLightView);
+    program->post("uLightMVPMatrix", ( mLightView->getProjectionMatrix() * mLightView->getViewMatrix() * glm::inverse(mFreeflyCamera->getViewMatrix())));
+    program->post("uLightShadowMapBias",  0.005f);
     program->postTexture("uGPosition", 0);
     program->postTexture("uGNormal", 1);
     program->postTexture("uGAmbient", 2);
@@ -128,6 +158,24 @@ void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
         case SDLK_DOWN:
         case SDLK_s:
             mFreeflyCamera->moveFront(-3.0f);
+            break;
+        case SDLK_i:
+            mLightView->moveFront(3.0f);
+            break;
+        case SDLK_j:
+            mLightView->moveLeft(3.0f);
+            break;
+        case SDLK_l:
+            mLightView->moveLeft(-3.0f);
+            break;
+        case SDLK_k:
+            mLightView->moveFront(-3.0f);
+            break;
+        case SDLK_p:
+            mLightView->moveUp(3.0f);
+            break;
+        case SDLK_m:
+            mLightView->moveUp(-3.0f);
             break;
         case SDLK_LSHIFT:
             mFreeflyCamera->moveUp(3.0f);
