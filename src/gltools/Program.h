@@ -16,7 +16,9 @@
 #include <glm/ext.hpp>
 
 #include "Shader"
-#include "Camera"
+#include "Model"
+#include "View"
+#include "Projection"
 
 /**
  * A namespace regrouping all the GLTools OpenGL wrapper.
@@ -90,6 +92,20 @@ namespace GLTools {
         void post(const std::string &name, const glm::vec4 &mat);
 
         /**
+         * Post a uniform mat4 to the shader
+         * @param name Name of the uniform
+         * @param mat Value to pass
+         */
+        void post(const std::string &name, const glm::mat3 &mat);
+
+        /**
+         * Post a uniform vec4 to the shader
+         * @param name Name of the uniform
+         * @param mat Value to pass
+         */
+        void post(const std::string &name, const glm::vec3 &mat);
+
+        /**
          * Post a uniform texture to the shader
          * @param name The Name of the uniform
          * @param texture The texture unit id
@@ -101,15 +117,27 @@ namespace GLTools {
          * @tparam vecType Either 2D or 3D
          * @param camera The camera to post
          */
-        template<typename vecType> inline void post(const ModelView<vecType> &camera) {
+        inline void post(const Model2D &model) {
             post("u", camera);
         }
 
-        template<typename vecType> inline void post(const std::string &name, const ModelView<vecType> &camera) {
-            post(name + "ModelMatrix", camera.getModelMatrix());
-            post(name + "NormalMatrix", camera.getNormalMatrix());
-            post(name + "MVMatrix", camera.getMVMatrix());
-            post(name + "MVPMatrix", camera.getProjectionMatrix() * camera.getMVMatrix());
+        inline void post(const std::string &name, const Model2D &model) {
+            post(name + "ModelMatrix", model.getMatrix());
+            post(name + "NormalMatrix", glm::transpose(glm::inverse(model.getMatrix())));
+            post(name + "MVMatrix", model.getMatrix());
+            post(name + "MVPMatrix", model.getMatrix());
+        }
+
+        inline void post(const Projection &projection, const Model3D &model, const View &view) {
+            post("u", projection, model, view);
+        }
+
+        inline void post(const std::string &name, const Projection &projection, const Model3D &model, const View &view) {
+            glm::mat4 modelView = view.getMatrix() * model.getMatrix();
+            post(name + "ModelMatrix", model.getMatrix());
+            post(name + "NormalMatrix", glm::transpose(glm::inverse(modelView)));
+            post(name + "MVMatrix", modelView);
+            post(name + "MVPMatrix", projection.getMatrix() * modelView);
         }
 
     protected:

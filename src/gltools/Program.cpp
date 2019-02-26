@@ -87,6 +87,24 @@ void GLTools::Program::post(const std::string &name, const glm::mat4 &mat) {
     glUniformMatrix4fv(mUniformMap[name], 1, GL_FALSE, glm::value_ptr(mat));
 }
 
+void GLTools::Program::post(const std::string &name, const glm::vec4 &mat) {
+    uniform(name);
+    use();
+    glUniform4fv(mUniformMap[name], 1, glm::value_ptr(mat));
+}
+
+void GLTools::Program::post(const std::string &name, const glm::mat3 &mat) {
+    uniform(name);
+    use();
+    glUniformMatrix3fv(mUniformMap[name], 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void GLTools::Program::post(const std::string &name, const glm::vec3 &mat) {
+    uniform(name);
+    use();
+    glUniform3fv(mUniformMap[name], 1, glm::value_ptr(mat));
+}
+
 void GLTools::Program::uniform(const std::string &name) {
     if (mUniformMap.count(name) == 0) {
         mUniformMap[name] = glGetUniformLocation(mId, name.c_str());
@@ -98,10 +116,4 @@ void GLTools::Program::postTexture(const std::string &name, GLint texture) {
     uniform(name);
     use();
     glUniform1i(mUniformMap[name], texture);
-}
-
-void GLTools::Program::post(const std::string &name, const glm::vec4 &mat) {
-    uniform(name);
-    use();
-    glUniform4fv(mUniformMap[name], 1, glm::value_ptr(mat));
 }
