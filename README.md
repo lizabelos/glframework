@@ -2,6 +2,8 @@
 
 ![Screenshot](example/solarsystem/res/screenshot_earth.png)
 
+![Screenshot](example/noel/res/screenshot.png)
+
 ## Required packages
 
 OpenGL, SDL2, GLEW, GLM, and ASSIMP are required.
