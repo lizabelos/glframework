@@ -9,6 +9,10 @@ uniform sampler2D uGDiffuse;
 uniform sampler2D uGlossyShininess;
 uniform sampler2DShadow uGShadow;
 
+uniform float uAmbientPower;
+uniform float uDiffusePower;
+uniform float uSpecularPower;
+
 uniform vec4 uLightPosition;
 uniform vec4 uCameraPosition;
 
@@ -36,17 +40,17 @@ void main() {
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
     vec3 diffuse = max(dot(normal, lightDirection), 0.0f) * diffuseColor;
-    vec3 ambient = ambientColor * 0.3;
+    vec3 ambient = ambientColor;
 
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), specularColor.a);
-    vec3 specular = 0.1 * spec * specularColor.rgb;
+    vec3 specular = spec * specularColor.rgb;
 
     vec4 positionInDirLightScreen = uLightMVPMatrix * vec4(position, 1); // Compute fragment position in NDC space of light
     vec3 positionInDirLightNDC = vec3(positionInDirLightScreen / positionInDirLightScreen.w) * 0.5 + 0.5; // Homogeneize + put between 0 and 1
     float dirLightVisibility = textureProj(uGShadow, vec4(positionInDirLightNDC.xy, positionInDirLightNDC.z - uLightShadowMapBias, 1.0), 0.0);
     dirLightVisibility = max(0.5, dirLightVisibility);
 
-    vec3 finalColor = diffuse + ambient + specular;
+    vec3 finalColor = diffuse * uDiffusePower + ambient * uAmbientPower + specular * uSpecularPower;
 
     fFragColor = vec4(finalColor * dirLightVisibility, 1.0);
 }

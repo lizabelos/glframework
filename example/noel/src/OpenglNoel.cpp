@@ -21,8 +21,8 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
 
-    mShadowProjection = GLTools::OrthographicProjection(mScene->getBoundingBoxDiagonal());
-    mShadowView = GLTools::LightView(glm::vec3(0, 0, 0), mScene->getBoundingBoxDiagonal(), 90, 90, glm::vec3(0, 0, -1));
+    mShadowProjection = GLTools::OrthographicProjection(mScene->getBoundingBoxDiagonal() / 2.0f);
+    mShadowView = GLTools::LightView(glm::vec3(0, 0, 0), mScene->getBoundingBoxDiagonal() / 8.0f, 90, 90, glm::vec3(0, 0, -1));
 
 }
 
@@ -34,7 +34,10 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mRender3DProgram->post("uLightPosition", mCamera.getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
         mRender3DProgram->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
-        mRender3DProgram->post(mProjection, mModel, mCamera);
+        mRender3DProgram->post("uAmbientPower", mLightToolAmbient);
+        mRender3DProgram->post("uDiffusePower", mLightToolDiffuse);
+        mRender3DProgram->post("uSpecularPower", mLightToolSpecular);
+        mRender3DProgram->post(mShadowProjection, mModel, mShadowView);
 
         mScene->render(mRender3DProgram, renderStep);
         renderLight(mRender3DProgram, renderStep);
@@ -86,7 +89,7 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
 }
 
-void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) {/*
+void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) {
     mModel.pushMatrix();
 
     mModel.translate(mShadowView.getLightPosition());
@@ -105,7 +108,7 @@ void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools:
 
     mSphere.render(program, renderStep);
 
-    mModel.popMatrix();*/
+    mModel.popMatrix();
 }
 
 
@@ -122,6 +125,9 @@ void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::
     program->postTexture("uGDiffuse", 3);
     program->postTexture("uGlossyShininess", 4);
     program->postTexture("uGShadow", 5);
+    program->post("uAmbientPower", mLightToolAmbient);
+    program->post("uDiffusePower", mLightToolDiffuse);
+    program->post("uSpecularPower", mLightToolSpecular);
 
     mModel2D.pushMatrix();
 
@@ -142,36 +148,20 @@ void OpenglNoel::renderGui(GLTools::RenderStep renderStep) {
 
     newImguiFrame();
 
-    float my_color[4] = {0.45f, 0.55f, 0.60f, 1.00f};
-    bool my_tool_active = true;
 
     // Create a window called "My First Tool", with a menu bar.
-    ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-            if (ImGui::MenuItem("Save", "Ctrl+S"))   { /* Do stuff */ }
-            if (ImGui::MenuItem("Close", "Ctrl+W"))  { my_tool_active = false; }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenuBar();
-    }
+    ImGui::Begin("Light Tool", &mLightToolActive);
 
-// Edit a color (stored as ~4 floats)
-    ImGui::ColorEdit4("Color", my_color);
+    ImGui::SliderFloat("ambient", &mLightToolAmbient, 0.0f, 1.0f);
+    ImGui::SliderFloat("diffuse", &mLightToolDiffuse, 0.0f, 1.0f);
+    ImGui::SliderFloat("specular", &mLightToolSpecular, 0.0f, 1.0f);
 
-// Plot some values
-    const float my_values[] = { 0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f };
-    ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
+    ImGui::SliderFloat("phi", &mLightToolPhi, 0.0f, 360.0f);
+    ImGui::SliderFloat("theta", &mLightToolTheta, 0.0f, 360.0f);
 
-// Display contents in a scrolling region
-    ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
-    ImGui::BeginChild("Scrolling");
-    for (int n = 0; n < 50; n++)
-        ImGui::Text("%04d: Some text", n);
-    ImGui::EndChild();
+    mShadowView.setPhi(mLightToolPhi);
+    mShadowView.setTheta(mLightToolTheta);
+
     ImGui::End();
 
     ImGui::Render();

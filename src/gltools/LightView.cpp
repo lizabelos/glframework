@@ -51,3 +51,13 @@ void GLTools::LightView::moveUp(float t) {
 glm::vec3 GLTools::LightView::getLightPosition() const {
     return mLightPosition;
 }
+
+void GLTools::LightView::setPhi(float phi) {
+    mPhi = phi;
+    processLightMatrix();
+}
+
+void GLTools::LightView::setTheta(float theta) {
+    mTheta = theta;
+    processLightMatrix();
+}

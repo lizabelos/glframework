@@ -45,6 +45,9 @@ namespace GLTools {
          */
         void moveUp(float t);
 
+        void setPhi(float phi);
+        void setTheta(float theta);
+
         /**
          *
          * @return The light position

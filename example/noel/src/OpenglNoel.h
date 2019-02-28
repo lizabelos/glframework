@@ -68,6 +68,9 @@ private:
     bool mSplittedMode;
     glm::vec2 mMouseStart;
 
+    bool mLightToolActive = true;
+    float mLightToolPhi = 90, mLightToolTheta = 90, mLightToolAmbient = 0.3, mLightToolDiffuse = 1.0, mLightToolSpecular = 0.1;
+
 };
 
 

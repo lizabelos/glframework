@@ -1,4 +1,4 @@
-# OpenGL Framework by BELOS Thomas
+# BELOSGL - OpenGL Framework by BELOS Thomas
 
 ![Screenshot](example/solarsystem/res/screenshot_earth.png)
 

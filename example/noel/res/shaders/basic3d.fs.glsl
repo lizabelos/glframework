@@ -15,6 +15,11 @@ uniform float uShininess;
 uniform vec4 uLightPosition;
 uniform vec4 uCameraPosition;
 
+uniform float uAmbientPower;
+uniform float uDiffusePower;
+uniform float uSpecularPower;
+
+
 uniform sampler2D uAmbientTexture;
 uniform sampler2D uDiffuseTexture;
 uniform sampler2D uSpecularTexture;
@@ -85,13 +90,13 @@ void main() {
     vec3 reflectDirection = reflect(-lightDirection, normal);
 
     vec4 diffuse = vec4(max(dot(normal, lightDirection), 0.0f) * getDiffuseColor().rgb, 1.0);
-    vec4 ambient = vec4(getAmbientColor().rgb * 0.3, 1.0);
+    vec4 ambient = vec4(getAmbientColor().rgb, 1.0);
 
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), getShininessNumber());
-    vec4 specular = vec4(0.1 * spec * getSpecularColor().rgb, 1.0);
+    vec4 specular = vec4(spec * getSpecularColor().rgb, 1.0);
 
     // fFragColor = vec4(normalize(uLightPosition.xyz),1.0f);
-    fFragColor = diffuse + ambient + specular;
+    fFragColor = diffuse * uDiffusePower + ambient * uAmbientPower + specular * uSpecularPower;
     //fFragColor = vec4(getNormal(), 1.0);
 
 
