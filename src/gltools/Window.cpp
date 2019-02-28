@@ -39,9 +39,18 @@ GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback((GLDEBUGPROC)glMessageCallback, nullptr);
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext);
+    ImGui_ImplOpenGL3_Init("#version 300 es");
 }
 
 GLTools::Window::~Window() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
     SDL_GL_DeleteContext(mContext);
     SDL_DestroyWindow(mWindow);
 
@@ -266,4 +275,10 @@ void GLTools::Window::setDeferred(bool state) {
 
 void GLTools::Window::setSelectionBuffer(bool state) {
     mSelectionBuffer = state;
+}
+
+void GLTools::Window::newImguiFrame() {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(mWindow);
+    ImGui::NewFrame();
 }

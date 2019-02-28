@@ -16,6 +16,8 @@ find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 find_package(ASSIMP REQUIRED)
 
+add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLEW)
+
 # Include directories
 include_directories(${SDL2_INCLUDE_DIRS})
 

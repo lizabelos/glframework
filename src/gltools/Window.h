@@ -13,6 +13,10 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
+#include "../external/imgui/imgui.h"
+#include "../external/imgui/imgui_impl_sdl.h"
+#include "../external/imgui/imgui_impl_opengl3.h"
+
 #include "Drawable"
 #include "Framebuffer"
 
@@ -144,6 +148,11 @@ namespace GLTools {
          * @param state true to enable or false to disable
          */
         void setSelectionBuffer(bool state);
+
+        /**
+         * Create a new ImGUI Frame
+         */
+        void newImguiFrame();
 
     private:
         void initGBuffer();

@@ -34,6 +34,8 @@ protected:
     void render(GLTools::RenderStep renderStep) override;
     void renderDeferred(std::shared_ptr<GLTools::Program> program, glm::vec2 position, glm::vec2 size);
     void renderLight(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep);
+    void renderGui(GLTools::RenderStep renderStep);
+
     void keyboard(Uint32 type, bool repeat, int key) override;
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
     void resize(unsigned int width, unsigned int height) override;
