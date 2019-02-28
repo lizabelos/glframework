@@ -24,21 +24,44 @@ make
 
 ## Run the examples
 
-From the build directory, run on of the generated binaries
+From the build directory, go into the executable directory, and run on of the generated binaries
 ```
+cd noel
+./noel
+```
+```
+cd solarsystem
 ./solarsystem
 ```
 
 ## References
 
-### Planet Pixel Emporium
+### GLTools
+
+#### IMGUI
+
+https://github.com/ocornut/imgui
+
+#### STB Image
+
+https://github.com/nothings/stb
+
+### Example : Solar System
+
+#### Planet Pixel Emporium
 
 http://planetpixelemporium.com/
 
-### NASA
+#### NASA
 
 https://nssdc.gsfc.nasa.gov/planetary/planetfact.html
 
-### STB Image
+#### STB Image
 
 https://github.com/nothings/stb
+
+### Example : Noel
+
+#### McGuire Computer Graphics Archive
+
+https://casual-effects.com/data/
