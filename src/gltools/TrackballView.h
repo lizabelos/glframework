@@ -7,7 +7,7 @@
 
 #include "View"
 
-class GLTools {
+namespace GLTools {
 
     class TrackballView : public View {
 
@@ -28,7 +28,7 @@ class GLTools {
         /**
          * @return The view matrix
          */
-        glm::mat4 getMatrix() override;
+        glm::mat4 getMatrix() const override;
 
         /**
          * Move front

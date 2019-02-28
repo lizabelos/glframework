@@ -6,8 +6,9 @@
 #define SOLAR_SYSTEM_PARALLELOGRAM_H
 
 #include "../gltools/Drawable"
-#include "Square"
-#include "Triangle"
+#include "../maths/Variable"
+#include "../gltools/Buffer"
+#include "../gltools/Program"
 
 namespace GLGeometry {
 
@@ -19,11 +20,11 @@ namespace GLGeometry {
     public:
         explicit Parallelogram(unsigned int code);
 
-        void render(GLTools::ModelView<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
+        void render(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
 
     private:
-        Square mSquare;
-        Triangle mTriangle;
+        GLTools::VertexArrayObject mVertexArrayObject;
+        int mSize;
 
     };
 

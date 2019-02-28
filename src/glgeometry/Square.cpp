@@ -34,8 +34,7 @@ GLGeometry::Square::Square(unsigned int code) : Drawable(code) {
     mVertexArrayObject.set(std::make_shared<GLTools::ElementArrayBuffer>(indices));
 }
 
-void GLGeometry::Square::render(GLTools::ModelView<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
-    program->post(camera);
+void GLGeometry::Square::render(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
     program->use();
 
     mVertexArrayObject.bind();

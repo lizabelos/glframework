@@ -21,7 +21,7 @@ namespace GLTools {
         /**
          * @return The view matrix
          */
-        glm::mat4 getMatrix() override;
+        glm::mat4 getMatrix() const override;
 
         /**
         * Move left
@@ -52,6 +52,11 @@ namespace GLTools {
          * @param t The angle to add
          */
         void rotateUp(float t);
+
+        /**
+         * @return The freefly camera position
+         */
+        glm::vec3 getPosition() const;
 
     private:
         glm::vec3 mPosition;

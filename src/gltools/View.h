@@ -5,6 +5,8 @@
 #ifndef BELOSGL_VIEW_H
 #define BELOSGL_VIEW_H
 
+#include <glm/ext.hpp>
+
 namespace GLTools {
 
     class View {

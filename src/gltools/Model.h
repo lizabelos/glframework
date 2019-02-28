@@ -3,6 +3,8 @@
 #ifndef BELOSGL_MODEL_H
 #define BELOSGL_MODEL_H
 
+#include <vector>
+#include <glm/ext.hpp>
 
 namespace GLTools {
 
@@ -105,7 +107,7 @@ namespace GLTools {
          * Scale the camera
          * @param scaling The scaling vector
          */
-        void scale(vecType scaling);
+        void scale(glm::vec3 scaling);
 
         /**
          * Scale the camera along all the axis

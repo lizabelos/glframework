@@ -23,7 +23,7 @@ namespace GLScene {
     public:
         explicit Scene(const std::string &path);
 
-        void render(GLTools::ModelView<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
+        void render(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
 
         float getBoundingBoxDiagonal();
 

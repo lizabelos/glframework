@@ -21,7 +21,7 @@ void GLTools::Model2D::popMatrix() {
     mMVMatrixStack.pop_back();
 }
 
-void GLTools::Model2D::translate(glm::vec2 translation) {
+void GLTools::Model2D::translate(glm::vec2 t) {
     glm::mat3 translationMatrix = {
             1  , 0  , 0,
             0  , 1  , 0,
@@ -36,10 +36,10 @@ void GLTools::Model2D::rotate(float angle) {
             -sinf(angle), cosf(angle), 0,
             0           , 0          , 1
     };
-    mMVMatrix = mModelMatrix * rotationMatrix;
+    mModelMatrix = mModelMatrix * rotationMatrix;
 }
 
-void GLTools::Model2D::scale(glm::vec2 scaling) {
+void GLTools::Model2D::scale(glm::vec2 s) {
     glm::mat3 scaleMatrix = {
             s.x, 0  , 0,
             0  , s.y, 0,
@@ -81,7 +81,7 @@ void GLTools::Model3D::rotate(float angle, glm::vec3 axis) {
     mModelMatrix = glm::rotate(mModelMatrix, angle, axis);
 }
 
-void GLTools::Model3D::scale(vecType scaling) {
+void GLTools::Model3D::scale(glm::vec3 scaling) {
     mModelMatrix = glm::scale(mModelMatrix, scaling);
 }
 

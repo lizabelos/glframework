@@ -61,8 +61,7 @@ void GLGeometry::ParametricDrawable3D::initialize(Maths::Variable x, Maths::Vari
 
 }
 
-void GLGeometry::ParametricDrawable3D::render(GLTools::ModelView<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
-    program->post(camera);
+void GLGeometry::ParametricDrawable3D::render(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
     program->use();
 
     mVertexArrayObject.bind();
@@ -172,10 +171,7 @@ GLGeometry::ParametricDrawable2D::initialize(Maths::Variable x, Maths::Variable 
     }
 }
 
-void GLGeometry::ParametricDrawable2D::render(GLTools::ModelView<glm::vec2> &camera,
-                                              std::shared_ptr<GLTools::Program> program,
-                                              GLTools::RenderStep renderStep) const {
-    program->post(camera);
+void GLGeometry::ParametricDrawable2D::render(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
     program->use();
 
     mVertexArrayObject.bind();

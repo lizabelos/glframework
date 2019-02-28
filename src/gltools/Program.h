@@ -118,7 +118,7 @@ namespace GLTools {
          * @param camera The camera to post
          */
         inline void post(const Model2D &model) {
-            post("u", camera);
+            post("u", model);
         }
 
         inline void post(const std::string &name, const Model2D &model) {

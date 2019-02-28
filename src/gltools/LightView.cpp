@@ -4,23 +4,50 @@
 
 #include "LightView.h"
 
-LightView::LightView() {
+
+GLTools::LightView::LightView() : LightView(glm::vec3(0,0,0), 1, 0, 0, glm::vec3(0, -1, 0)) {
+}
+
+
+GLTools::LightView::LightView(glm::vec3 sceneCenter, float sceneRadius, float phi, float theta, glm::vec3 direction) : mLightPosition(mSceneRadius), mSceneRadius(sceneRadius), mPhi(phi), mTheta(theta), mDirection(direction) {
+    processLightMatrix();
+}
+
+glm::mat4 GLTools::LightView::getMatrix() const {
+    return mLightMatrix;
+}
+
+void GLTools::LightView::processLightMatrix() {
+
     static const auto computeDirectionVectorUp = [](float phiRadians, float thetaRadians)
     {
-        const auto cosPhi = glm::cos(phiRadians);
-        const auto sinPhi = glm::sin(phiRadians);
-        const auto cosTheta = glm::cos(thetaRadians);
+        float cosPhi = glm::cos(phiRadians);
+        float sinPhi = glm::sin(phiRadians);
+        float cosTheta = glm::cos(thetaRadians);
         return -glm::normalize(glm::vec3(sinPhi * cosTheta, -glm::sin(thetaRadians), cosPhi * cosTheta));
     };
 
-    const auto sceneCenter = 0.5f * (m_BBoxMin + m_BBoxMax);
-    const float sceneRadius = m_SceneSizeLength * 0.5f;
-
-    const auto dirLightUpVector = computeDirectionVectorUp(glm::radians(m_DirLightPhiAngleDegrees), glm::radians(m_DirLightThetaAngleDegrees));
-    lightMatrix = glm::lookAt(sceneCenter + m_DirLightDirection * sceneRadius, sceneCenter, dirLightUpVector); // Will not work if m_DirLightDirection is colinear to lightUpVector
+    const auto dirLightUpVector = computeDirectionVectorUp(glm::radians(mPhi), glm::radians(mTheta));
+    mLightMatrix = glm::lookAt(mLightPosition + mDirection * mSceneRadius, mLightPosition, dirLightUpVector); // Will not work if m_DirLightDirection is colinear to lightUpVector
 
 }
 
-glm::mat4 LightView::getMatrix() {
-    return lightMatrix;
+
+void GLTools::LightView::moveLeft(float t) {
+    mLightPosition.x = mLightPosition.x + t;
+    processLightMatrix();
+}
+
+void GLTools::LightView::moveFront(float t) {
+    mLightPosition.z = mLightPosition.z + t;
+    processLightMatrix();
+}
+
+void GLTools::LightView::moveUp(float t) {
+    mLightPosition.y = mLightPosition.y + t;
+    processLightMatrix();
+}
+
+glm::vec3 GLTools::LightView::getLightPosition() const {
+    return mLightPosition;
 }

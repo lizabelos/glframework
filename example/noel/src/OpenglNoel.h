@@ -14,8 +14,10 @@
 #include "gltools/Program"
 #include "gltools/Texture"
 #include "glgeometry/Square"
-#include "gltools/TrackballCamera"
-#include "gltools/FreeflyCamera"
+#include "gltools/Projection"
+#include "gltools/Model"
+#include "gltools/FreeflyView"
+#include "gltools/LightView"
 #include "glgeometry/Cube.h"
 #include "utility/TimeManager"
 #include "gltools/TextureManager"
@@ -40,10 +42,19 @@ protected:
 private:
     GLGeometry::Sphere mSphere;
     GLGeometry::Cube mCube;
-    std::shared_ptr<GLGeometry::Square> mSquare;
+    GLGeometry::Square mSquare;
 
-    std::shared_ptr<GLTools::FreeflyModelView> mFreeflyCamera, mLightView;
-    std::shared_ptr<GLTools::ModelView2D> mModelView2D;
+    // Model, View, Projection for the camera
+    GLTools::PerspectiveProjection mProjection;
+    GLTools::Model3D mModel;
+    GLTools::FreeflyView mCamera;
+
+    // View, Projection for the shadow
+    GLTools::OrthographicProjection mShadowProjection;
+    GLTools::LightView mShadowView;
+
+    // Model for 2D drawing
+    GLTools::Model2D mModel2D;
 
 
     std::shared_ptr<GLTools::Program> mRender3DProgram, mGeometryProgram, mShadingProgram, mShadingAmbienProgram, mShadingDiffuseProgram, mShadingNormalProgram, mShadingShadowProgram, mShadingSpecularProgram, mShadowProgram;

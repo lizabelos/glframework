@@ -18,7 +18,7 @@ namespace GLGeometry {
     public:
         explicit Triangle(unsigned int code);
 
-        void render(GLTools::ModelView<glm::vec2> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
+        void render(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const override;
 
     private:
         GLTools::VertexArrayObject mVertexArrayObject;

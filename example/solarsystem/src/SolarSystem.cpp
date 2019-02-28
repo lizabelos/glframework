@@ -237,7 +237,7 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::ModelView
     program->post(camera);
     program->post("uId", 255 - mousei);
 
-    mSphere.render(camera, program, renderStep);
+    mSphere.render(program, renderStep);
     i++;
     mousei++;
 
@@ -252,7 +252,7 @@ void SolarSystem::renderAstre(GLTools::RenderStep renderStep, GLTools::ModelView
 
         mRingProgram->post("uDiffuseMin", 0.1f);
 
-        mRing3D.render(camera, mRingProgram, renderStep);
+        mRing3D.render(mRingProgram, renderStep);
     }
 
     camera.popMatrix();

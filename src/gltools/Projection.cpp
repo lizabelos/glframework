@@ -4,18 +4,18 @@
 
 #include "Projection.h"
 
-PerspectiveProjection::PerspectiveProjection(unsigned int width, unsigned int height, float mNear = 0.1f, float mFar = 1000.0f) {
-    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)mWidth / (float)mHeight, mNear, mFar);
+GLTools::PerspectiveProjection::PerspectiveProjection(unsigned int width, unsigned int height, float mNear, float mFar) {
+    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)width / (float)height, mNear, mFar);
 }
 
-glm::mat4 PerspectiveProjection::getMatrix() {
+glm::mat4 GLTools::PerspectiveProjection::getMatrix() const {
     return mProjectionMatrix;
 }
 
-OrthographicProjection::OrthographicProjection(float sceneRadius) {
+GLTools::OrthographicProjection::OrthographicProjection(float sceneRadius) {
     mProjectionMatrix = glm::ortho(-sceneRadius, sceneRadius, -sceneRadius, sceneRadius, 0.01f * sceneRadius, 2.f * sceneRadius);
 }
 
-glm::mat4 OrthographicProjection::getMatrix() {
+glm::mat4 GLTools::OrthographicProjection::getMatrix() const {
     return mProjectionMatrix;
 }

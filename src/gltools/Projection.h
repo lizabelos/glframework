@@ -28,12 +28,12 @@ namespace GLTools {
          * @param mNear Near parameter
          * @param mFar Far parameter
          */
-        PerspectiveProjection(unsigned int width, unsigned int height, float mNear = 0.1f, float mFar = 1000.0f);
+        PerspectiveProjection(unsigned int width = 1, unsigned int height = 1, float mNear = 0.1f, float mFar = 1000.0f);
 
         /**
          * @return The projection matrix
          */
-        glm::mat4 getMatrix() override;
+        glm::mat4 getMatrix() const override;
 
     private:
         glm::mat4 mProjectionMatrix;
@@ -43,12 +43,12 @@ namespace GLTools {
     class OrthographicProjection : public Projection {
 
     public:
-        OrthographicProjection(float sceneRadius);
+        OrthographicProjection(float sceneRadius = 1);
 
         /**
          * @return The projection matrix
          */
-        glm::mat4 getMatrix() override;
+        glm::mat4 getMatrix() const override;
 
     private:
         glm::mat4 mProjectionMatrix;

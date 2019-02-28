@@ -8,16 +8,17 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-GLTools::FreeflyView::FreeflyView() : GLTools::ModelView3D(), mPitch(0.0f), mRoll(0.0f), mYaw(0.0f), mTranslate(true) {
+GLTools::FreeflyView::FreeflyView() : mPitch(0.0f), mRoll(0.0f), mYaw(0.0f) {
 
 }
 
-glm::mat4 GLTools::FreeflyView::getViewMatrix() const {
+glm::mat4 GLTools::FreeflyView::getMatrix() const {
     glm::mat4 viewMatrix = glm::mat4(1.0f);
 
     viewMatrix = glm::rotate(viewMatrix, mPitch, glm::vec3(1.0f, 0.0f, 0.0f));
     viewMatrix = glm::rotate(viewMatrix, mYaw, glm::vec3(0.0f, 1.0f, 0.0f));
-    if (mTranslate) viewMatrix = glm::translate(viewMatrix, mPosition);
+    //if (mTranslate) viewMatrix = glm::translate(viewMatrix, mPosition);
+    viewMatrix = glm::translate(viewMatrix, mPosition);
 
     //viewMatrix = glm::rotate(viewMatrix, mPitch, glm::vec3(1.0f, 0.0f, 0.0f));
     //viewMatrix = glm::rotate(viewMatrix, mRoll, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -46,7 +47,7 @@ void GLTools::FreeflyView::rotateUp(float t) {
 void GLTools::FreeflyView::moveUp(float t) {
     mPosition.y = mPosition.y + t;
 }
-
+/*
 void GLTools::FreeflyView::enableTranslation() {
     mTranslate = true;
 }
@@ -54,7 +55,7 @@ void GLTools::FreeflyView::enableTranslation() {
 void GLTools::FreeflyView::disableTranslation() {
     mTranslate = false;
 }
-
-glm::vec3 GLTools::FreeflyView::getPosition() {
+*/
+glm::vec3 GLTools::FreeflyView::getPosition() const {
     return mPosition;
 }

@@ -3,9 +3,7 @@
 
 #include <iostream>
 
-OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256), mCube(0), mMouseSet(false), mTextureManager("res/textures") {
-
-    mSquare = std::make_shared<GLGeometry::Square>(0);
+OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256), mCube(0), mSquare(0), mMouseSet(false), mTextureManager("res/textures") {
 
     mRender3DProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/basic3d.fs.glsl");
     mGeometryProgram = std::make_shared<GLTools::Program>("res/shaders/basic3d.vs.glsl", "res/shaders/geometry/default.fs.glsl");
@@ -22,17 +20,8 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
 
-    mFreeflyCamera = std::make_shared<GLTools::FreeflyModelView>();
-    mFreeflyCamera->setPerspective(mScene->getBoundingBoxDiagonal(), 0.1f);
-
-    mLightView = std::make_shared<GLTools::FreeflyModelView>();
-    // todo : ortogprahic projection
-    mLightView->setOrthographic(mScene->getBoundingBoxDiagonal());
-    //mLightView->moveUp(mScene->getBoundingBoxDiagonal() / 4);
-    mLightView->rotateUp(-M_PI/2);
-
-    mModelView2D = std::make_shared<GLTools::ModelView2D>();
-
+    mShadowProjection = GLTools::OrthographicProjection(mScene->getBoundingBoxDiagonal());
+    mShadowView = GLTools::LightView(glm::vec3(0, 0, 0), mScene->getBoundingBoxDiagonal(), 0, 0, glm::vec3(0, 0, -1));
 
 }
 
@@ -40,20 +29,23 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
     if (renderStep == GLTools::RENDER_SCREEN) {
 
-        mFreeflyCamera->identity();
+        mModel.identity();
 
-        mRender3DProgram->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(mLightView->getPosition(), 1.0f));
-        mRender3DProgram->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
+        mRender3DProgram->post("uLightPosition", mCamera.getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
+        mRender3DProgram->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
+        mRender3DProgram->post(mProjection, mModel, mCamera);
 
-        mScene->render(*mFreeflyCamera, mRender3DProgram, renderStep);
+        mScene->render(mRender3DProgram, renderStep);
         renderLight(mRender3DProgram, renderStep);
 
     }
 
     if (renderStep == GLTools::RENDER_DEFERRED_FRAMEBUFFER) {
 
-        mFreeflyCamera->identity();
-        mScene->render(*mFreeflyCamera, mGeometryProgram, renderStep);
+        mModel.identity();
+
+        mGeometryProgram->post(mProjection, mModel, mCamera);
+        mScene->render(mGeometryProgram, renderStep);
         renderLight(mGeometryProgram, renderStep);
 
 
@@ -61,13 +53,15 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
     if (renderStep == GLTools::RENDER_DEFERRED_SHADOW) {
 
-        mFreeflyCamera->identity();
-        mScene->render(*mLightView, mShadowProgram, renderStep);
+        mModel.identity();
+
+        mShadowProgram->post(mShadowProjection, mModel, mShadowView);
+        mScene->render(mShadowProgram, renderStep);
     }
 
     if (renderStep == GLTools::RENDER_DEFERRED_SCREEN) {
 
-        mModelView2D->identity();
+        mModel2D.identity();
 
         if (mSplittedMode) {
 
@@ -89,10 +83,10 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 }
 
 void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) {
-    mFreeflyCamera->pushMatrix();
+    mModel.pushMatrix();
 
-    mFreeflyCamera->translate(mLightView->getPosition());
-    mFreeflyCamera->scale(10.0f);
+    mModel.translate(mShadowView.getLightPosition());
+    mModel.scale(10.0f);
 
     program->post("uAmbientHasTexture", GL_FALSE);
     program->post("uDiffuseHasTexture", GL_FALSE);
@@ -103,20 +97,20 @@ void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools:
     program->post("uDiffuse", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     program->post("uSpecular", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     program->post("uShininess", 1.0f);
+    program->post(mProjection, mModel, mCamera);
 
-    mSphere.render(*mFreeflyCamera, program, renderStep);
+    mSphere.render(program, renderStep);
 
-
-    mFreeflyCamera->popMatrix();
+    mModel.popMatrix();
 }
 
 
 void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::vec2 position, glm::vec2 size) {
 
-    program->post("uLightPosition", mFreeflyCamera->getViewMatrix() * glm::vec4(mLightView->getPosition(), 1.0f));
-    program->post("uCameraPosition", glm::vec4(mFreeflyCamera->getPosition(), 1.0f));
-    program->post("uLight", *mLightView);
-    program->post("uLightMVPMatrix", ( mLightView->getProjectionMatrix() * mLightView->getViewMatrix() * glm::inverse(mFreeflyCamera->getViewMatrix())));
+    program->post("uLightPosition", mCamera.getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
+    program->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
+    program->post("uLight", mShadowView.getMatrix());
+    program->post("uLightMVPMatrix", ( mShadowProjection.getMatrix() * mShadowView.getMatrix() * glm::inverse(mCamera.getMatrix())));
     program->post("uLightShadowMapBias",  0.005f);
     program->postTexture("uGPosition", 0);
     program->postTexture("uGNormal", 1);
@@ -125,18 +119,18 @@ void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::
     program->postTexture("uGlossyShininess", 4);
     program->postTexture("uGShadow", 5);
 
-    mModelView2D->pushMatrix();
+    mModel2D.pushMatrix();
 
    // mModelView2D->translate(glm::vec2(-2.0/3.0,-0.5));
-    mModelView2D->translate(position);
-    mModelView2D->scale(size);
+    mModel2D.translate(position);
+    mModel2D.scale(size);
 
 
-
+    program->post(mModel2D);
     //mModelView2D->translate(position);
 
-    mSquare->render(*mModelView2D, program, GLTools::RENDER_DEFERRED_SCREEN);
-    mModelView2D->popMatrix();
+    mSquare.render(program, GLTools::RENDER_DEFERRED_SCREEN);
+    mModel2D.popMatrix();
 
 }
 
@@ -145,43 +139,43 @@ void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
     switch (key) {
         case SDLK_UP:
         case SDLK_z:
-            mFreeflyCamera->moveFront(3.0f);
+            mCamera.moveFront(3.0f);
             break;
         case SDLK_LEFT:
         case SDLK_q:
-            mFreeflyCamera->moveLeft(3.0f);
+            mCamera.moveLeft(3.0f);
             break;
         case SDLK_RIGHT:
         case SDLK_d:
-            mFreeflyCamera->moveLeft(-3.0f);
+            mCamera.moveLeft(-3.0f);
             break;
         case SDLK_DOWN:
         case SDLK_s:
-            mFreeflyCamera->moveFront(-3.0f);
+            mCamera.moveFront(-3.0f);
             break;
         case SDLK_i:
-            mLightView->moveFront(3.0f);
+            mShadowView.moveFront(3.0f);
             break;
         case SDLK_j:
-            mLightView->moveLeft(3.0f);
+            mShadowView.moveLeft(3.0f);
             break;
         case SDLK_l:
-            mLightView->moveLeft(-3.0f);
+            mShadowView.moveLeft(-3.0f);
             break;
         case SDLK_k:
-            mLightView->moveFront(-3.0f);
+            mShadowView.moveFront(-3.0f);
             break;
         case SDLK_p:
-            mLightView->moveUp(3.0f);
+            mShadowView.moveUp(3.0f);
             break;
         case SDLK_m:
-            mLightView->moveUp(-3.0f);
+            mShadowView.moveUp(-3.0f);
             break;
         case SDLK_LSHIFT:
-            mFreeflyCamera->moveUp(3.0f);
+            mCamera.moveUp(3.0f);
             break;
         case SDLK_SPACE:
-            mFreeflyCamera->moveUp(-3.0f);
+            mCamera.moveUp(-3.0f);
             break;
         case SDLK_h:
             setDeferred(true);
@@ -207,16 +201,15 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
     mMouseStart = mousePosition;
     
     if (mMouseSet) {
-        mFreeflyCamera->rotateLeft(diff.x * 2 * M_PI);
-        mFreeflyCamera->rotateUp(diff.y * 2 * M_PI);
+        mCamera.rotateLeft(diff.x * 2 * M_PI);
+        mCamera.rotateUp(diff.y * 2 * M_PI);
     } else {
         mMouseSet = true;
     }
 }
 
 void OpenglNoel::resize(unsigned int width, unsigned int height) {
-    mFreeflyCamera->resize(width, height);
-    //mModelView2D->resize(width, height);
+    mProjection = GLTools::PerspectiveProjection(width, height, 0.1f, mScene->getBoundingBoxDiagonal());
 }
 
 bool OpenglNoel::needRenderShadow() {

@@ -26,8 +26,6 @@ GLushort cube_indices[] = {
 
 GLGeometry::Cube::Cube(unsigned int code) : Drawable(code) {
 
-
-
     std::vector<glm::vec3> vertexs;
     std::vector<GLuint> indices;
     for (int i = 0; i < sizeof(cube_vertices); i = i + 3) {
@@ -48,8 +46,7 @@ GLGeometry::Cube::Cube(unsigned int code) : Drawable(code) {
 
 }
 
-void GLGeometry::Cube::render(GLTools::ModelView<glm::vec3> &camera, std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
-    program->post(camera);
+void GLGeometry::Cube::render(std::shared_ptr<GLTools::Program> program, GLTools::RenderStep renderStep) const {
     program->use();
 
     mVertexArrayObject.bind();

@@ -14,7 +14,6 @@
 #include <SDL2/SDL.h>
 
 #include "Drawable"
-#include "Camera"
 #include "Framebuffer"
 
 /**
