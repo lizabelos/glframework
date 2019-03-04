@@ -9,7 +9,7 @@ GLTools::LightView::LightView() : LightView(glm::vec3(0,0,0), 1, 0, 0, glm::vec3
 }
 
 
-GLTools::LightView::LightView(glm::vec3 sceneCenter, float sceneRadius, float phi, float theta, glm::vec3 direction) : mLightPosition(mSceneRadius), mSceneRadius(sceneRadius), mPhi(phi), mTheta(theta), mDirection(direction) {
+GLTools::LightView::LightView(glm::vec3 sceneCenter, float sceneRadius, float phi, float theta, glm::vec3 direction) : mLightPosition(sceneCenter), mSceneRadius(sceneRadius), mPhi(phi), mTheta(theta), mDirection(direction) {
     processLightMatrix();
 }
 
@@ -28,8 +28,8 @@ void GLTools::LightView::processLightMatrix() {
     };
 
     const auto dirLightUpVector = computeDirectionVectorUp(glm::radians(mPhi), glm::radians(mTheta));
-    mLightMatrix = glm::lookAt(mLightPosition + mDirection * mSceneRadius, mLightPosition, dirLightUpVector); // Will not work if m_DirLightDirection is colinear to lightUpVector
-
+    // mLightMatrix = glm::lookAt(mLightPosition + mDirection * mSceneRadius, mLightPosition, dirLightUpVector);
+    mLightMatrix = glm::lookAt(mLightPosition, mLightPosition + mDirection * mSceneRadius, dirLightUpVector);
 }
 
 

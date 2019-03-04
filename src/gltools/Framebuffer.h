@@ -68,7 +68,7 @@ namespace GLTools {
         GLuint mDirectionalSMTexture;
         GLuint mDirectionalSMFBO;
         GLuint mDirectionalSMSampler;
-        int mDirectionalSMResolution = 512;
+        int mDirectionalSMResolution = 1024;
 
     };
 

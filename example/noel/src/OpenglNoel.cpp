@@ -20,9 +20,11 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
     mShadowProgram = std::make_shared<GLTools::Program>("res/shaders/shadow/directionalSM.vs.glsl", "res/shaders/shadow/directionalSM.fs.glsl");
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
+    // mScene = std::make_shared<GLScene::Scene>("res/objs/iscv2");
 
     mShadowProjection = GLTools::OrthographicProjection(mScene->getBoundingBoxDiagonal() / 2.0f);
-    mShadowView = GLTools::LightView(glm::vec3(0, 0, 0), mScene->getBoundingBoxDiagonal() / 8.0f, 90, 90, glm::vec3(0, 0, -1));
+
+    mShadowView = GLTools::LightView(glm::vec3(0, mScene->getBoundingBoxDiagonal() / 2.0f, 0), mScene->getBoundingBoxDiagonal(), 90, 90, glm::vec3(0, -1, 0));
 
 }
 
@@ -37,7 +39,8 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
         mRender3DProgram->post("uAmbientPower", mLightToolAmbient);
         mRender3DProgram->post("uDiffusePower", mLightToolDiffuse);
         mRender3DProgram->post("uSpecularPower", mLightToolSpecular);
-        mRender3DProgram->post(mShadowProjection, mModel, mShadowView);
+        // mRender3DProgram->post(mShadowProjection, mModel, mShadowView);
+        mRender3DProgram->post(mProjection, mModel, mCamera);
 
         mScene->render(mRender3DProgram, renderStep);
         renderLight(mRender3DProgram, renderStep);
