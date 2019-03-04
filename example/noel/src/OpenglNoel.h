@@ -52,7 +52,6 @@ private:
     GLTools::FreeflyView mCamera;
 
     // View, Projection for the shadow
-    GLTools::OrthographicProjection mShadowProjection;
     GLTools::LightView mShadowView;
 
     // Model for 2D drawing

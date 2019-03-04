@@ -5,11 +5,13 @@
 #ifndef BELOSGL_LIGHTVIEW_H
 #define BELOSGL_LIGHTVIEW_H
 
+#include <vector>
+
 #include "View"
 
 namespace GLTools {
 
-    class LightView : public View {
+    class LightView {
 
     public:
         /**
@@ -20,12 +22,12 @@ namespace GLTools {
         /**
          * Create a LightView
          */
-        LightView(glm::vec3 sceneCenter, float sceneRadius, float phi, float theta, glm::vec3 direction);
+        LightView(glm::vec3 lightPosition);
 
         /**
          * @return The view matrix
          */
-        glm::mat4 getMatrix() const override;
+        std::vector<glm::mat4> getMatrices() const;
 
         /**
         * Move left
@@ -45,9 +47,6 @@ namespace GLTools {
          */
         void moveUp(float t);
 
-        void setPhi(float phi);
-        void setTheta(float theta);
-
         /**
          *
          * @return The light position
@@ -58,13 +57,8 @@ namespace GLTools {
         void processLightMatrix();
 
     private:
-        glm::mat4 mLightMatrix;
+        std::vector<glm::mat4> mLightMatrices;
         glm::vec3 mLightPosition;
-        float mSceneRadius;
-        float mPhi;
-        float mTheta;
-        glm::vec3 mDirection;
-
     };
 
 }

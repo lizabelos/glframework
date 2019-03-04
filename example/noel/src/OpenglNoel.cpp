@@ -17,14 +17,24 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
     mShadingSpecularProgram = std::make_shared<GLTools::Program>("res/shaders/shading/default.vs.glsl", "res/shaders/shading/specular.fs.glsl");
 
 
-    mShadowProgram = std::make_shared<GLTools::Program>("res/shaders/shadow/directionalSM.vs.glsl", "res/shaders/shadow/directionalSM.fs.glsl");
+    // mShadowProgram = std::make_shared<GLTools::Program>("res/shaders/shadow/directionalSM.vs.glsl", "res/shaders/shadow/directionalSM.fs.glsl");
+
+    std::shared_ptr<GLTools::Shader> pVertex = std::make_shared<GLTools::Shader>(GL_VERTEX_SHADER, "res/shaders/shadow/directionalSM.vs.glsl");
+    std::shared_ptr<GLTools::Shader> pGeometry = std::make_shared<GLTools::Shader>(GL_GEOMETRY_SHADER, "res/shaders/shadow/directionalSM.gs.glsl");
+    std::shared_ptr<GLTools::Shader> pFragment = std::make_shared<GLTools::Shader>(GL_FRAGMENT_SHADER, "res/shaders/shadow/directionalSM.fs.glsl");
+
+    std::vector<std::shared_ptr<GLTools::Shader>> mShadowShaders;
+    mShadowShaders.push_back(std::make_shared<GLTools::Shader>(GL_VERTEX_SHADER, "res/shaders/shadow/directionalSM.vs.glsl"));
+    mShadowShaders.push_back(std::make_shared<GLTools::Shader>(GL_GEOMETRY_SHADER, "res/shaders/shadow/directionalSM.gs.glsl"));
+    mShadowShaders.push_back(std::make_shared<GLTools::Shader>(GL_FRAGMENT_SHADER, "res/shaders/shadow/directionalSM.fs.glsl"));
+
+    mShadowProgram = std::make_shared<GLTools::Program>(mShadowShaders);
+
 
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
     // mScene = std::make_shared<GLScene::Scene>("res/objs/iscv2");
 
-    mShadowProjection = GLTools::OrthographicProjection(mScene->getBoundingBoxDiagonal() / 2.0f);
-
-    mShadowView = GLTools::LightView(glm::vec3(0, mScene->getBoundingBoxDiagonal() / 2.0f, 0), mScene->getBoundingBoxDiagonal(), 90, 90, glm::vec3(0, -1, 0));
+    mShadowView = GLTools::LightView(glm::vec3(0, mScene->getBoundingBoxDiagonal() / 2.0f, 0));
 
 }
 
@@ -63,7 +73,10 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mModel.identity();
 
-        mShadowProgram->post(mShadowProjection, mModel, mShadowView);
+        mShadowProgram->post(mProjection, mModel, mShadowView, mCamera);
+        mShadowProgram->post("uLightPosition", mCamera.getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
+        mShadowProgram->post("uFarPlane", mScene->getBoundingBoxDiagonal());
+
         mScene->render(mShadowProgram, renderStep);
     }
 
@@ -119,9 +132,10 @@ void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::
 
     program->post("uLightPosition", mCamera.getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
     program->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
-    program->post("uLight", mShadowView.getMatrix());
-    program->post("uLightMVPMatrix", ( mShadowProjection.getMatrix() * mShadowView.getMatrix() * glm::inverse(mCamera.getMatrix())));
+    // program->post("uLight", mShadowView.getMatrices());
+    program->post("uLightInverseMatrix", (glm::inverse(mCamera.getMatrix())));
     program->post("uLightShadowMapBias",  0.005f);
+    program->post("uFarPlane", mScene->getBoundingBoxDiagonal());
     program->postTexture("uGPosition", 0);
     program->postTexture("uGNormal", 1);
     program->postTexture("uGAmbient", 2);
@@ -162,8 +176,8 @@ void OpenglNoel::renderGui(GLTools::RenderStep renderStep) {
     ImGui::SliderFloat("phi", &mLightToolPhi, 0.0f, 360.0f);
     ImGui::SliderFloat("theta", &mLightToolTheta, 0.0f, 360.0f);
 
-    mShadowView.setPhi(mLightToolPhi);
-    mShadowView.setTheta(mLightToolTheta);
+    // mShadowView.setPhi(mLightToolPhi);
+    // mShadowView.setTheta(mLightToolTheta);
 
     ImGui::End();
 

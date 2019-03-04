@@ -13,16 +13,25 @@
 
 GLTools::Program::Program(std::shared_ptr<GLTools::Shader> pVertex, std::shared_ptr<GLTools::Shader> pFragment) {
 
-    mVertex = pVertex;
-    mFragment = pFragment;
+    mShaders.push_back(pVertex);
+    mShaders.push_back(pFragment);
     initialize();
 
 }
 
 GLTools::Program::Program(const std::string &vertexPath, const std::string &fragmentPath) {
 
-    mVertex = std::make_shared<Shader>(GL_VERTEX_SHADER, vertexPath);
-    mFragment = std::make_shared<Shader>(GL_FRAGMENT_SHADER, fragmentPath);
+    std::shared_ptr<GLTools::Shader> pVertex = std::make_shared<Shader>(GL_VERTEX_SHADER, vertexPath);
+    std::shared_ptr<GLTools::Shader> pFragment = std::make_shared<Shader>(GL_FRAGMENT_SHADER, fragmentPath);
+    mShaders.push_back(pVertex);
+    mShaders.push_back(pFragment);
+    initialize();
+
+}
+
+GLTools::Program::Program(std::vector<std::shared_ptr<GLTools::Shader>> shaders) {
+
+    mShaders = shaders;
     initialize();
 
 }
@@ -32,10 +41,11 @@ void GLTools::Program::initialize() {
 
     mId = glCreateProgram();
 
-    std::cout << "Creating a new program " << mId << " with vertex shader " << mVertex->getId() << " and fragment shader " << mFragment->getId() << std::endl;
+    std::cout << "Creating a new program " << mId << std::endl;
 
-    glAttachShader(mId, mVertex->getId());
-    glAttachShader(mId, mFragment->getId());
+    for (const std::shared_ptr<GLTools::Shader> &shader : mShaders) {
+        glAttachShader(mId, shader->getId());
+    }
 
     glLinkProgram(mId);
 
@@ -56,6 +66,7 @@ void GLTools::Program::initialize() {
 }
 
 GLTools::Program::~Program() {
+    std::wcout << "Deleting program " << mId << std::endl;
     glDeleteProgram(mId);
 }
 
@@ -116,4 +127,10 @@ void GLTools::Program::postTexture(const std::string &name, GLint texture) {
     uniform(name);
     use();
     glUniform1i(mUniformMap[name], texture);
+}
+
+void GLTools::Program::post(const std::string &name, const std::vector<glm::mat4> &mat) {
+    uniform(name);
+    use();
+    glUniformMatrix4fv(mUniformMap[name], static_cast<GLsizei>(mat.size()), GL_FALSE, (float*)mat.data());
 }

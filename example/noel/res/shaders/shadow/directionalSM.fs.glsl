@@ -1,10 +1,18 @@
-#version 300 es
+#version 330 core
 
-precision mediump float;
+in vec4 FragPos;
 
-layout(location = 0) out float fragmentDepth;
+uniform vec4 uLightPosition;
+uniform float uFarPlane;
 
 void main()
 {
-    fragmentDepth = gl_FragCoord.z;
+    // get distance between fragment and light source
+    float lightDistance = length(FragPos.xyz - uLightPosition.xyz);
+
+    // map to [0;1] range by dividing by far_plane
+    lightDistance = lightDistance / uFarPlane;
+
+    // write this as modified depth
+    gl_FragDepth = lightDistance;
 }

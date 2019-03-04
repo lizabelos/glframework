@@ -5,31 +5,29 @@
 #include "LightView.h"
 
 
-GLTools::LightView::LightView() : LightView(glm::vec3(0,0,0), 1, 0, 0, glm::vec3(0, -1, 0)) {
+GLTools::LightView::LightView() : LightView(glm::vec3(0,0,0)) {
 }
 
 
-GLTools::LightView::LightView(glm::vec3 sceneCenter, float sceneRadius, float phi, float theta, glm::vec3 direction) : mLightPosition(sceneCenter), mSceneRadius(sceneRadius), mPhi(phi), mTheta(theta), mDirection(direction) {
+GLTools::LightView::LightView(glm::vec3 position) : mLightPosition(position) {
     processLightMatrix();
 }
 
-glm::mat4 GLTools::LightView::getMatrix() const {
-    return mLightMatrix;
+std::vector<glm::mat4> GLTools::LightView::getMatrices() const {
+    return mLightMatrices;
 }
 
 void GLTools::LightView::processLightMatrix() {
 
-    static const auto computeDirectionVectorUp = [](float phiRadians, float thetaRadians)
-    {
-        float cosPhi = glm::cos(phiRadians);
-        float sinPhi = glm::sin(phiRadians);
-        float cosTheta = glm::cos(thetaRadians);
-        return -glm::normalize(glm::vec3(sinPhi * cosTheta, -glm::sin(thetaRadians), cosPhi * cosTheta));
-    };
+    mLightMatrices.clear();
+    mLightMatrices.push_back(glm::lookAt(mLightPosition, mLightPosition + glm::vec3( 1.0, 0.0, 0.0), glm::vec3(0.0,-1.0, 0.0)));
+    mLightMatrices.push_back(glm::lookAt(mLightPosition, mLightPosition + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0,-1.0, 0.0)));
+    mLightMatrices.push_back(glm::lookAt(mLightPosition, mLightPosition + glm::vec3( 0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+    mLightMatrices.push_back(glm::lookAt(mLightPosition, mLightPosition + glm::vec3( 0.0,-1.0, 0.0), glm::vec3(0.0, 0.0,-1.0)));
+    mLightMatrices.push_back(glm::lookAt(mLightPosition, mLightPosition + glm::vec3( 0.0, 0.0, 1.0), glm::vec3(0.0,-1.0, 0.0)));
+    mLightMatrices.push_back(glm::lookAt(mLightPosition, mLightPosition + glm::vec3( 0.0, 0.0,-1.0), glm::vec3(0.0,-1.0, 0.0)));
 
-    const auto dirLightUpVector = computeDirectionVectorUp(glm::radians(mPhi), glm::radians(mTheta));
-    // mLightMatrix = glm::lookAt(mLightPosition + mDirection * mSceneRadius, mLightPosition, dirLightUpVector);
-    mLightMatrix = glm::lookAt(mLightPosition, mLightPosition + mDirection * mSceneRadius, dirLightUpVector);
+
 }
 
 
@@ -50,14 +48,4 @@ void GLTools::LightView::moveUp(float t) {
 
 glm::vec3 GLTools::LightView::getLightPosition() const {
     return mLightPosition;
-}
-
-void GLTools::LightView::setPhi(float phi) {
-    mPhi = phi;
-    processLightMatrix();
-}
-
-void GLTools::LightView::setTheta(float theta) {
-    mTheta = theta;
-    processLightMatrix();
 }

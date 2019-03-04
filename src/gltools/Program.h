@@ -18,6 +18,7 @@
 #include "Shader"
 #include "Model"
 #include "View"
+#include "LightView"
 #include "Projection"
 
 /**
@@ -44,6 +45,12 @@ namespace GLTools {
          * @param pFragment The fragment shader
          */
         Program(std::shared_ptr<Shader> pVertex, std::shared_ptr<Shader> pFragment);
+
+        /**
+         * Create a program from a list of shader
+         * @param shaders the list of shaders
+         */
+        Program(std::vector<std::shared_ptr<GLTools::Shader>> shaders);
 
         /**
          * The destructor is virtual.
@@ -83,6 +90,13 @@ namespace GLTools {
          * @param mat Value to pass
          */
         void post(const std::string &name, const glm::mat4 &mat);
+
+        /**
+         * Post multiple uniform mat4 to the shader
+         * @param name Name of the uniform
+         * @param mat Value to pass
+         */
+        void post(const std::string &name, const std::vector<glm::mat4> &mat);
 
         /**
          * Post a uniform vec4 to the shader
@@ -140,6 +154,22 @@ namespace GLTools {
             post(name + "MVPMatrix", projection.getMatrix() * modelView);
         }
 
+        inline void post(const Projection &projection, const Model3D &model, const LightView &lightView,  const View &view) {
+            post("u", projection, model, lightView, view);
+        }
+
+        inline void post(const std::string &name, const Projection &projection, const Model3D &model, const LightView &lightView, const View &view) {
+            std::vector<glm::mat4> views = lightView.getMatrices(), modelView, modelViewProjection;
+            for (int i = 0; i < views.size(); i++) {
+                modelView.push_back(views[i] * model.getMatrix());
+                // modelViewProjection.push_back(projection.getMatrix() * views[i] * model.getMatrix() * glm::inverse(view.getMatrix()));
+                modelViewProjection.push_back(projection.getMatrix() * views[i] * model.getMatrix());
+            }
+
+            post(name + "MVPMatrix", modelViewProjection);
+            post(name + "ModelMatrix", model.getMatrix());
+        }
+
     protected:
         void uniform(const std::string &name);
 
@@ -147,8 +177,7 @@ namespace GLTools {
         void initialize();
 
         GLuint mId;
-        std::shared_ptr<Shader> mVertex;
-        std::shared_ptr<Shader> mFragment;
+        std::vector<std::shared_ptr<GLTools::Shader>> mShaders;
         std::map<std::string, GLint> mUniformMap;
 
     };

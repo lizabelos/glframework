@@ -65,7 +65,7 @@ namespace GLTools {
         ShadowFramebuffer& operator=( const Framebuffer& ) = delete;
 
     private:
-        GLuint mDirectionalSMTexture;
+        GLuint mDirectionalSMCubemap;
         GLuint mDirectionalSMFBO;
         GLuint mDirectionalSMSampler;
         int mDirectionalSMResolution = 1024;

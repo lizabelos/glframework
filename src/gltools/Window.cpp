@@ -43,7 +43,7 @@ GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
     ImGui::CreateContext();
 
     ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext);
-    ImGui_ImplOpenGL3_Init("#version 300 es");
+    ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
 GLTools::Window::~Window() {

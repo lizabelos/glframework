@@ -6,7 +6,7 @@ GLTools::Framebuffer::Framebuffer(int width, int height) {
 
     std::cout << "Creating frame buffer object of size " << width << "x" << height << "..." << std::endl;
 
-    for (int i = 0; i < GBufferTextureCount; i++) {
+    for (unsigned int i = 0; i < GBufferTextureCount; i++) {
         std::cout << "Creating texture " << i << std::endl;
         glGenTextures(1, &mGBufferTextures[i]);
         glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
@@ -18,7 +18,7 @@ GLTools::Framebuffer::Framebuffer(int width, int height) {
     glGenFramebuffers(1, &mFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
 
-    for (int i = 0; i < GBufferTextureCount; i++) {
+    for (unsigned int i = 0; i < GBufferTextureCount; i++) {
 
         if ((GBufferTextureType)i == GDepth) {
             std::cout << "Creating Depth Attachment..." << std::endl;
@@ -55,7 +55,7 @@ GLTools::Framebuffer::~Framebuffer() {
 
     glDeleteFramebuffers(1, &mFBO);
 
-    for (int i = 0; i < GBufferTextureCount; i++) {
+    for (unsigned int i = 0; i < GBufferTextureCount; i++) {
         glDeleteTextures(1, &mGBufferTextures[i]);
     }
 
@@ -71,21 +71,31 @@ void GLTools::Framebuffer::useScreen() {
 }
 
 void GLTools::Framebuffer::bindTextures() {
-    for (int i = 0; i < GDrawBuffersSize; i++) {
+    for (unsigned int i = 0; i < GDrawBuffersSize; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, mGBufferTextures[i]);
     }
 }
 
 GLTools::ShadowFramebuffer::ShadowFramebuffer() {
-    glGenTextures(1, &mDirectionalSMTexture);
-    glBindTexture(GL_TEXTURE_2D, mDirectionalSMTexture);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, mDirectionalSMResolution, mDirectionalSMResolution);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glGenTextures(1, &mDirectionalSMCubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mDirectionalSMCubemap);
+    for (unsigned int i = 0; i < 6; i++) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
+                     mDirectionalSMResolution, mDirectionalSMResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     glGenFramebuffers(1, &mDirectionalSMFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDirectionalSMFBO);
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDirectionalSMTexture, 0);
+    glFramebufferTexture(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, mDirectionalSMCubemap, 0);
 
     GLenum framebufferStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
     switch (framebufferStatus) {
@@ -103,7 +113,7 @@ GLTools::ShadowFramebuffer::ShadowFramebuffer() {
     }
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
+/*
     glGenSamplers(1, &mDirectionalSMSampler);
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -111,13 +121,13 @@ GLTools::ShadowFramebuffer::ShadowFramebuffer() {
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     glSamplerParameteri(mDirectionalSMSampler, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-
+*/
 
 }
 
 GLTools::ShadowFramebuffer::~ShadowFramebuffer() {
     glDeleteFramebuffers(1, &mDirectionalSMFBO);
-    glDeleteTextures(1, &mDirectionalSMTexture);
+    glDeleteTextures(1, &mDirectionalSMCubemap);
 }
 
 void GLTools::ShadowFramebuffer::use() {
@@ -128,6 +138,6 @@ void GLTools::ShadowFramebuffer::use() {
 
 void GLTools::ShadowFramebuffer::bindTexture() {
     glActiveTexture(GL_TEXTURE0 + GDrawBuffersSize);
-    glBindTexture(GL_TEXTURE_2D, mDirectionalSMTexture);
-    glBindSampler(GDrawBuffersSize, mDirectionalSMSampler);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mDirectionalSMCubemap);
+    // glBindSampler(GDrawBuffersSize, mDirectionalSMSampler);
 }

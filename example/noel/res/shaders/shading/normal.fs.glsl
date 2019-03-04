@@ -1,6 +1,4 @@
-#version 300 es
-
-precision mediump float;
+#version 330 core
 
 uniform sampler2D uGPosition;
 uniform sampler2D uGNormal;
