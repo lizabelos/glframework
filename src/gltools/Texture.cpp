@@ -28,6 +28,9 @@ GLTools::Texture::Texture(const std::string &path) {
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_TEXTURE_CUBE_MAP);
     glGenTextures(1, &mId);
+
+    std::cout << "Texture id is " << mId << std::endl;
+
     glBindTexture(GL_TEXTURE_2D, mId);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 

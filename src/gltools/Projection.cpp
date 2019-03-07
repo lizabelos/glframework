@@ -4,8 +4,8 @@
 
 #include "Projection.h"
 
-GLTools::PerspectiveProjection::PerspectiveProjection(unsigned int width, unsigned int height, float mNear, float mFar) {
-    mProjectionMatrix = glm::perspective(glm::radians(70.f), (float)width / (float)height, mNear, mFar);
+GLTools::PerspectiveProjection::PerspectiveProjection(float angle, unsigned int width, unsigned int height, float mNear, float mFar) {
+    mProjectionMatrix = glm::perspective(glm::radians(angle), (float)width / (float)height, mNear, mFar);
 }
 
 glm::mat4 GLTools::PerspectiveProjection::getMatrix() const {

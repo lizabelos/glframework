@@ -155,6 +155,8 @@ int GLTools::Window::run() {
 
         }
 
+        assert(glGetError() == GL_NO_ERROR);
+
     }
 
     return 0;

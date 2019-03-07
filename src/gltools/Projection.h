@@ -28,7 +28,7 @@ namespace GLTools {
          * @param mNear Near parameter
          * @param mFar Far parameter
          */
-        PerspectiveProjection(unsigned int width = 1, unsigned int height = 1, float mNear = 0.1f, float mFar = 1000.0f);
+        PerspectiveProjection(float angle = 70.0f, unsigned int width = 1, unsigned int height = 1, float mNear = 0.1f, float mFar = 1000.0f);
 
         /**
          * @return The projection matrix

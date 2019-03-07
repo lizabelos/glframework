@@ -163,10 +163,10 @@ namespace GLTools {
             for (int i = 0; i < views.size(); i++) {
                 modelView.push_back(views[i] * model.getMatrix());
                 // modelViewProjection.push_back(projection.getMatrix() * views[i] * model.getMatrix() * glm::inverse(view.getMatrix()));
-                modelViewProjection.push_back(projection.getMatrix() * views[i] * model.getMatrix());
+                modelViewProjection.push_back(projection.getMatrix() * views[i]);
             }
 
-            post(name + "MVPMatrix", modelViewProjection);
+            post(name + "VPMatrix", modelViewProjection);
             post(name + "ModelMatrix", model.getMatrix());
         }
 
