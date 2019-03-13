@@ -96,6 +96,6 @@ void main() {
     // fFragColor = vec4(normalize(uLightPosition.xyz),1.0f);
     fFragColor = diffuse * uDiffusePower + ambient * uAmbientPower + specular * uSpecularPower;
     //fFragColor = vec4(getNormal(), 1.0);
-
+    // fFragColor = vec4(1.0, 1.0, 1.0, 1.0);
 
 }

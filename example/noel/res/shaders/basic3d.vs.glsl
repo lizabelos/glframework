@@ -12,6 +12,9 @@ uniform mat4 uMVMatrix;
 uniform mat4 uMVPMatrix;
 uniform mat4 uModelMatrix;
 uniform mat4 uNormalMatrix;
+uniform mat4 uViewMatrix;
+uniform mat4 uProjectionMatrix;
+
 
 
 void main() {

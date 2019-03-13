@@ -149,6 +149,8 @@ namespace GLTools {
         inline void post(const std::string &name, const Projection &projection, const Model3D &model, const View &view) {
             glm::mat4 modelView = view.getMatrix() * model.getMatrix();
             post(name + "ModelMatrix", model.getMatrix());
+            post(name + "ViewMatrix", view.getMatrix());
+            post(name + "ProjectionMatrix", projection.getMatrix());
             post(name + "NormalMatrix", glm::transpose(glm::inverse(modelView)));
             post(name + "MVMatrix", modelView);
             post(name + "MVPMatrix", projection.getMatrix() * modelView);

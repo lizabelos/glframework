@@ -34,7 +34,7 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
     mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
     // mScene = std::make_shared<GLScene::Scene>("res/objs/iscv2");
 
-    mShadowView = GLTools::LightView(glm::vec3(0, mScene->getBoundingBoxDiagonal(), 0));
+    mShadowView = GLTools::LightView(glm::vec3(0, 0, 0));
     mShadowProjection = GLTools::PerspectiveProjection(90.0f);
 }
 
@@ -44,6 +44,7 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mModel.identity();
 
+        mRender3DProgram->use();
         mRender3DProgram->post("uLightPosition", mCamera.getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
         mRender3DProgram->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
         mRender3DProgram->post("uAmbientPower", mLightToolAmbient);
@@ -264,7 +265,7 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 }
 
 void OpenglNoel::resize(unsigned int width, unsigned int height) {
-    mProjection = GLTools::PerspectiveProjection(width, height, 0.1f, mScene->getBoundingBoxDiagonal());
+    mProjection = GLTools::PerspectiveProjection(90.0f, width, height, 0.1f, mScene->getBoundingBoxDiagonal());
 }
 
 bool OpenglNoel::needRenderShadow() {

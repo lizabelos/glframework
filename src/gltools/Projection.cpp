@@ -4,7 +4,13 @@
 
 #include "Projection.h"
 
+#include <iostream>
+
 GLTools::PerspectiveProjection::PerspectiveProjection(float angle, unsigned int width, unsigned int height, float mNear, float mFar) {
+    std::cout << "PerspectiveProjection(angle = " << angle << ",width=" << width << ",height=" << height << ",near=" << mNear << ",far=" << mFar << std::endl;
+    if (mNear > mFar) {
+        throw std::runtime_error("mNear > mFar");
+    }
     mProjectionMatrix = glm::perspective(glm::radians(angle), (float)width / (float)height, mNear, mFar);
 }
 

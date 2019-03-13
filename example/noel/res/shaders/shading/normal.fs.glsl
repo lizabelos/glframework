@@ -76,6 +76,6 @@ void main() {
 
     // The final color
     vec3 lighting = (ambient * uAmbientPower + diffuse * uDiffusePower + specular * uSpecularPower) * (shadow);
-    fFragColor = vec4(normal, 1.0);
+    fFragColor = vec4(normalAsIt, 1.0);
 
 }

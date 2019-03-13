@@ -8,7 +8,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-GLTools::FreeflyView::FreeflyView() : mPitch(0.0f), mRoll(0.0f), mYaw(0.0f) {
+GLTools::FreeflyView::FreeflyView() : mPitch(0.0f), mRoll(0.0f), mYaw(0.0f), mPosition(0.0f, 0.0f, 0.0f) {
 
 }
 
