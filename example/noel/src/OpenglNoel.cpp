@@ -31,9 +31,6 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
     mShadowProgram = std::make_shared<GLTools::Program>(mShadowShaders);
 
 
-    mScene = std::make_shared<GLScene::Scene>("res/objs/sponza");
-    // mScene = std::make_shared<GLScene::Scene>("res/objs/iscv2");
-
     mShadowView = GLTools::LightView(glm::vec3(0, 0, 0));
     mShadowProjection = GLTools::PerspectiveProjection(90.0f);
 }
@@ -271,4 +268,8 @@ void OpenglNoel::resize(unsigned int width, unsigned int height) {
 
 bool OpenglNoel::needRenderShadow() {
     return true;
+}
+
+void OpenglNoel::useScene(std::shared_ptr<GLScene::Scene> scene) {
+    mScene = scene;
 }

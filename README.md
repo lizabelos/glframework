@@ -22,16 +22,22 @@ cmake ..
 make
 ```
 
-## Run the examples
+## Exemple : GL Noel Viewer
 
 From the build directory, go into the executable directory, and run on of the generated binaries
 ```
 cd noel
+
+# Load the default model
 ./noel
-```
-```
-cd solarsystem
-./solarsystem
+
+# Load a .obj model with ASSIMP
+./noel res/objs/sponza
+# or
+./noel ASSIMP res/objs/sponza
+
+# Load a GLTF model
+./noel GLTF res/gltf/cube
 ```
 
 ## References

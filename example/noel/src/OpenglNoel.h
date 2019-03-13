@@ -29,6 +29,7 @@ class OpenglNoel : public GLTools::Window {
 
 public:
     OpenglNoel();
+    void useScene(std::shared_ptr<GLScene::Scene> scene);
 
 protected:
     void render(GLTools::RenderStep renderStep) override;
