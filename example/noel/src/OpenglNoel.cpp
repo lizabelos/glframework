@@ -136,7 +136,7 @@ void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::
     program->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
     // program->post("uLight", mShadowView.getMatrices());
     program->post("uLightInverseMatrix", (glm::inverse(mCamera.getMatrix())));
-    program->post("uLightShadowMapBias",  0.005f);
+    program->post("uLightShadowMapBias",  mLightToolShadowBias);
     program->post("uFarPlane", mScene->getBoundingBoxDiagonal());
     program->postTexture("uGPosition", 0);
     program->postTexture("uGNormal", 1);
@@ -176,6 +176,7 @@ void OpenglNoel::renderGui(GLTools::RenderStep renderStep) {
     ImGui::SliderFloat("diffuse", &mLightToolDiffuse, 0.0f, 1.0f);
     ImGui::SliderFloat("specular", &mLightToolSpecular, 0.0f, 1.0f);
     ImGui::SliderFloat("shadow", &mLightToolShadow, 0.0f, 1.0f);
+    ImGui::SliderFloat("shadow bias", &mLightToolShadowBias, 0.0f, 1.0f);
 
     // mShadowView.setPhi(mLightToolPhi);
     // mShadowView.setTheta(mLightToolTheta);

@@ -70,7 +70,7 @@ private:
 
     bool mLightToolActive = true;
     bool mCameraLock = false;
-    float mLightToolAmbient = 0.3, mLightToolDiffuse = 1.0, mLightToolSpecular = 0.1, mLightToolShadow = 0.5;
+    float mLightToolAmbient = 0.3, mLightToolDiffuse = 1.0, mLightToolSpecular = 0.1, mLightToolShadow = 0.5, mLightToolShadowBias = 1.0f;
 
 };
 
