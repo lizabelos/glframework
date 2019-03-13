@@ -11,18 +11,29 @@ OpenGL, SDL2, GLEW, GLM, and ASSIMP are required.
 You can install these packages on Ubuntu by using : 
 
 ```
+sudo apt install gcc g++ make cmake git
 sudo apt install libsdl2-dev libglew-dev libglm-dev libassimp-dev
 ```
 
 ## Compilation and installation
 
+Clone the repository : 
+```
+git clone https://github.com/belosthomas/glframework.git
+cd glframework
+```
+
+Build the project with cmake : 
 ```
 mkdir build
 cmake ..
 make
 ```
 
-## Exemple : GL Noel Viewer
+From your project, you can use the generated ```libbelosgl.a```.
+
+
+## Example : GL Noel Viewer
 
 From the build directory, go into the executable directory, and run on of the generated binaries
 ```
