@@ -16,6 +16,9 @@ find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 find_package(ASSIMP REQUIRED)
 
+# Fix for SDL2
+string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
+
 add_compile_definitions(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 
 # Include directories
