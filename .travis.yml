@@ -1,0 +1,17 @@
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+before_script:
+  - sudo apt install gcc g++ make git
+  - sudo apt install libsdl2-dev libglew-dev libglm-dev libassimp-dev
+  - cd utils
+  - sh install-cmake.sh
+  - cd ..
+  - mkdir build
+  - cd build
+  - cmake ..
+
+script: make
