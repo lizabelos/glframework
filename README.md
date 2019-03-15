@@ -1,5 +1,7 @@
 # BELOSGL - OpenGL Framework by BELOS Thomas
 
+[![Build Status](https://travis-ci.org/belosthomas/glframework.svg?branch=master)](https://travis-ci.org/belosthomas/glframework)
+
 ![Screenshot](example/solarsystem/res/screenshot_earth.png)
 
 ![Screenshot](example/noel/res/screenshot0.png)
@@ -19,6 +21,8 @@ sudo apt install libsdl2-dev libglew-dev libglm-dev libassimp-dev
 ```
 
 ## Compilation and installation
+
+[![Build Status](https://travis-ci.org/belosthomas/glframework.svg?branch=master)](https://travis-ci.org/belosthomas/glframework)
 
 Clone the repository : 
 ```
