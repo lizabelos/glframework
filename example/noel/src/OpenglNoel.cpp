@@ -33,6 +33,8 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
 
     mShadowView = GLTools::LightView(glm::vec3(0, 0, 0));
     mShadowProjection = GLTools::PerspectiveProjection(90.0f);
+
+    setDeferred(true);
 }
 
 void OpenglNoel::render(GLTools::RenderStep renderStep) {
@@ -272,4 +274,5 @@ bool OpenglNoel::needRenderShadow() {
 
 void OpenglNoel::useScene(std::shared_ptr<GLScene::Scene> scene) {
     mScene = scene;
+    mShadowView = GLTools::LightView(glm::vec3(0, scene->getBoundingBoxDiagonal() / 5.0f, 0));
 }

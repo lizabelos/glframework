@@ -10,7 +10,8 @@ int main(int argc, char **argv) {
     std::string modelType;
     switch (argc) {
         case 1:
-            openglNoel.useScene(std::make_shared<GLScene::SceneASSIMP>("res/objs/sponza"));
+            // openglNoel.useScene(std::make_shared<GLScene::SceneASSIMP>("res/objs/sponza"));
+            openglNoel.useScene(std::make_shared<GLScene::SceneGLTF>("res/gltfs/VC.glb"));
             break;
         case 2:
             openglNoel.useScene(std::make_shared<GLScene::SceneASSIMP>(argv[1]));
@@ -37,18 +38,6 @@ int main(int argc, char **argv) {
             std::cout << argv[0] << " [ASSIMP or GLTF] [MODEL]" << std::endl;
             break;
     }
-    if (argc == 1) {
-        openglNoel.useScene(std::make_shared<GLScene::SceneASSIMP>("res/objs/sponza"));
-    }
-
-    if (argc == 2) {
-
-    }
-
-    if (argc == 3) {
-
-    }
-
 
     openglNoel.run();
 }
