@@ -8,6 +8,7 @@ compiler:
   - gcc
 
 before_script:
+  - sudo apt update
   - sudo apt install gcc g++ make git
   - sudo apt install libsdl2-dev libglew-dev libglm-dev libassimp-dev
   - cd utils
