@@ -55,6 +55,8 @@ void GLTools::Texture::activate(GLenum texture) {
 
 GLTools::Texture::Texture(GLuint id) : mId(id) {
 
+    std::cout << "Loaded memory texture. id is " << mId << std::endl;
+
 }
 
 GLTools::TextureCubeMap::TextureCubeMap(const std::string &xpos, const std::string &xneg, const std::string &ypos, const std::string &yneg, const std::string &zpos, const std::string &zneg) {
