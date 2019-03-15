@@ -265,7 +265,8 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
 }
 
 void OpenglNoel::resize(unsigned int width, unsigned int height) {
-    mProjection = GLTools::PerspectiveProjection(90.0f, width, height, 0.1f, mScene->getBoundingBoxDiagonal());
+    mProjection = GLTools::PerspectiveProjection(90.0f, width, height, mScene->getBoundingBoxDiagonal() / 1000.0f, mScene->getBoundingBoxDiagonal());
+    mShadowProjection = GLTools::PerspectiveProjection(90.0f, 1.0f, 1.0f, mScene->getBoundingBoxDiagonal() / 1000.0f, mScene->getBoundingBoxDiagonal());
 }
 
 bool OpenglNoel::needRenderShadow() {

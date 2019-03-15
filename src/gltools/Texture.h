@@ -19,6 +19,7 @@ namespace GLTools {
 
     public:
         Texture(const std::string &path);
+        Texture(GLuint id);
         ~Texture();
 
         /**

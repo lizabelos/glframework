@@ -32,10 +32,15 @@ namespace GLScene {
     private:
         friend class SceneGLTFPrimitive;
 
+        void loadNode(const tinygltf::Node &node);
+        void loadTexture(int textureId);
+
         std::vector<std::unique_ptr<SceneGLTFPrimitive>> mPrimitives;
 
         tinygltf::TinyGLTF mLoader;
         tinygltf::Model mModel;
+
+        std::map<int, std::shared_ptr<GLTools::Texture>> mTextures;
 
     };
 
@@ -48,6 +53,8 @@ namespace GLScene {
 
         glm::vec3 getBoxMin();
         glm::vec3 getBoxMax();
+
+        int getMaterial();
 
     private:
         void loadIndices();

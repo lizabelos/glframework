@@ -21,6 +21,16 @@ static std::string GetFilePathExtension(const std::string &FileName) {
     return "";
 }
 
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+    if ( !v.empty() ) {
+        out << '[';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b]";
+    }
+    return out;
+}
+
 GLScene::SceneGLTF::SceneGLTF(const std::string &path) : Scene(0) {
     std::string err;
     std::string warn;
@@ -58,14 +68,13 @@ GLScene::SceneGLTF::SceneGLTF(const std::string &path) : Scene(0) {
               << mModel.lights.size() << " lights\n";
 
 
-    for (const auto &meshe : mModel.meshes) {
+    const tinygltf::Scene &scene = mModel.scenes[mModel.defaultScene];
+    for (int node : scene.nodes) {
+        loadNode(mModel.nodes[node]);
+    }
 
-        for (const auto &primitive : meshe.primitives) {
-
-            mPrimitives.emplace_back(std::make_unique<SceneGLTFPrimitive>(*this, primitive));
-
-        }
-
+    for (int i = 0; i < mModel.textures.size(); i++) {
+        loadTexture(i);
     }
 
 
@@ -79,12 +88,39 @@ void GLScene::SceneGLTF::render(std::shared_ptr<GLTools::Program> program, GLToo
     program->post("uSpecularHasTexture", GL_FALSE);
     program->post("uShininessHasTexture", GL_FALSE);
     program->post("uNormalHasTexture", GL_FALSE);
-    program->post("uAmbient", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    program->post("uDiffuse", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    program->post("uSpecular", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    program->post("uAmbient", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+    program->post("uDiffuse", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+    program->post("uSpecular", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
     program->post("uShininess", 1.0f);
 
     for (const std::unique_ptr<SceneGLTFPrimitive> &primitive : mPrimitives) {
+        const tinygltf::Material &material = mModel.materials[primitive->getMaterial()];
+        for (const auto &content : material.values) {
+            if (content.first == "baseColorFactor") {
+                program->post("uAmbient", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
+                program->post("uDiffuse", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
+                program->post("uSpecular", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
+            }
+            if (content.first == "baseColorTexture") {
+                int textureId = static_cast<int>(content.second.number_value);
+                mTextures.at(textureId)->activate(GL_TEXTURE0);
+                program->postTexture("uAmbientTexture", 0);
+                program->post("uAmbientHasTexture", GL_TRUE);
+
+                mTextures.at(textureId)->activate(GL_TEXTURE1);
+                program->postTexture("uDiffuseTexture", 1);
+                program->post("uDiffuseHasTexture", GL_TRUE);
+
+                mTextures.at(textureId)->activate(GL_TEXTURE2);
+                program->postTexture("uSpecularTexture", 2);
+                program->post("uSpecularHasTexture", GL_TRUE);
+            }
+            std::cout << "VALUE " << content.first << "=" << content.second.number_array << " " << content.second.number_value << std::endl;
+        }
+
+        for (const auto &content : material.additionalValues) {
+            std::cout << "ADDITIONAL " << content.first << "=" << content.second.number_array << std::endl;
+        }
         primitive->render(program, renderStep);
     }
 
@@ -104,6 +140,64 @@ float GLScene::SceneGLTF::getBoundingBoxDiagonal() {
 
 
     return glm::distance(boxMin, boxMax);
+}
+
+void GLScene::SceneGLTF::loadTexture(int textureId) {
+    if (mTextures.count(textureId) == 0) {
+
+        tinygltf::Texture &tex = mModel.textures[textureId];
+        tinygltf::Image &image = mModel.images[tex.source];
+
+        GLuint texid;
+
+        glBindTexture(GL_TEXTURE_2D, texid);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        GLenum format = GL_RGBA;
+
+        if (image.component == 1) {
+            format = GL_RED;
+        } else if (image.component == 2) {
+            format = GL_RG;
+        } else if (image.component == 3) {
+            format = GL_RGB;
+        } else if (image.component == 4) {
+            format = GL_RGBA;
+        } else {
+            throw std::runtime_error("Incompatible texture component type");
+        }
+
+        GLenum type = GL_UNSIGNED_BYTE;
+        if (image.bits == 8) {
+            // ok
+        } else if (image.bits == 16) {
+            type = GL_UNSIGNED_SHORT;
+        } else {
+            throw std::runtime_error("Incompatible texture bits type");
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0,
+                     format, type, &image.image.at(0));
+
+        mTextures[textureId] = std::make_shared<GLTools::Texture>(texid);
+    }
+
+}
+
+void GLScene::SceneGLTF::loadNode(const tinygltf::Node &node) {
+
+    const tinygltf::Mesh &meshe = mModel.meshes[node.mesh];
+    for (const auto &primitive : meshe.primitives) {
+        mPrimitives.emplace_back(std::make_unique<SceneGLTFPrimitive>(*this, primitive));
+    }
+
+    for (int i : node.children) {
+        loadNode(mModel.nodes[i]);
+    }
 }
 
 GLScene::SceneGLTFPrimitive::SceneGLTFPrimitive(const GLScene::SceneGLTF &parent, const tinygltf::Primitive &primitive) : GLTools::Drawable<glm::vec3>(0), mParent(parent), mPrimitive(primitive) {
@@ -279,7 +373,7 @@ void GLScene::SceneGLTFPrimitive::render(std::shared_ptr<GLTools::Program> progr
     program->use();
 
     mVertexArrayObject.bind();
-    glDrawElements(GL_QUADS, mSize, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, mSize, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
@@ -289,4 +383,8 @@ glm::vec3 GLScene::SceneGLTFPrimitive::getBoxMin() {
 
 glm::vec3 GLScene::SceneGLTFPrimitive::getBoxMax() {
     return mBoxMax;
+}
+
+int GLScene::SceneGLTFPrimitive::getMaterial() {
+    return mPrimitive.material;
 }

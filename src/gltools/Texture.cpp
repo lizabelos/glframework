@@ -53,6 +53,10 @@ void GLTools::Texture::activate(GLenum texture) {
     glBindTexture(GL_TEXTURE_2D, mId);
 }
 
+GLTools::Texture::Texture(GLuint id) : mId(id) {
+
+}
+
 GLTools::TextureCubeMap::TextureCubeMap(const std::string &xpos, const std::string &xneg, const std::string &ypos, const std::string &yneg, const std::string &zpos, const std::string &zneg) {
 
     std::cout << "Loading texture cube map : " << std::endl;
