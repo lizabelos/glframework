@@ -16,6 +16,6 @@ before_script:
   - cd ..
   - mkdir build
   - cd build
-  - cmake ..
+  - /usr/local/bin/cmake ..
 
 script: make
