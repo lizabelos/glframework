@@ -8,12 +8,13 @@
 
 ## Required packages
 
-OpenGL, SDL2, GLEW, GLM, and ASSIMP are required.
+ - You need a cmake version **higher than 3.13.2** ! You can download the latest binary here : https://cmake.org/download/ or use the utility scripts in ```utils/install-cmake.sh```.
+ - OpenGL, SDL2, GLEW, GLM, and ASSIMP are required.
 
 You can install these packages on Ubuntu by using : 
 
 ```
-sudo apt install gcc g++ make cmake git
+sudo apt install gcc g++ make git
 sudo apt install libsdl2-dev libglew-dev libglm-dev libassimp-dev
 ```
 
@@ -55,6 +56,12 @@ cd noel
 
 Warning : to not specify the extension for .obj files.
 
+## FAQ
+
+### Unknown CMake command "add_compile_definitions"
+
+You need a more recent version of CMake. A cmake version higher than 3.13.2 is needed.
+
 ## References
 
 ### GLTools
@@ -66,6 +73,10 @@ https://github.com/ocornut/imgui
 #### STB Image
 
 https://github.com/nothings/stb
+
+#### TinyGLTF
+
+https://github.com/syoyo/tinygltf
 
 ### Example : Solar System
 
