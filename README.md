@@ -2,7 +2,9 @@
 
 ![Screenshot](example/solarsystem/res/screenshot_earth.png)
 
-![Screenshot](example/noel/res/screenshot.png)
+![Screenshot](example/noel/res/screenshot0.png)
+
+![Screenshot](example/noel/res/screenshot1.png)
 
 ## Required packages
 
@@ -48,8 +50,10 @@ cd noel
 ./noel ASSIMP res/objs/sponza
 
 # Load a GLTF model
-./noel GLTF res/gltf/cube
+./noel GLTF res/gltfs/Buggy.glb
 ```
+
+Warning : to not specify the extension for .obj files.
 
 ## References
 

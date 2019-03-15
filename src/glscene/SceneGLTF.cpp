@@ -68,10 +68,18 @@ GLScene::SceneGLTF::SceneGLTF(const std::string &path) : Scene(0) {
               << mModel.lights.size() << " lights\n";
 
 
+    for (const auto &meshe : mModel.meshes) {
+        for (const auto &primitive : meshe.primitives) {
+            mPrimitives.emplace_back(std::make_unique<SceneGLTFPrimitive>(*this, primitive));
+        }
+    }
+
+    /*
     const tinygltf::Scene &scene = mModel.scenes[mModel.defaultScene];
     for (int node : scene.nodes) {
         loadNode(mModel.nodes[node]);
     }
+     */
 
     for (int i = 0; i < mModel.textures.size(); i++) {
         loadTexture(i);
