@@ -33,3 +33,13 @@ void GLTools::TrackballView::rotateLeft(float delta) {
 void GLTools::TrackballView::rotateUp(float delta) {
     mUp += delta;
 }
+
+glm::vec3 GLTools::TrackballView::getPosition() const {
+    glm::mat4 M = glm::inverse(getMatrix());
+    glm::vec3 eyeWorld = glm::vec3(M[0][3], M[1][3], M[2][3]);
+    return eyeWorld;
+}
+
+void GLTools::TrackballView::setFront(float front) {
+    mFront = front;
+}

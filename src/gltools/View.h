@@ -17,6 +17,11 @@ namespace GLTools {
          */
         virtual glm::mat4 getMatrix() const = 0;
 
+        /**
+         * @return Must return the camera position
+         */
+        virtual glm::vec3 getPosition() const = 0;
+
     };
 
 }

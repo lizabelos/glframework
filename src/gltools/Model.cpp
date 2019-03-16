@@ -53,7 +53,7 @@ void GLTools::Model2D::scale(float scaling) {
 }
 
 void GLTools::Model2D::identity() {
-    mModelMatrix = glm::mat4(1.0f);
+    mModelMatrix = glm::mat3(1.0f);
 }
 
 GLTools::Model3D::Model3D() {

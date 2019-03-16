@@ -17,6 +17,7 @@
 #include "gltools/Projection"
 #include "gltools/Model"
 #include "gltools/FreeflyView"
+#include "gltools/TrackballView"
 #include "gltools/LightView"
 #include "glgeometry/Cube.h"
 #include "utility/TimeManager"
@@ -41,6 +42,7 @@ protected:
     void mouseMove(glm::vec2 mousePosition, unsigned int selection) override;
     void resize(unsigned int width, unsigned int height) override;
     bool needRenderShadow() override;
+    void scroll(int x, int y) override;
 
 private:
     GLGeometry::Sphere mSphere;
@@ -50,7 +52,9 @@ private:
     // Model, View, Projection for the camera
     GLTools::PerspectiveProjection mProjection;
     GLTools::Model3D mModel;
-    GLTools::FreeflyView mCamera;
+
+    GLTools::FreeflyView mFreeflyCamera;
+    GLTools::TrackballView mTrackballCamera;
 
     // View, Projection for the shadow
     GLTools::PerspectiveProjection mShadowProjection;
@@ -71,6 +75,7 @@ private:
 
     bool mLightToolActive = true;
     bool mCameraLock = false;
+    bool mCameraIsFreefly = false;
     float mLightToolAmbient = 0.3, mLightToolDiffuse = 1.0, mLightToolSpecular = 0.1, mLightToolShadow = 0.5, mLightToolShadowBias = 1.0f;
 
 };

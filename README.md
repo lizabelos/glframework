@@ -66,6 +66,10 @@ Warning : to not specify the extension for .obj files.
 
 You need a more recent version of CMake. A cmake version higher than 3.13.2 is needed.
 
+### CMake not found, or the same version after install-cmake.sh
+
+Try to use ```/usr/share/bin/cmake``` instead of ```cmake```
+
 ## References
 
 ### GLTools

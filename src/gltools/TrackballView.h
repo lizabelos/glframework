@@ -35,6 +35,7 @@ namespace GLTools {
          * @param delta Mouvement multiplicator
          */
         void moveFront(float delta);
+        void setFront(float front);
 
         /**
          * Rotate left
@@ -47,6 +48,11 @@ namespace GLTools {
          * @param delta Angle factor
          */
         void rotateUp(float delta);
+
+        /**
+         * @return Return the camera position
+         */
+        glm::vec3 getPosition() const override;
 
     private:
         float mFront;

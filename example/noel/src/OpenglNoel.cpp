@@ -43,14 +43,17 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mModel.identity();
 
+        const GLTools::View *view = &mTrackballCamera;
+        if (mCameraIsFreefly) view = &mFreeflyCamera;
+
         mRender3DProgram->use();
-        mRender3DProgram->post("uLightPosition", mCamera.getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
-        mRender3DProgram->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
+        mRender3DProgram->post("uLightPosition", view->getMatrix() * glm::vec4(mShadowView.getLightPosition(), 1.0f));
+        mRender3DProgram->post("uCameraPosition", glm::vec4(view->getPosition(), 1.0f));
         mRender3DProgram->post("uAmbientPower", mLightToolAmbient);
         mRender3DProgram->post("uDiffusePower", mLightToolDiffuse);
         mRender3DProgram->post("uSpecularPower", mLightToolSpecular);
         // mRender3DProgram->post(mShadowProjection, mModel, mShadowView);
-        mRender3DProgram->post(mProjection, mModel, mCamera);
+        mRender3DProgram->post(mProjection, mModel, *view);
 
         mScene->render(mRender3DProgram, renderStep);
         renderLight(mRender3DProgram, renderStep);
@@ -62,7 +65,8 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mModel.identity();
 
-        mGeometryProgram->post(mProjection, mModel, mCamera);
+        if (mCameraIsFreefly) mGeometryProgram->post(mProjection, mModel, mFreeflyCamera);
+        else mGeometryProgram->post(mProjection, mModel, mTrackballCamera);
         mScene->render(mGeometryProgram, renderStep);
         renderLight(mGeometryProgram, renderStep);
 
@@ -73,7 +77,8 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         mModel.identity();
 
-        mShadowProgram->post(mShadowProjection, mModel, mShadowView, mCamera);
+        if (mCameraIsFreefly) mShadowProgram->post(mShadowProjection, mModel, mShadowView, mFreeflyCamera);
+        else mShadowProgram->post(mShadowProjection, mModel, mShadowView, mTrackballCamera);
         mShadowProgram->post("uLightPosition", glm::vec4(mShadowView.getLightPosition(), 1.0f));
         mShadowProgram->post("uFarPlane", mScene->getBoundingBoxDiagonal());
 
@@ -120,7 +125,8 @@ void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools:
     program->post("uDiffuse", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     program->post("uSpecular", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     program->post("uShininess", 1.0f);
-    program->post(mProjection, mModel, mCamera);
+    if (mCameraIsFreefly) program->post(mProjection, mModel, mFreeflyCamera);
+    else program->post(mProjection, mModel, mTrackballCamera);
 
     mSphere.render(program, renderStep);
 
@@ -130,11 +136,14 @@ void OpenglNoel::renderLight(std::shared_ptr<GLTools::Program> program, GLTools:
 
 void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::vec2 position, glm::vec2 size) {
 
-    program->post("uGeometry", mProjection, mModel, mCamera);
+    const GLTools::View *view = &mTrackballCamera;
+    if (mCameraIsFreefly) view = &mFreeflyCamera;
+
+    program->post("uGeometry", mProjection, mModel, *view);
     program->post("uLightPosition", glm::vec4(mShadowView.getLightPosition(), 1.0f));
-    program->post("uCameraPosition", glm::vec4(mCamera.getPosition(), 1.0f));
+    program->post("uCameraPosition", glm::vec4(view->getPosition(), 1.0f));
     // program->post("uLight", mShadowView.getMatrices());
-    program->post("uLightInverseMatrix", (glm::inverse(mCamera.getMatrix())));
+    program->post("uLightInverseMatrix", (glm::inverse(view->getMatrix())));
     program->post("uLightShadowMapBias",  mLightToolShadowBias);
     program->post("uFarPlane", mScene->getBoundingBoxDiagonal());
     program->postTexture("uGPosition", 0);
@@ -177,10 +186,61 @@ void OpenglNoel::renderGui(GLTools::RenderStep renderStep) {
     ImGui::SliderFloat("shadow", &mLightToolShadow, 0.0f, 1.0f);
     ImGui::SliderFloat("shadow bias", &mLightToolShadowBias, 0.0f, 1.0f);
 
-    // mShadowView.setPhi(mLightToolPhi);
-    // mShadowView.setTheta(mLightToolTheta);
+    ImGui::Text("The sphere correspond to the position of the light");
+    ImGui::Text("[i,j,k,l] Front, Left, Behind, Right");
+    ImGui::Text("[p,m] Up, Down");
 
     ImGui::End();
+
+    ImGui::Begin("Camera Tool", &mLightToolActive);
+
+    if (mCameraIsFreefly) {
+        if (ImGui::Button("[x] Trackball Camera"))
+        {
+            mCameraIsFreefly = false;
+        }
+        ImGui::Text("[z,q,s,d] Front, Left, Behind, Right");
+        ImGui::Text("[space,shift] Up, Down");
+    } else {
+        if (ImGui::Button("[x] Freefly Camera"))
+        {
+            mCameraIsFreefly = true;
+        }
+    }
+
+    if (mCameraLock) {
+        if (ImGui::Button("[w] Unlock Camera"))
+        {
+            mCameraLock = false;
+        }
+    } else {
+        if (ImGui::Button("[w] Lock Camera"))
+        {
+            mCameraLock = true;
+        }
+    }
+
+    ImGui::End();
+
+    ImGui::Begin("View Tool");
+
+    if (ImGui::Button("[h] Deferred and Splitted")) {
+        setDeferred(true);
+        mSplittedMode = true;
+    }
+
+    if (ImGui::Button("[f] Deferred but Not Splitted")) {
+        setDeferred(true);
+        mSplittedMode = false;
+    }
+
+    if (ImGui::Button("[g] Not Deferred and Not Splitted")) {
+        setDeferred(false);
+        mSplittedMode = false;
+    }
+
+    ImGui::End();
+
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -192,19 +252,19 @@ void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
     switch (key) {
         case SDLK_UP:
         case SDLK_z:
-            if (!mCameraLock) mCamera.moveFront(3.0f);
+            if (!mCameraLock && mCameraIsFreefly) mFreeflyCamera.moveFront(3.0f);
             break;
         case SDLK_LEFT:
         case SDLK_q:
-            if (!mCameraLock) mCamera.moveLeft(3.0f);
+            if (!mCameraLock && mCameraIsFreefly) mFreeflyCamera.moveLeft(3.0f);
             break;
         case SDLK_RIGHT:
         case SDLK_d:
-            if (!mCameraLock) mCamera.moveLeft(-3.0f);
+            if (!mCameraLock && mCameraIsFreefly) mFreeflyCamera.moveLeft(-3.0f);
             break;
         case SDLK_DOWN:
         case SDLK_s:
-            if (!mCameraLock) mCamera.moveFront(-3.0f);
+            if (!mCameraLock && mCameraIsFreefly) mFreeflyCamera.moveFront(-3.0f);
             break;
         case SDLK_i:
             mShadowView.moveFront(3.0f);
@@ -225,26 +285,34 @@ void OpenglNoel::keyboard(Uint32 type, bool repeat, int key) {
             mShadowView.moveUp(-3.0f);
             break;
         case SDLK_w:
-            mCameraLock = !mCameraLock;
+            if (type == SDL_KEYUP) mCameraLock = !mCameraLock;
+            break;
+        case SDLK_x:
+            if (type == SDL_KEYUP) mCameraIsFreefly = !mCameraIsFreefly;
             break;
         case SDLK_LSHIFT:
-            if (!mCameraLock) mCamera.moveUp(3.0f);
+            if (!mCameraLock && mCameraIsFreefly) mFreeflyCamera.moveUp(3.0f);
             break;
         case SDLK_SPACE:
-            if (!mCameraLock) mCamera.moveUp(-3.0f);
+            if (!mCameraLock && mCameraIsFreefly) mFreeflyCamera.moveUp(-3.0f);
             break;
         case SDLK_h:
-            setDeferred(true);
-            mSplittedMode = true;
-            std::cout << "Set splitted mode to true" << std::endl;
+            if (type == SDL_KEYUP) {
+                setDeferred(true);
+                mSplittedMode = true;
+            }
             break;
         case SDLK_f:
-            setDeferred(true);
-            mSplittedMode = false;
+            if (type == SDL_KEYUP) {
+                setDeferred(true);
+                mSplittedMode = false;
+            }
             break;
         case SDLK_g:
-            setDeferred(false);
-            mSplittedMode = false;
+            if (type == SDL_KEYUP) {
+                setDeferred(false);
+                mSplittedMode = false;
+            }
             break;
         default:
             break;
@@ -257,16 +325,25 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
     mMouseStart = mousePosition;
     
     if (mMouseSet) {
-        if (!mCameraLock) mCamera.rotateLeft(diff.x * 2 * M_PI);
-        if (!mCameraLock) mCamera.rotateUp(diff.y * 2 * M_PI);
+        if (mCameraIsFreefly) {
+            if (!mCameraLock) {
+                mFreeflyCamera.rotateLeft(diff.x * 2 * M_PI);
+                mFreeflyCamera.rotateUp(diff.y * 2 * M_PI);
+            }
+        } else {
+            if (!mCameraLock) {
+                mTrackballCamera.rotateLeft(diff.x * 2 * M_PI);
+                mTrackballCamera.rotateUp(diff.y * 2 * M_PI);
+            }
+        }
     } else {
         mMouseSet = true;
     }
 }
 
 void OpenglNoel::resize(unsigned int width, unsigned int height) {
-    mProjection = GLTools::PerspectiveProjection(90.0f, width, height, mScene->getBoundingBoxDiagonal() / 1000.0f, mScene->getBoundingBoxDiagonal());
-    mShadowProjection = GLTools::PerspectiveProjection(90.0f, 1.0f, 1.0f, mScene->getBoundingBoxDiagonal() / 1000.0f, mScene->getBoundingBoxDiagonal());
+    mProjection = GLTools::PerspectiveProjection(90.0f, width, height, mScene->getBoundingBoxDiagonal() / 1000.0f, mScene->getBoundingBoxDiagonal() * 2.0f);
+    mShadowProjection = GLTools::PerspectiveProjection(90.0f, 1.0f, 1.0f, mScene->getBoundingBoxDiagonal() / 1000.0f, mScene->getBoundingBoxDiagonal() * 2.0f);
 }
 
 bool OpenglNoel::needRenderShadow() {
@@ -276,4 +353,16 @@ bool OpenglNoel::needRenderShadow() {
 void OpenglNoel::useScene(std::shared_ptr<GLScene::Scene> scene) {
     mScene = scene;
     mShadowView = GLTools::LightView(glm::vec3(0, scene->getBoundingBoxDiagonal() / 5.0f, 0));
+    mTrackballCamera.setFront(scene->getBoundingBoxDiagonal());
+}
+
+void OpenglNoel::scroll(int x, int y) {
+    if (!mCameraIsFreefly) {
+        if (y > 0) {
+            mTrackballCamera.moveFront(1.0f / (y * 1.1f));
+        }
+        if (y < 0) {
+            mTrackballCamera.moveFront((-y * 1.1f));
+        }
+    }
 }
