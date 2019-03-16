@@ -18,11 +18,9 @@ void glMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, G
 
 GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
 
-    mWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_OPENGL);
+    mWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!mWindow) throw std::runtime_error("SDL_CreateWindow failed : '" + std::string(SDL_GetError()) + "'");
-
-    SDL_SetWindowResizable(mWindow, SDL_TRUE);
-
+    
     mContext = SDL_GL_CreateContext(mWindow);
 
     GLenum err = glewInit();
