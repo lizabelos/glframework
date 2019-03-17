@@ -2,11 +2,8 @@
 
 [![Build Status](https://travis-ci.org/belosthomas/glframework.svg?branch=master)](https://travis-ci.org/belosthomas/glframework)
 
-![Screenshot](example/solarsystem/res/screenshot_earth.png)
+![Screenshot](example/noel/res/screenshot.png)
 
-![Screenshot](example/noel/res/screenshot0.png)
-
-![Screenshot](example/noel/res/screenshot1.png)
 
 ## Required packages
 
@@ -70,9 +67,15 @@ You need a more recent version of CMake. A cmake version higher than 3.13.2 is n
 
 Try to use ```/usr/share/bin/cmake``` instead of ```cmake```
 
-## References
+### File not found, when executing ```./noel```
 
-### GLTools
+Please make sure that you run the executable in the ```noel``` directory : 
+```
+cd noel
+./noel
+```
+
+## References
 
 #### IMGUI
 
@@ -86,7 +89,9 @@ https://github.com/nothings/stb
 
 https://github.com/syoyo/tinygltf
 
-### Example : Solar System
+#### TinyGLTL Sample models
+
+https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0
 
 #### Planet Pixel Emporium
 
@@ -95,12 +100,6 @@ http://planetpixelemporium.com/
 #### NASA
 
 https://nssdc.gsfc.nasa.gov/planetary/planetfact.html
-
-#### STB Image
-
-https://github.com/nothings/stb
-
-### Example : Noel
 
 #### McGuire Computer Graphics Archive
 
