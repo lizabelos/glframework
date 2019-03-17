@@ -22,7 +22,6 @@ namespace GLTools {
 
     // Warning : GL_RGB32F is unsupported of a lot of computer. Using GL_RGBA32F instead.
     const GLenum GBufferTextureFormat[GBufferTextureCount] = { GL_RGBA32F, GL_RGBA32F, GL_RGBA32F, GL_RGBA32F, GL_RGBA32F, GL_DEPTH_COMPONENT32F };
-
     const GLenum GDrawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
     const int GDrawBuffersSize = 5;
 
@@ -71,6 +70,31 @@ namespace GLTools {
         int mDirectionalSMResolution = 1024;
 
     };
+
+    class ComputeFramebuffer {
+
+    public:
+        ComputeFramebuffer(int width, int height);
+        ~ComputeFramebuffer();
+
+        void use();
+        void useRead();
+        void bindTextures();
+
+        static void useScreen();
+
+        /**
+         * You can't copy a Framebuffer.
+         */
+        ComputeFramebuffer( const Framebuffer& ) = delete;
+        ComputeFramebuffer& operator=( const Framebuffer& ) = delete;
+
+    private:
+        GLuint mGBufferTextureIn, mGBufferTextureOut;
+        GLuint mFBO;
+
+    };
+
 
 }
 

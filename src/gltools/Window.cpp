@@ -20,7 +20,7 @@ GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
 
     mWindow = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!mWindow) throw std::runtime_error("SDL_CreateWindow failed : '" + std::string(SDL_GetError()) + "'");
-    
+
     mContext = SDL_GL_CreateContext(mWindow);
 
     GLenum err = glewInit();
@@ -41,7 +41,7 @@ GLTools::Window::Window(const std::string &name) : mMouseX(0), mMouseY(0) {
     ImGui::CreateContext();
 
     ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext);
-    ImGui_ImplOpenGL3_Init("#version 330 core");
+    ImGui_ImplOpenGL3_Init("#version 430");
 }
 
 GLTools::Window::~Window() {
@@ -130,15 +130,20 @@ int GLTools::Window::run() {
 
             }
 
+            // RENDER_DEFERRED_FRAMEBUFFER --------------
             mFramebuffer->use();
             glViewport(0, 0, w, h);
 
             glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            render(RENDER_DEFERRED_FRAMEBUFFER);
+            render(RENDER_DEFERRED_FRAMEBUFFER); // ----
 
-            mFramebuffer->useScreen();
+
+
+
+            // RENDER_DEFERRED_SHADING -----------------
+            mComputeFramebuffer->use();
             glViewport(0, 0, w, h);
 
             glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
@@ -147,8 +152,23 @@ int GLTools::Window::run() {
             mFramebuffer->bindTextures();
             mShadowFramebuffer->bindTexture();
 
-            render(RENDER_DEFERRED_SCREEN);
+            render(RENDER_DEFERRED_SHADING); // ---------
 
+
+
+
+            // RENDER_DEFERRED_COMPUTE ------------------
+            render(RENDER_DEFERRED_COMPUTE);
+            mComputeFramebuffer->bindTextures();
+            glDispatchCompute(w,h,1);
+            // ------------------------------------------
+
+
+
+            // Screen Render
+            mComputeFramebuffer->useScreen();
+            mComputeFramebuffer->useRead();
+            glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
             SDL_GL_SwapWindow(mWindow);
 
         }
@@ -267,6 +287,7 @@ void GLTools::Window::setDeferred(bool state) {
         SDL_GetWindowSize(mWindow, &w, &h);
         mFramebuffer = std::make_shared<Framebuffer>(w, h);
         mShadowFramebuffer = std::make_shared<ShadowFramebuffer>();
+        mComputeFramebuffer = std::make_shared<ComputeFramebuffer>(w, h);
     } else {
         mFramebuffer = std::shared_ptr<Framebuffer>(nullptr);
         mShadowFramebuffer = std::shared_ptr<ShadowFramebuffer>(nullptr);

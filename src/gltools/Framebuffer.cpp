@@ -141,3 +141,78 @@ void GLTools::ShadowFramebuffer::bindTexture() {
     glBindTexture(GL_TEXTURE_CUBE_MAP, mDirectionalSMCubemap);
     // glBindSampler(GDrawBuffersSize, mDirectionalSMSampler);
 }
+
+GLTools::ComputeFramebuffer::ComputeFramebuffer(int width, int height) {
+
+
+    std::cout << "Creating compute frame buffer object of size " << width << "x" << height << "..." << std::endl;
+
+    std::cout << "Creating texture" << std::endl;
+    glGenTextures(1, &mGBufferTextureIn);
+    glBindTexture(GL_TEXTURE_2D, mGBufferTextureIn);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, width, height);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glGenTextures(1, &mGBufferTextureOut);
+    glBindTexture(GL_TEXTURE_2D, mGBufferTextureOut);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, width, height);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    std::cout << "Generating framebuffer..." << std::endl;
+    glGenFramebuffers(1, &mFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
+
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mGBufferTextureIn, 0);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, mGBufferTextureOut, 0);
+
+    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, drawBuffers);
+
+    GLenum framebufferStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+    switch (framebufferStatus) {
+        case GL_FRAMEBUFFER_COMPLETE:
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:  throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+        case GL_FRAMEBUFFER_UNSUPPORTED: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_UNSUPPORTED");
+        case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
+        case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: throw std::runtime_error("gl draw framebuffer is not complete. GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS");
+        default:
+            throw std::runtime_error("gl draw framebuffer is not complete. unknown error :(");
+
+    }
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+}
+
+GLTools::ComputeFramebuffer::~ComputeFramebuffer() {
+
+    glDeleteFramebuffers(1, &mFBO);
+
+    glDeleteTextures(1, &mGBufferTextureIn);
+    glDeleteTextures(1, &mGBufferTextureOut);
+
+
+}
+
+void GLTools::ComputeFramebuffer::use() {
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
+    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, drawBuffers);
+}
+
+void GLTools::ComputeFramebuffer::useRead() {
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, mFBO);
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+}
+
+void GLTools::ComputeFramebuffer::bindTextures() {
+    glBindImageTexture(0, mGBufferTextureIn, 0, GL_FALSE, 0 ,GL_READ_ONLY, GL_RGBA32F);
+    glBindImageTexture(1, mGBufferTextureOut, 0, GL_FALSE, 0 ,GL_WRITE_ONLY, GL_RGBA32F);
+}
+
+void GLTools::ComputeFramebuffer::useScreen() {
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}

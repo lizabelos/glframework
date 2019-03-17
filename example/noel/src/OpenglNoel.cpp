@@ -31,6 +31,10 @@ OpenglNoel::OpenglNoel() : GLTools::Window("Solar System"), mSphere(0, 256, 256)
     mShadowProgram = std::make_shared<GLTools::Program>(mShadowShaders);
 
 
+    std::vector<std::shared_ptr<GLTools::Shader>> mComputeShader;
+    mComputeShader.push_back(std::make_shared<GLTools::Shader>(GL_COMPUTE_SHADER, "res/shaders/postprocessing/gamma.cs.glsl"));
+    mComputeProgram = std::make_shared<GLTools::Program>(mComputeShader);
+
     mShadowView = GLTools::LightView(glm::vec3(0, 0, 0));
     mShadowProjection = GLTools::PerspectiveProjection(90.0f);
 
@@ -85,7 +89,7 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
         mScene->render(mShadowProgram, renderStep);
     }
 
-    if (renderStep == GLTools::RENDER_DEFERRED_SCREEN) {
+    if (renderStep == GLTools::RENDER_DEFERRED_SHADING) {
 
         mModel2D.identity();
 
@@ -105,7 +109,11 @@ void OpenglNoel::render(GLTools::RenderStep renderStep) {
 
         renderGui(renderStep);
 
+    }
 
+    if (renderStep == GLTools::RENDER_DEFERRED_COMPUTE) {
+        mComputeProgram->post("uGammaExponent", mComputeToolGama);
+        mComputeProgram->use();
     }
 
 }
@@ -167,7 +175,7 @@ void OpenglNoel::renderDeferred(std::shared_ptr<GLTools::Program> program, glm::
     program->post(mModel2D);
     //mModelView2D->translate(position);
 
-    mSquare.render(program, GLTools::RENDER_DEFERRED_SCREEN);
+    mSquare.render(program, GLTools::RENDER_DEFERRED_SHADING);
     mModel2D.popMatrix();
 
 }
@@ -238,6 +246,12 @@ void OpenglNoel::renderGui(GLTools::RenderStep renderStep) {
         setDeferred(false);
         mSplittedMode = false;
     }
+
+    ImGui::End();
+
+    ImGui::Begin("Compute Tool");
+
+    ImGui::SliderFloat("gamma", &mComputeToolGama, 0.0f, 5.0f);
 
     ImGui::End();
 
@@ -331,7 +345,7 @@ void OpenglNoel::mouseMove(glm::vec2 mousePosition, unsigned int selection) {
                 mFreeflyCamera.rotateUp(diff.y * 2 * M_PI);
             }
         } else {
-            if (!mCameraLock) {
+            if (!mCameraLock && mMouseRotation) {
                 mTrackballCamera.rotateLeft(diff.x * 2 * M_PI);
                 mTrackballCamera.rotateUp(diff.y * 2 * M_PI);
             }
@@ -364,5 +378,14 @@ void OpenglNoel::scroll(int x, int y) {
         if (y < 0) {
             mTrackballCamera.moveFront((-y * 1.1f));
         }
+    }
+}
+
+void OpenglNoel::mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) {
+    if (state == SDL_PRESSED) {
+        mMouseRotation = true;
+    }
+    if (state == SDL_RELEASED) {
+        mMouseRotation = false;
     }
 }

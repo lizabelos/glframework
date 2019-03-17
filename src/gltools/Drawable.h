@@ -36,7 +36,11 @@ namespace GLTools {
          /**
          * Deferred render on the screen
          */
-         RENDER_DEFERRED_SCREEN
+         RENDER_DEFERRED_SHADING,
+        /**
+        * Deferred render on the screen
+        */
+         RENDER_DEFERRED_COMPUTE
     } RenderStep;
 
     /**

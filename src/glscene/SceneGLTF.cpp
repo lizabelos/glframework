@@ -105,29 +105,32 @@ void GLScene::SceneGLTF::render(std::shared_ptr<GLTools::Program> program, GLToo
         const tinygltf::Material &material = mModel.materials[primitive->getMaterial()];
         for (const auto &content : material.values) {
             if (content.first == "baseColorFactor") {
-                program->post("uAmbient", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
+                // program->post("uAmbient", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
                 program->post("uDiffuse", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
-                program->post("uSpecular", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
+                // program->post("uSpecular", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], content.second.number_array[3]));
             }
             if (content.first == "baseColorTexture") {
                 int textureId = static_cast<int>(content.second.number_value);
-                mTextures.at(textureId)->activate(GL_TEXTURE0);
-                program->postTexture("uAmbientTexture", 0);
-                program->post("uAmbientHasTexture", GL_TRUE);
+                // mTextures.at(textureId)->activate(GL_TEXTURE0);
+                // program->postTexture("uAmbientTexture", 0);
+                // program->post("uAmbientHasTexture", GL_TRUE);
 
                 mTextures.at(textureId)->activate(GL_TEXTURE1);
                 program->postTexture("uDiffuseTexture", 1);
                 program->post("uDiffuseHasTexture", GL_TRUE);
 
-                mTextures.at(textureId)->activate(GL_TEXTURE2);
-                program->postTexture("uSpecularTexture", 2);
-                program->post("uSpecularHasTexture", GL_TRUE);
+                // mTextures.at(textureId)->activate(GL_TEXTURE2);
+                // program->postTexture("uSpecularTexture", 2);
+                // program->post("uSpecularHasTexture", GL_TRUE);
             }
             std::cout << "VALUE " << content.first << "=" << content.second.number_array << " " << content.second.number_value << std::endl;
         }
 
         for (const auto &content : material.additionalValues) {
             std::cout << "ADDITIONAL " << content.first << "=" << content.second.number_array << std::endl;
+            if (content.first == "emissiveFactor") {
+                program->post("uAmbient", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], 1.0));
+            }
         }
         primitive->render(program, renderStep);
     }

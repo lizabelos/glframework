@@ -43,6 +43,7 @@ protected:
     void resize(unsigned int width, unsigned int height) override;
     bool needRenderShadow() override;
     void scroll(int x, int y) override;
+    void mouseClick(glm::vec2 mousePosition, Uint8 state, Uint8 button, unsigned int selection) override;
 
 private:
     GLGeometry::Sphere mSphere;
@@ -64,7 +65,7 @@ private:
     GLTools::Model2D mModel2D;
 
 
-    std::shared_ptr<GLTools::Program> mRender3DProgram, mGeometryProgram, mShadingProgram, mShadingAmbienProgram, mShadingDiffuseProgram, mShadingNormalProgram, mShadingShadowProgram, mShadingSpecularProgram, mShadowProgram;
+    std::shared_ptr<GLTools::Program> mRender3DProgram, mGeometryProgram, mShadingProgram, mShadingAmbienProgram, mShadingDiffuseProgram, mShadingNormalProgram, mShadingShadowProgram, mShadingSpecularProgram, mShadowProgram, mComputeProgram;
     std::shared_ptr<GLScene::Scene> mScene;
 
     GLTools::TextureManager mTextureManager;
@@ -76,7 +77,9 @@ private:
     bool mLightToolActive = true;
     bool mCameraLock = false;
     bool mCameraIsFreefly = false;
-    float mLightToolAmbient = 0.3, mLightToolDiffuse = 1.0, mLightToolSpecular = 0.1, mLightToolShadow = 0.5, mLightToolShadowBias = 1.0f;
+    float mLightToolAmbient = 0.3, mLightToolDiffuse = 1.0, mLightToolSpecular = 0.1, mLightToolShadow = 0.5, mLightToolShadowBias = 1.0f, mComputeToolGama = 1.0f;
+
+    bool mMouseRotation = false;
 
 };
 
