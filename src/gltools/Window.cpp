@@ -7,9 +7,8 @@
 
 void glMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
 
-    std::cerr << "GL CALLBACK: " << message << std::endl;
-
     if (type == GL_DEBUG_TYPE_ERROR) {
+        std::cerr << "GL CALLBACK: " << message << std::endl;
         throw std::runtime_error(message);
     }
 
@@ -168,6 +167,9 @@ int GLTools::Window::run() {
             // Screen Render
             mComputeFramebuffer->useScreen();
             mComputeFramebuffer->useRead();
+            glViewport(0, 0, w, h);
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
             glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
             SDL_GL_SwapWindow(mWindow);
 
@@ -246,7 +248,10 @@ void GLTools::Window::processEvent(const SDL_Event &event, bool &loop) {
         switch (event.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
                 // glViewport(0, 0, event.window.data1, event.window.data2);
-                if (mDeferred) mFramebuffer = std::make_shared<Framebuffer>(event.window.data1, event.window.data2);
+                if (mDeferred) {
+                    mFramebuffer = std::make_shared<Framebuffer>(event.window.data1, event.window.data2);
+                    mComputeFramebuffer = std::make_shared<ComputeFramebuffer>(event.window.data1, event.window.data2);
+                }
                 resize(static_cast<unsigned int>(event.window.data1), static_cast<unsigned int>(event.window.data2));
                 break;
             default:

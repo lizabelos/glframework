@@ -123,11 +123,11 @@ void GLScene::SceneGLTF::render(std::shared_ptr<GLTools::Program> program, GLToo
                 // program->postTexture("uSpecularTexture", 2);
                 // program->post("uSpecularHasTexture", GL_TRUE);
             }
-            std::cout << "VALUE " << content.first << "=" << content.second.number_array << " " << content.second.number_value << std::endl;
+            // std::cout << "VALUE " << content.first << "=" << content.second.number_array << " " << content.second.number_value << std::endl;
         }
 
         for (const auto &content : material.additionalValues) {
-            std::cout << "ADDITIONAL " << content.first << "=" << content.second.number_array << std::endl;
+            // std::cout << "ADDITIONAL " << content.first << "=" << content.second.number_array << std::endl;
             if (content.first == "emissiveFactor") {
                 program->post("uAmbient", glm::vec4(content.second.number_array[0], content.second.number_array[1], content.second.number_array[2], 1.0));
             }
